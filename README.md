@@ -32,6 +32,28 @@ ln -s /path/to/pi-rlm .pi/extensions/pi-rlm
 - **Python 3** — for the sandboxed REPL environment
 - **pi** coding agent
 
+## Quick Start
+
+```bash
+# Quickstart demo (~30 seconds, creates a tiny test file)
+./examples/quickstart.sh
+```
+
+## Examples
+
+Run any example to see the RLM iterating in your terminal:
+
+```bash
+./examples/run.sh              # List available examples
+./examples/run.sh sales        # Analyze 2000-row sales CSV
+./examples/run.sh logs         # Investigate 5000-line server log
+./examples/run.sh puzzle       # Decode a ROT13+Base64 cipher
+./examples/run.sh configs      # Diff two large JSON configs
+./examples/run.sh all          # Run all examples
+```
+
+Each example is designed so that **only code execution can produce the correct answer** — an LLM reasoning alone would fail.
+
 ## Usage
 
 The extension registers an `rlm` tool that the LLM can call:

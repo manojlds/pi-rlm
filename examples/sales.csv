@@ -1,0 +1,2001 @@
+date,product,region,units,price_each
+2024-11-04,Widget A,East,32,48.53
+2024-12-04,Thingamajig,North,76,87.27
+2024-01-03,Widget B,South,65,122.39
+2024-09-07,Thingamajig,West,29,92.6
+2024-05-26,Widget A,South,90,87.41
+2024-05-05,Widget B,East,14,23.09
+2024-02-12,Gadget X,East,6,147.3
+2024-09-04,Gadget Y,North,71,62.17
+2024-11-20,Gadget X,South,91,18.56
+2024-11-08,Gadget X,North,30,173.96
+2024-07-09,Gadget Y,East,21,77.19
+2024-04-22,Gadget X,North,78,128.82
+2024-09-24,Widget B,South,60,78.99
+2024-11-23,Doohickey,South,88,68.24
+2024-01-08,Widget A,East,52,57.21
+2024-04-19,Thingamajig,East,28,132.81
+2024-07-21,Gadget Y,South,34,32.23
+2024-12-18,Doohickey,East,96,118.99
+2024-10-13,Gadget X,South,18,104.36
+2024-02-25,Widget A,North,20,127.35
+2024-11-14,Doohickey,North,50,79.42
+2024-08-17,Gadget X,North,88,145.54
+2024-11-18,Gadget X,East,15,62.23
+2024-03-15,Widget A,East,65,153.58
+2024-09-04,Thingamajig,East,82,103.99
+2024-04-05,Gadget X,South,70,190.93
+2024-09-01,Doohickey,East,63,8.8
+2024-06-27,Gadget X,South,8,51.97
+2024-10-03,Widget A,West,9,195.71
+2024-09-25,Widget B,South,85,97.68
+2024-09-06,Gadget X,West,28,186.14
+2024-12-23,Widget B,East,52,199.05
+2024-11-12,Gadget Y,West,16,53.34
+2024-02-11,Widget A,South,76,47.94
+2024-02-23,Thingamajig,North,30,18.14
+2024-01-28,Gadget X,North,66,51.41
+2024-11-16,Widget B,South,93,187.43
+2024-10-19,Gadget Y,South,61,162.46
+2024-04-04,Widget A,West,46,87.6
+2024-08-28,Thingamajig,North,87,132.42
+2024-11-04,Widget A,West,94,71.16
+2024-02-08,Widget B,South,69,92.48
+2024-07-06,Gadget X,West,32,175.52
+2024-02-15,Doohickey,North,7,132.17
+2024-09-27,Widget A,North,97,170.5
+2024-03-14,Gadget Y,West,28,173.61
+2024-01-06,Gadget Y,North,50,56.71
+2024-08-10,Gadget Y,West,20,42.03
+2024-04-02,Doohickey,North,96,66.15
+2024-01-19,Gadget Y,South,8,192.35
+2024-02-28,Widget B,North,77,18.25
+2024-04-13,Widget A,South,75,120.93
+2024-10-03,Gadget Y,East,34,44.83
+2024-12-11,Widget B,East,51,30.52
+2024-11-10,Gadget Y,East,97,187.47
+2024-01-15,Doohickey,North,10,109.84
+2024-09-09,Widget B,East,9,176.46
+2024-06-10,Widget B,West,70,142.19
+2024-10-26,Thingamajig,North,86,164.34
+2024-05-22,Widget A,South,34,27.51
+2024-02-24,Doohickey,South,35,59.94
+2024-04-23,Gadget X,South,88,128.68
+2024-05-17,Gadget Y,East,7,23.0
+2024-07-27,Gadget X,North,1,70.04
+2024-03-21,Gadget X,South,95,91.16
+2024-12-14,Doohickey,North,15,19.67
+2024-12-05,Doohickey,North,48,118.59
+2024-03-14,Widget B,North,40,76.11
+2024-01-12,Widget B,South,86,25.04
+2024-09-28,Gadget Y,South,31,173.6
+2024-03-14,Widget A,South,95,185.28
+2024-07-26,Thingamajig,South,35,36.04
+2024-12-04,Gadget Y,North,61,48.37
+2024-08-12,Gadget X,South,29,9.61
+2024-04-13,Gadget X,East,9,193.54
+2024-05-12,Thingamajig,West,87,196.32
+2024-09-11,Widget A,North,34,39.82
+2024-05-02,Widget A,West,45,147.07
+2024-06-14,Doohickey,North,50,180.4
+2024-04-09,Widget A,West,1,106.38
+2024-09-22,Thingamajig,South,47,89.1
+2024-11-11,Doohickey,East,85,170.36
+2024-12-10,Doohickey,East,86,84.64
+2024-07-23,Gadget X,South,25,86.99
+2024-07-22,Thingamajig,South,79,115.98
+2024-07-18,Widget A,East,37,45.99
+2024-10-20,Thingamajig,East,60,91.15
+2024-11-07,Doohickey,West,95,38.09
+2024-02-10,Doohickey,East,12,164.59
+2024-04-22,Gadget X,South,26,33.73
+2024-01-08,Gadget Y,North,59,85.82
+2024-11-19,Widget B,West,64,82.93
+2024-03-21,Thingamajig,North,97,172.79
+2024-02-25,Gadget Y,South,23,161.8
+2024-12-17,Gadget Y,North,72,53.59
+2024-02-15,Widget B,West,86,108.57
+2024-09-20,Gadget X,West,79,163.93
+2024-09-14,Doohickey,West,21,150.01
+2024-08-15,Gadget X,South,82,59.08
+2024-09-16,Thingamajig,South,36,90.78
+2024-12-10,Widget B,East,43,67.34
+2024-09-03,Widget B,South,30,79.69
+2024-03-23,Widget B,North,54,84.48
+2024-09-15,Gadget Y,North,27,167.41
+2024-07-25,Doohickey,North,98,117.26
+2024-08-01,Gadget X,East,97,81.05
+2024-07-18,Thingamajig,South,63,47.79
+2024-07-16,Widget A,West,44,135.43
+2024-07-24,Widget B,West,17,196.24
+2024-09-01,Gadget Y,North,11,130.34
+2024-03-28,Gadget Y,South,7,55.73
+2024-06-07,Gadget Y,East,44,153.44
+2024-07-09,Gadget Y,East,11,96.71
+2024-12-18,Widget A,East,29,131.78
+2024-11-02,Widget A,South,26,168.65
+2024-10-05,Widget B,South,61,135.54
+2024-10-07,Gadget Y,East,99,76.93
+2024-10-20,Thingamajig,North,100,164.76
+2024-05-04,Doohickey,North,40,117.28
+2024-07-13,Thingamajig,South,10,120.46
+2024-11-08,Widget A,East,88,122.08
+2024-02-26,Doohickey,North,45,108.89
+2024-11-12,Widget A,East,2,170.67
+2024-08-04,Gadget Y,East,82,178.86
+2024-08-23,Widget B,West,23,148.09
+2024-11-09,Doohickey,West,60,89.94
+2024-12-19,Gadget X,East,32,166.99
+2024-02-09,Gadget Y,South,97,95.62
+2024-10-22,Gadget Y,East,4,101.39
+2024-06-06,Gadget Y,South,46,160.58
+2024-06-09,Doohickey,East,72,6.98
+2024-04-03,Widget B,West,63,113.26
+2024-04-23,Gadget Y,West,58,159.62
+2024-02-10,Widget B,West,89,52.44
+2024-11-19,Gadget X,West,71,108.53
+2024-07-24,Doohickey,East,46,142.06
+2024-05-10,Gadget X,South,16,145.65
+2024-06-04,Thingamajig,South,25,47.2
+2024-08-09,Thingamajig,East,13,167.36
+2024-05-08,Gadget X,South,39,7.76
+2024-09-05,Gadget X,North,7,112.9
+2024-12-05,Thingamajig,West,14,175.18
+2024-10-10,Gadget Y,West,57,71.44
+2024-01-09,Gadget Y,North,9,83.14
+2024-02-19,Thingamajig,North,20,34.09
+2024-10-10,Widget A,South,16,113.82
+2024-07-20,Doohickey,South,100,106.9
+2024-08-15,Gadget X,West,40,115.88
+2024-01-20,Thingamajig,North,98,45.52
+2024-04-09,Thingamajig,North,21,51.77
+2024-09-03,Widget B,North,53,92.85
+2024-10-16,Gadget X,North,30,61.18
+2024-05-23,Gadget Y,North,88,50.52
+2024-05-26,Thingamajig,South,55,27.38
+2024-04-21,Widget B,East,19,18.92
+2024-03-26,Gadget X,East,57,29.25
+2024-12-10,Thingamajig,West,35,102.59
+2024-08-15,Widget A,North,56,148.23
+2024-10-09,Widget A,North,30,192.57
+2024-10-19,Widget A,East,74,12.85
+2024-03-16,Doohickey,West,36,40.39
+2024-10-14,Thingamajig,West,12,96.65
+2024-07-11,Gadget X,North,21,69.31
+2024-12-16,Gadget X,West,98,112.27
+2024-08-03,Gadget X,East,42,27.6
+2024-07-28,Doohickey,North,85,174.53
+2024-08-14,Widget A,South,67,75.55
+2024-08-21,Gadget Y,North,27,57.08
+2024-03-10,Gadget Y,West,16,10.63
+2024-11-20,Widget B,South,40,112.41
+2024-09-14,Widget A,South,15,94.98
+2024-02-21,Widget B,West,92,61.91
+2024-12-09,Gadget Y,West,61,52.53
+2024-09-05,Gadget Y,South,77,104.11
+2024-03-28,Widget A,East,99,159.05
+2024-07-11,Doohickey,East,1,60.15
+2024-05-27,Doohickey,West,20,92.08
+2024-08-12,Gadget X,West,59,186.91
+2024-04-23,Widget B,West,30,171.92
+2024-07-02,Gadget X,West,91,183.12
+2024-07-13,Thingamajig,South,64,193.14
+2024-03-17,Doohickey,East,13,175.47
+2024-08-04,Doohickey,West,2,145.88
+2024-07-28,Thingamajig,South,10,96.55
+2024-05-11,Doohickey,West,84,20.66
+2024-06-28,Thingamajig,West,41,127.23
+2024-08-28,Doohickey,North,80,18.34
+2024-11-22,Gadget X,South,96,22.62
+2024-02-25,Thingamajig,North,57,37.44
+2024-05-01,Widget A,East,8,62.21
+2024-06-14,Widget B,South,68,85.35
+2024-11-26,Widget B,South,23,20.4
+2024-07-20,Thingamajig,South,64,183.0
+2024-03-08,Gadget Y,East,59,54.79
+2024-01-26,Gadget Y,East,87,111.59
+2024-02-15,Gadget X,East,82,192.6
+2024-12-09,Gadget Y,East,26,199.88
+2024-08-04,Widget B,West,74,75.0
+2024-05-23,Gadget X,North,85,82.18
+2024-01-19,Thingamajig,North,78,150.31
+2024-05-25,Widget B,East,29,129.14
+2024-10-09,Thingamajig,South,81,23.95
+2024-11-21,Widget A,East,57,11.51
+2024-06-24,Widget B,North,38,68.71
+2024-07-06,Widget B,South,70,175.91
+2024-06-17,Doohickey,East,22,55.11
+2024-08-26,Gadget X,East,15,96.32
+2024-02-05,Widget B,West,72,76.33
+2024-07-01,Gadget X,North,59,76.87
+2024-12-22,Gadget X,West,82,188.36
+2024-02-22,Widget B,West,4,125.81
+2024-09-11,Doohickey,South,83,17.33
+2024-08-23,Gadget X,West,15,32.26
+2024-01-10,Gadget Y,North,13,50.79
+2024-09-05,Gadget Y,West,48,135.74
+2024-12-23,Doohickey,West,76,149.74
+2024-03-14,Thingamajig,North,63,125.05
+2024-05-02,Thingamajig,East,28,91.46
+2024-04-28,Gadget X,North,88,76.63
+2024-11-12,Widget A,West,36,42.01
+2024-02-28,Gadget Y,North,85,46.36
+2024-11-20,Widget A,North,43,52.5
+2024-03-26,Doohickey,South,9,166.81
+2024-09-07,Doohickey,South,30,69.07
+2024-03-26,Doohickey,North,36,172.39
+2024-03-05,Doohickey,East,23,26.44
+2024-01-05,Widget A,East,31,119.83
+2024-01-06,Gadget X,North,17,149.64
+2024-09-04,Thingamajig,North,61,92.41
+2024-06-17,Doohickey,North,58,103.25
+2024-10-02,Thingamajig,East,59,130.45
+2024-01-02,Gadget Y,West,55,138.79
+2024-08-23,Gadget Y,North,11,67.81
+2024-03-03,Widget B,East,80,128.45
+2024-09-23,Gadget X,West,77,108.46
+2024-08-17,Doohickey,West,13,159.65
+2024-02-28,Thingamajig,South,56,93.05
+2024-04-14,Gadget X,West,52,86.12
+2024-02-11,Gadget Y,East,86,54.7
+2024-03-22,Gadget Y,North,12,167.2
+2024-02-14,Widget A,East,17,113.49
+2024-10-18,Doohickey,East,86,28.84
+2024-06-28,Thingamajig,West,93,15.03
+2024-05-20,Gadget X,East,14,117.69
+2024-04-05,Thingamajig,West,29,170.22
+2024-06-28,Doohickey,East,15,153.71
+2024-10-08,Gadget Y,North,78,186.17
+2024-12-09,Widget A,South,35,142.03
+2024-05-11,Gadget X,North,24,174.62
+2024-10-22,Gadget Y,North,19,149.49
+2024-01-03,Thingamajig,South,49,86.87
+2024-06-06,Gadget X,East,93,68.25
+2024-10-20,Widget A,North,20,35.69
+2024-10-02,Thingamajig,North,35,91.41
+2024-07-16,Doohickey,West,54,58.27
+2024-09-04,Gadget X,West,15,60.23
+2024-11-19,Gadget Y,East,6,48.0
+2024-10-02,Widget A,South,39,189.34
+2024-03-25,Gadget X,East,42,28.4
+2024-08-24,Gadget Y,South,17,79.14
+2024-12-08,Doohickey,East,10,82.43
+2024-12-02,Gadget Y,North,59,184.63
+2024-06-19,Gadget Y,West,91,129.83
+2024-05-04,Gadget Y,North,42,38.52
+2024-10-15,Thingamajig,East,12,90.16
+2024-02-08,Gadget Y,West,68,20.34
+2024-05-24,Gadget X,South,43,156.93
+2024-02-17,Thingamajig,North,68,104.44
+2024-06-12,Thingamajig,South,31,25.05
+2024-05-07,Widget B,South,98,153.03
+2024-02-06,Thingamajig,West,60,152.12
+2024-10-15,Thingamajig,East,81,66.65
+2024-08-03,Gadget Y,West,81,64.05
+2024-05-19,Widget A,East,65,19.47
+2024-08-15,Widget A,North,48,167.18
+2024-02-21,Widget A,West,60,118.16
+2024-12-02,Gadget Y,South,42,122.98
+2024-09-05,Widget A,West,14,163.14
+2024-06-23,Widget A,South,6,53.31
+2024-08-15,Doohickey,South,47,77.71
+2024-05-13,Gadget Y,East,87,121.59
+2024-11-21,Gadget X,North,43,23.43
+2024-11-13,Gadget X,East,93,171.06
+2024-10-28,Widget B,East,11,118.63
+2024-03-12,Gadget X,West,17,121.03
+2024-02-10,Doohickey,West,83,159.37
+2024-03-22,Thingamajig,North,83,135.74
+2024-09-12,Widget A,East,40,40.15
+2024-04-11,Gadget Y,South,29,200.0
+2024-03-03,Gadget X,North,65,155.32
+2024-12-17,Widget A,East,99,125.52
+2024-10-13,Widget B,South,24,167.11
+2024-10-26,Widget B,West,6,85.12
+2024-11-24,Widget B,West,79,60.56
+2024-12-26,Gadget Y,South,69,51.64
+2024-08-27,Widget B,East,87,189.69
+2024-08-15,Gadget X,West,65,107.85
+2024-03-27,Widget B,South,33,15.18
+2024-08-28,Gadget X,North,92,169.95
+2024-02-10,Widget A,South,35,92.62
+2024-09-05,Gadget Y,North,29,164.26
+2024-06-01,Gadget Y,North,51,102.89
+2024-04-13,Widget A,East,29,10.5
+2024-02-27,Thingamajig,East,19,31.83
+2024-05-27,Gadget Y,South,98,142.58
+2024-08-20,Widget A,North,3,54.91
+2024-03-18,Thingamajig,West,15,156.35
+2024-04-10,Widget A,North,31,86.87
+2024-10-15,Widget A,North,64,121.36
+2024-01-21,Doohickey,South,92,33.0
+2024-07-01,Doohickey,East,31,116.28
+2024-03-22,Thingamajig,North,68,195.06
+2024-02-17,Doohickey,North,50,175.3
+2024-01-21,Gadget Y,East,33,150.73
+2024-06-26,Widget A,East,31,147.92
+2024-11-04,Doohickey,East,18,13.65
+2024-09-11,Thingamajig,South,100,138.51
+2024-12-16,Thingamajig,South,18,17.3
+2024-08-02,Gadget X,South,6,159.27
+2024-01-11,Gadget X,West,70,97.31
+2024-01-25,Thingamajig,South,37,74.61
+2024-01-28,Thingamajig,East,35,29.27
+2024-06-14,Gadget Y,West,50,71.11
+2024-03-16,Thingamajig,West,48,185.24
+2024-09-09,Widget A,West,11,88.97
+2024-03-18,Gadget X,East,14,20.61
+2024-11-10,Gadget X,West,78,144.94
+2024-03-23,Gadget Y,East,58,13.26
+2024-06-20,Gadget Y,East,82,196.11
+2024-01-03,Thingamajig,West,47,105.05
+2024-12-22,Widget B,North,19,170.49
+2024-11-26,Gadget Y,North,17,18.11
+2024-11-12,Gadget X,West,73,11.32
+2024-03-22,Gadget Y,East,48,91.57
+2024-02-19,Widget B,East,51,66.31
+2024-05-08,Widget A,North,95,41.28
+2024-09-13,Doohickey,North,34,156.12
+2024-12-15,Widget B,East,89,183.71
+2024-08-07,Widget A,South,10,93.15
+2024-12-15,Widget A,East,86,72.75
+2024-02-18,Doohickey,East,39,171.02
+2024-12-23,Thingamajig,South,47,104.21
+2024-02-07,Widget B,South,64,10.13
+2024-09-19,Gadget X,West,71,30.31
+2024-02-03,Gadget X,West,92,145.18
+2024-09-14,Gadget Y,North,17,194.61
+2024-11-03,Gadget Y,West,88,105.89
+2024-03-27,Doohickey,South,99,193.42
+2024-07-17,Widget A,North,67,34.84
+2024-03-06,Gadget X,South,45,189.76
+2024-09-10,Widget A,East,26,128.84
+2024-09-09,Widget B,East,79,109.03
+2024-09-21,Widget B,South,22,133.45
+2024-12-20,Gadget X,North,4,20.84
+2024-11-25,Doohickey,East,84,46.11
+2024-10-14,Doohickey,North,64,178.35
+2024-09-10,Thingamajig,East,62,52.75
+2024-11-13,Gadget X,West,10,139.28
+2024-03-15,Gadget Y,West,60,44.78
+2024-10-05,Gadget X,East,94,197.66
+2024-06-13,Widget B,East,66,114.52
+2024-06-08,Gadget Y,North,35,92.67
+2024-03-04,Widget A,East,50,173.51
+2024-07-08,Widget B,East,74,145.62
+2024-04-25,Widget B,West,66,96.03
+2024-05-16,Widget A,North,51,103.56
+2024-04-07,Doohickey,East,7,14.86
+2024-08-20,Thingamajig,West,37,109.65
+2024-02-14,Widget B,East,94,76.33
+2024-07-12,Widget A,West,7,116.2
+2024-04-12,Doohickey,East,10,80.34
+2024-08-25,Doohickey,East,80,137.68
+2024-02-05,Widget A,West,48,160.0
+2024-06-18,Gadget X,South,26,122.48
+2024-07-17,Widget A,North,5,31.72
+2024-06-26,Gadget Y,West,20,123.22
+2024-09-05,Gadget X,East,21,81.63
+2024-10-24,Gadget X,East,65,166.52
+2024-09-16,Thingamajig,East,61,164.07
+2024-06-11,Thingamajig,North,54,118.82
+2024-12-28,Thingamajig,North,77,97.55
+2024-11-26,Doohickey,South,93,15.01
+2024-08-06,Doohickey,West,19,165.22
+2024-04-02,Doohickey,North,25,8.69
+2024-06-14,Widget B,West,89,44.76
+2024-09-25,Doohickey,West,95,146.84
+2024-12-05,Doohickey,South,72,68.38
+2024-11-16,Doohickey,West,41,191.55
+2024-08-18,Gadget X,East,87,155.54
+2024-12-22,Thingamajig,East,79,99.42
+2024-04-09,Doohickey,East,29,188.59
+2024-05-25,Gadget X,South,89,142.47
+2024-06-16,Gadget X,East,37,28.77
+2024-11-18,Gadget Y,West,45,191.15
+2024-03-10,Widget A,East,92,20.41
+2024-08-21,Gadget X,West,28,44.4
+2024-09-09,Doohickey,East,18,26.3
+2024-12-19,Widget B,South,7,135.62
+2024-09-08,Thingamajig,South,7,24.54
+2024-06-23,Gadget Y,North,88,155.3
+2024-01-18,Widget B,West,84,187.33
+2024-08-16,Thingamajig,South,97,192.96
+2024-06-10,Thingamajig,North,99,22.44
+2024-10-08,Doohickey,North,23,86.49
+2024-03-02,Gadget Y,West,24,187.64
+2024-05-02,Widget A,East,73,122.54
+2024-06-10,Gadget Y,West,18,170.96
+2024-08-09,Widget B,North,43,36.69
+2024-08-21,Gadget X,South,2,148.64
+2024-05-19,Thingamajig,South,23,124.14
+2024-11-13,Gadget Y,East,12,83.16
+2024-02-06,Widget B,West,42,187.49
+2024-01-09,Gadget Y,South,58,151.98
+2024-06-10,Doohickey,North,34,132.47
+2024-12-08,Widget A,North,60,64.83
+2024-07-22,Doohickey,East,89,27.9
+2024-05-12,Doohickey,South,29,191.69
+2024-08-05,Gadget Y,East,54,141.88
+2024-08-25,Doohickey,South,98,53.26
+2024-10-28,Widget A,West,68,142.23
+2024-02-19,Widget A,North,71,181.06
+2024-04-19,Doohickey,South,22,68.98
+2024-09-15,Widget A,South,92,118.71
+2024-02-17,Gadget Y,North,59,30.73
+2024-07-15,Doohickey,North,72,95.16
+2024-05-24,Widget A,West,33,164.21
+2024-12-07,Doohickey,North,6,87.62
+2024-12-03,Doohickey,North,9,197.3
+2024-08-02,Gadget X,West,24,154.95
+2024-11-24,Thingamajig,West,48,198.61
+2024-07-15,Gadget Y,West,11,138.13
+2024-11-28,Doohickey,South,84,172.76
+2024-02-06,Doohickey,West,68,29.83
+2024-04-27,Widget A,North,39,95.29
+2024-12-18,Gadget Y,West,30,53.26
+2024-06-05,Gadget X,South,93,154.27
+2024-01-26,Thingamajig,West,79,154.38
+2024-01-08,Widget B,North,13,120.82
+2024-08-20,Thingamajig,North,32,149.41
+2024-07-15,Widget B,South,97,173.43
+2024-01-05,Doohickey,East,30,164.08
+2024-12-19,Gadget X,East,31,63.84
+2024-03-22,Doohickey,South,53,63.6
+2024-01-18,Doohickey,South,81,137.36
+2024-09-16,Widget A,East,83,135.91
+2024-09-11,Thingamajig,West,53,34.1
+2024-07-06,Doohickey,West,31,170.62
+2024-05-28,Thingamajig,South,60,183.37
+2024-09-14,Gadget Y,South,50,52.36
+2024-04-11,Thingamajig,North,58,170.19
+2024-02-18,Thingamajig,South,7,57.35
+2024-11-20,Doohickey,North,10,41.69
+2024-10-24,Thingamajig,South,62,45.73
+2024-06-10,Widget A,South,25,192.61
+2024-02-24,Gadget Y,South,90,122.86
+2024-04-13,Widget B,East,100,60.2
+2024-08-18,Thingamajig,East,40,56.0
+2024-09-16,Gadget Y,North,93,96.55
+2024-06-07,Gadget X,East,53,13.91
+2024-04-24,Widget B,North,34,112.9
+2024-10-19,Thingamajig,West,38,34.72
+2024-06-08,Gadget Y,South,64,112.38
+2024-11-11,Gadget X,West,93,130.13
+2024-08-15,Widget B,East,22,32.29
+2024-09-16,Widget B,North,68,11.6
+2024-02-27,Thingamajig,North,98,6.24
+2024-03-27,Thingamajig,South,9,142.9
+2024-01-07,Doohickey,West,48,16.79
+2024-11-22,Doohickey,West,85,100.13
+2024-01-18,Doohickey,West,2,8.26
+2024-12-09,Doohickey,East,3,102.93
+2024-12-22,Gadget Y,South,14,184.02
+2024-09-05,Widget B,South,80,107.66
+2024-06-09,Gadget Y,North,48,192.06
+2024-08-19,Widget B,South,39,138.39
+2024-02-21,Thingamajig,North,12,84.03
+2024-07-18,Gadget Y,North,82,6.84
+2024-03-03,Gadget Y,West,83,157.95
+2024-10-28,Widget A,North,30,46.23
+2024-12-19,Gadget Y,East,6,185.21
+2024-11-09,Doohickey,North,23,186.11
+2024-06-01,Widget B,South,97,165.03
+2024-07-03,Gadget X,South,73,51.89
+2024-07-22,Doohickey,East,50,152.34
+2024-03-26,Thingamajig,North,65,150.36
+2024-06-02,Widget A,West,30,168.54
+2024-06-20,Doohickey,West,100,68.64
+2024-11-09,Gadget Y,West,30,74.38
+2024-07-14,Widget B,West,11,155.57
+2024-05-26,Widget B,North,11,57.25
+2024-07-23,Thingamajig,South,95,80.98
+2024-06-04,Widget A,North,40,91.72
+2024-05-04,Widget B,North,24,89.04
+2024-09-18,Doohickey,West,14,10.12
+2024-06-18,Widget A,East,50,7.41
+2024-07-13,Widget A,South,74,106.62
+2024-11-13,Widget B,South,35,63.72
+2024-08-05,Widget A,South,56,58.81
+2024-05-16,Widget A,East,33,189.12
+2024-12-21,Gadget Y,South,59,25.86
+2024-05-01,Gadget Y,East,80,79.08
+2024-06-15,Gadget X,West,84,194.97
+2024-03-10,Gadget X,South,62,66.27
+2024-07-11,Gadget X,West,74,157.49
+2024-06-13,Gadget X,West,47,27.21
+2024-10-07,Doohickey,South,88,154.69
+2024-01-24,Gadget Y,South,57,160.55
+2024-12-03,Gadget Y,West,18,128.5
+2024-04-09,Thingamajig,South,92,87.51
+2024-07-03,Gadget Y,West,75,83.16
+2024-09-28,Thingamajig,West,70,12.17
+2024-06-23,Doohickey,North,14,154.95
+2024-11-22,Gadget X,South,83,124.47
+2024-10-21,Thingamajig,West,97,69.66
+2024-07-04,Widget A,North,34,48.29
+2024-12-17,Doohickey,South,58,77.95
+2024-08-25,Thingamajig,South,45,199.55
+2024-08-04,Gadget X,West,11,27.63
+2024-12-05,Gadget X,East,44,93.79
+2024-04-17,Gadget Y,East,61,24.04
+2024-12-23,Gadget Y,East,9,63.55
+2024-12-04,Widget A,East,83,26.33
+2024-03-24,Widget B,South,71,36.23
+2024-09-14,Gadget Y,South,52,127.8
+2024-03-21,Thingamajig,West,51,10.69
+2024-10-07,Gadget Y,West,50,5.87
+2024-04-07,Gadget X,North,74,24.84
+2024-09-06,Gadget X,East,26,94.22
+2024-05-22,Gadget Y,East,77,80.78
+2024-07-19,Widget A,East,46,169.88
+2024-10-06,Thingamajig,East,79,120.08
+2024-11-05,Gadget X,North,31,64.55
+2024-03-12,Thingamajig,South,66,80.75
+2024-10-05,Doohickey,West,55,41.22
+2024-11-18,Thingamajig,South,72,37.54
+2024-05-05,Widget B,East,58,125.78
+2024-06-01,Gadget Y,South,25,163.97
+2024-09-17,Thingamajig,West,53,138.52
+2024-07-23,Gadget Y,West,22,21.12
+2024-01-26,Widget B,East,5,58.6
+2024-09-10,Widget B,West,73,149.79
+2024-08-18,Doohickey,North,74,27.27
+2024-09-27,Gadget X,North,98,145.2
+2024-09-07,Gadget Y,North,95,166.86
+2024-04-10,Widget A,West,34,72.97
+2024-02-15,Widget A,South,27,163.09
+2024-10-23,Gadget X,West,22,125.15
+2024-04-27,Widget B,North,73,73.41
+2024-05-20,Doohickey,South,42,195.91
+2024-05-10,Doohickey,East,66,197.17
+2024-11-27,Widget A,South,97,158.21
+2024-01-09,Thingamajig,South,90,173.89
+2024-04-05,Thingamajig,East,32,153.49
+2024-11-13,Gadget Y,South,74,128.32
+2024-11-14,Gadget Y,West,10,128.56
+2024-02-13,Doohickey,East,89,187.59
+2024-06-15,Gadget Y,East,75,5.48
+2024-12-03,Thingamajig,West,82,134.51
+2024-06-28,Widget A,West,28,193.79
+2024-04-16,Gadget X,East,37,70.86
+2024-10-05,Doohickey,West,44,179.36
+2024-01-02,Widget A,West,3,29.23
+2024-03-15,Gadget Y,North,55,44.45
+2024-12-05,Thingamajig,East,21,175.51
+2024-05-03,Thingamajig,East,33,21.07
+2024-11-21,Widget B,North,51,126.99
+2024-12-23,Widget B,West,84,22.78
+2024-02-01,Widget B,West,10,30.88
+2024-04-17,Thingamajig,West,2,6.57
+2024-06-27,Widget A,West,89,30.77
+2024-02-08,Gadget Y,North,94,162.16
+2024-02-11,Gadget X,East,18,79.63
+2024-03-21,Thingamajig,South,9,108.45
+2024-01-20,Thingamajig,South,57,73.48
+2024-04-21,Thingamajig,South,53,125.13
+2024-08-28,Widget B,North,13,32.3
+2024-02-19,Thingamajig,West,45,192.83
+2024-06-26,Widget B,South,36,130.7
+2024-04-18,Doohickey,East,100,188.55
+2024-01-28,Thingamajig,East,27,105.96
+2024-09-07,Thingamajig,West,38,131.0
+2024-04-16,Gadget Y,North,31,102.42
+2024-10-03,Doohickey,North,47,187.12
+2024-03-13,Doohickey,West,47,111.54
+2024-03-25,Gadget Y,North,3,119.54
+2024-01-09,Widget B,North,8,189.99
+2024-07-17,Gadget X,West,55,141.85
+2024-02-21,Doohickey,South,36,21.3
+2024-02-17,Widget B,South,69,68.72
+2024-10-21,Thingamajig,North,40,141.24
+2024-12-28,Widget B,North,32,21.81
+2024-07-04,Gadget Y,North,40,134.89
+2024-11-24,Widget B,North,2,143.04
+2024-12-01,Widget B,West,45,106.99
+2024-12-09,Widget B,East,17,151.21
+2024-05-24,Widget A,North,43,162.39
+2024-05-17,Widget A,East,92,195.13
+2024-11-03,Gadget Y,West,66,75.22
+2024-08-28,Doohickey,South,48,35.68
+2024-02-19,Thingamajig,North,30,149.45
+2024-01-02,Widget A,South,6,96.99
+2024-07-05,Widget B,North,71,161.61
+2024-12-24,Thingamajig,West,29,67.75
+2024-07-24,Gadget X,East,10,116.45
+2024-02-17,Thingamajig,North,23,48.52
+2024-09-02,Gadget Y,North,60,173.88
+2024-05-11,Widget A,West,2,76.94
+2024-05-19,Gadget X,South,60,76.81
+2024-08-25,Widget B,South,20,6.24
+2024-07-01,Widget B,East,82,168.72
+2024-01-11,Widget A,West,95,146.81
+2024-02-07,Doohickey,South,54,100.95
+2024-01-05,Thingamajig,East,12,13.56
+2024-04-28,Doohickey,West,90,179.64
+2024-08-24,Widget A,North,65,31.04
+2024-07-03,Doohickey,North,56,134.18
+2024-03-08,Gadget X,East,41,185.58
+2024-07-23,Thingamajig,East,41,93.29
+2024-04-03,Widget B,South,100,155.18
+2024-02-05,Widget A,South,58,95.88
+2024-07-04,Doohickey,East,99,45.49
+2024-05-15,Gadget X,North,12,35.73
+2024-11-10,Thingamajig,North,28,168.01
+2024-06-05,Widget A,South,46,82.27
+2024-01-22,Gadget X,East,23,11.06
+2024-07-28,Gadget Y,South,13,95.1
+2024-03-04,Widget A,North,100,196.6
+2024-03-07,Gadget Y,East,88,127.91
+2024-11-03,Doohickey,East,10,9.25
+2024-02-07,Thingamajig,West,17,22.94
+2024-06-04,Widget A,West,7,37.76
+2024-10-14,Thingamajig,West,64,10.75
+2024-11-14,Widget B,East,28,182.12
+2024-05-09,Gadget Y,South,5,124.75
+2024-10-08,Thingamajig,East,64,85.34
+2024-09-16,Widget A,North,36,79.69
+2024-07-07,Thingamajig,South,81,198.85
+2024-09-26,Widget A,West,92,75.03
+2024-09-26,Gadget Y,East,73,102.97
+2024-07-09,Widget B,North,41,121.44
+2024-01-26,Gadget X,North,61,108.24
+2024-10-08,Widget B,North,32,133.09
+2024-05-18,Thingamajig,North,98,199.3
+2024-04-19,Gadget Y,East,23,39.34
+2024-10-11,Thingamajig,East,76,10.5
+2024-12-12,Doohickey,South,73,189.93
+2024-08-18,Gadget X,South,63,12.4
+2024-01-08,Doohickey,South,3,107.66
+2024-01-11,Doohickey,South,17,71.45
+2024-03-26,Gadget X,North,3,33.8
+2024-12-05,Widget A,East,10,77.85
+2024-11-13,Doohickey,North,44,63.84
+2024-03-06,Thingamajig,West,82,192.33
+2024-11-11,Widget B,East,29,134.78
+2024-03-13,Gadget X,East,17,39.65
+2024-01-23,Doohickey,West,99,193.21
+2024-01-06,Doohickey,East,79,48.07
+2024-10-04,Gadget Y,South,43,150.34
+2024-04-12,Gadget X,South,82,177.64
+2024-02-27,Thingamajig,East,58,7.22
+2024-04-08,Thingamajig,North,45,55.05
+2024-02-24,Widget A,North,50,90.45
+2024-07-06,Gadget Y,West,49,73.49
+2024-07-04,Gadget Y,South,21,93.0
+2024-01-10,Widget A,East,34,190.57
+2024-02-11,Widget B,West,21,147.74
+2024-09-03,Gadget X,West,91,11.04
+2024-11-06,Doohickey,West,21,15.44
+2024-06-07,Widget B,West,90,113.05
+2024-12-18,Gadget X,East,39,51.32
+2024-01-13,Doohickey,West,20,15.63
+2024-01-14,Widget A,East,85,126.89
+2024-08-07,Widget A,North,27,38.31
+2024-05-03,Gadget Y,North,40,158.05
+2024-08-16,Thingamajig,East,12,130.16
+2024-07-06,Gadget X,West,48,41.38
+2024-01-09,Gadget Y,West,34,49.12
+2024-05-19,Widget A,South,97,140.81
+2024-02-03,Thingamajig,East,70,85.73
+2024-10-08,Doohickey,North,50,164.59
+2024-07-18,Thingamajig,West,74,176.92
+2024-08-10,Widget A,West,92,11.77
+2024-10-17,Doohickey,South,16,190.1
+2024-08-06,Widget B,South,25,29.61
+2024-07-03,Thingamajig,West,26,199.47
+2024-11-05,Doohickey,East,41,182.61
+2024-02-03,Gadget Y,West,71,68.59
+2024-05-17,Gadget Y,North,90,126.5
+2024-09-26,Gadget Y,North,54,34.18
+2024-10-19,Doohickey,North,14,114.72
+2024-02-26,Gadget X,East,53,56.51
+2024-11-16,Doohickey,West,5,38.58
+2024-07-05,Doohickey,West,5,82.18
+2024-06-23,Widget B,North,96,97.67
+2024-05-12,Widget A,East,39,65.64
+2024-08-28,Thingamajig,North,30,31.21
+2024-12-15,Gadget X,East,94,86.27
+2024-11-03,Widget B,West,28,183.12
+2024-07-24,Gadget Y,East,8,105.48
+2024-03-03,Gadget X,West,18,157.2
+2024-09-19,Widget A,South,25,175.66
+2024-04-27,Widget A,South,5,94.01
+2024-06-23,Widget B,East,48,165.58
+2024-09-13,Thingamajig,North,88,10.96
+2024-06-16,Doohickey,West,23,192.3
+2024-08-19,Doohickey,East,45,36.89
+2024-05-24,Thingamajig,North,37,10.35
+2024-01-06,Doohickey,South,29,131.24
+2024-11-07,Gadget X,West,66,8.91
+2024-11-01,Gadget Y,South,83,38.77
+2024-01-08,Gadget X,East,92,193.57
+2024-11-09,Gadget Y,West,45,94.5
+2024-04-15,Gadget X,West,75,24.95
+2024-09-22,Gadget X,East,39,138.46
+2024-08-03,Gadget X,East,82,68.4
+2024-05-09,Thingamajig,East,25,34.24
+2024-04-02,Doohickey,West,85,67.32
+2024-03-24,Widget A,West,38,55.59
+2024-07-13,Gadget Y,North,75,143.07
+2024-10-27,Widget B,East,93,144.11
+2024-11-18,Thingamajig,West,86,74.91
+2024-05-28,Widget B,South,38,24.03
+2024-03-24,Gadget X,South,88,180.42
+2024-11-03,Widget B,East,29,150.12
+2024-05-14,Gadget X,East,34,119.19
+2024-08-28,Widget A,West,7,173.95
+2024-10-19,Doohickey,North,61,178.44
+2024-09-04,Thingamajig,West,68,63.18
+2024-01-28,Widget B,South,26,71.82
+2024-10-15,Widget B,East,92,40.17
+2024-02-16,Gadget X,South,41,128.73
+2024-01-15,Gadget X,South,98,155.84
+2024-10-25,Widget B,West,98,157.05
+2024-03-20,Gadget Y,West,52,88.66
+2024-08-13,Widget A,North,69,43.89
+2024-06-01,Gadget X,South,3,136.97
+2024-11-24,Widget B,South,89,176.01
+2024-05-05,Widget A,West,65,119.79
+2024-03-03,Widget A,East,38,93.91
+2024-09-20,Doohickey,East,56,178.15
+2024-03-11,Gadget Y,East,97,41.74
+2024-07-01,Widget B,South,94,197.05
+2024-04-24,Widget A,South,16,76.49
+2024-11-26,Widget A,West,82,54.88
+2024-09-20,Widget A,North,85,26.08
+2024-01-02,Thingamajig,North,54,91.64
+2024-02-18,Gadget X,West,90,34.86
+2024-12-22,Thingamajig,North,39,87.07
+2024-02-22,Doohickey,East,80,123.1
+2024-03-14,Widget A,North,37,27.23
+2024-02-16,Widget B,South,100,56.28
+2024-09-07,Gadget X,West,38,36.27
+2024-09-16,Widget B,West,43,50.73
+2024-01-22,Widget A,North,74,135.46
+2024-03-03,Doohickey,North,93,146.1
+2024-05-21,Widget B,West,38,56.5
+2024-01-04,Widget B,North,38,75.24
+2024-11-11,Gadget Y,North,13,170.99
+2024-01-01,Widget B,South,43,74.72
+2024-08-20,Gadget X,North,48,163.92
+2024-03-04,Gadget Y,West,59,58.01
+2024-07-23,Gadget Y,West,84,177.79
+2024-03-04,Widget B,North,21,25.22
+2024-10-16,Doohickey,West,24,124.21
+2024-06-20,Widget A,South,62,184.48
+2024-02-14,Gadget Y,North,9,56.01
+2024-06-01,Thingamajig,South,86,175.26
+2024-09-17,Thingamajig,North,56,134.03
+2024-04-16,Gadget X,West,20,168.61
+2024-09-20,Widget A,North,83,187.2
+2024-09-28,Gadget Y,West,22,19.6
+2024-08-11,Widget B,East,36,14.82
+2024-04-18,Thingamajig,West,52,164.34
+2024-02-15,Gadget Y,West,12,172.03
+2024-08-11,Widget A,West,96,132.41
+2024-02-13,Gadget Y,North,72,112.07
+2024-02-26,Doohickey,East,66,114.65
+2024-11-22,Gadget Y,East,47,165.94
+2024-04-28,Gadget Y,East,72,154.65
+2024-10-16,Thingamajig,East,92,93.24
+2024-02-25,Thingamajig,South,1,71.56
+2024-11-26,Gadget X,East,90,25.73
+2024-03-16,Widget B,West,14,54.59
+2024-04-07,Widget A,West,28,94.12
+2024-04-23,Gadget X,North,97,85.82
+2024-11-27,Thingamajig,North,99,178.89
+2024-08-22,Doohickey,South,64,5.85
+2024-12-02,Doohickey,West,75,99.17
+2024-09-25,Widget B,South,94,163.97
+2024-02-13,Thingamajig,East,65,176.87
+2024-07-20,Thingamajig,South,36,82.58
+2024-06-10,Gadget Y,South,18,85.49
+2024-12-24,Doohickey,East,90,111.82
+2024-06-23,Thingamajig,South,26,45.89
+2024-12-10,Thingamajig,East,87,30.87
+2024-12-21,Widget B,East,91,27.5
+2024-06-18,Gadget Y,West,87,150.83
+2024-09-10,Gadget Y,North,67,25.76
+2024-07-05,Widget A,North,26,57.06
+2024-03-10,Thingamajig,East,19,168.68
+2024-12-26,Gadget X,South,97,110.53
+2024-06-27,Gadget Y,North,79,174.27
+2024-12-18,Widget B,West,31,104.63
+2024-12-10,Thingamajig,North,49,80.57
+2024-11-11,Doohickey,North,2,150.02
+2024-04-20,Gadget Y,South,82,142.4
+2024-11-12,Doohickey,South,100,146.36
+2024-04-10,Gadget Y,South,88,19.52
+2024-03-24,Doohickey,North,49,12.92
+2024-05-18,Gadget X,South,21,118.88
+2024-05-01,Gadget X,West,91,187.81
+2024-01-05,Gadget X,North,100,186.81
+2024-10-27,Thingamajig,East,63,159.03
+2024-09-12,Widget A,East,68,47.89
+2024-03-17,Widget A,South,54,110.9
+2024-07-03,Gadget X,South,28,134.35
+2024-06-12,Gadget X,South,97,125.56
+2024-08-18,Thingamajig,North,15,135.44
+2024-08-08,Thingamajig,South,6,138.1
+2024-06-13,Widget A,West,33,110.35
+2024-05-01,Doohickey,East,66,161.55
+2024-08-16,Widget A,East,84,42.54
+2024-09-03,Widget A,South,99,109.91
+2024-01-21,Widget A,South,86,127.76
+2024-04-28,Thingamajig,West,14,45.09
+2024-12-24,Gadget Y,North,96,138.78
+2024-01-15,Thingamajig,East,5,22.07
+2024-01-06,Gadget X,North,74,165.22
+2024-05-14,Gadget Y,West,81,83.87
+2024-06-01,Gadget Y,North,69,6.15
+2024-12-20,Widget A,North,90,170.41
+2024-06-17,Widget A,East,88,63.76
+2024-02-10,Gadget Y,West,51,165.31
+2024-01-16,Widget B,South,18,150.62
+2024-09-10,Thingamajig,South,39,137.07
+2024-12-21,Gadget X,North,71,175.58
+2024-03-04,Widget A,North,74,121.35
+2024-09-18,Widget A,East,27,150.92
+2024-12-12,Widget B,West,83,171.03
+2024-03-06,Widget B,South,79,167.78
+2024-04-04,Widget B,North,97,186.81
+2024-09-15,Thingamajig,North,38,135.98
+2024-05-04,Widget B,West,43,74.64
+2024-11-21,Widget B,North,37,125.81
+2024-04-11,Gadget Y,West,43,125.19
+2024-05-23,Doohickey,South,73,115.54
+2024-06-14,Widget B,North,41,53.0
+2024-04-23,Thingamajig,West,36,168.82
+2024-03-22,Thingamajig,East,62,95.26
+2024-06-25,Gadget X,West,71,26.22
+2024-11-20,Widget A,East,18,178.8
+2024-04-09,Thingamajig,North,94,19.7
+2024-01-28,Doohickey,North,75,117.89
+2024-10-07,Widget A,East,70,179.33
+2024-09-16,Thingamajig,South,47,81.54
+2024-10-24,Gadget X,South,60,102.72
+2024-02-13,Gadget X,North,85,51.58
+2024-10-22,Widget B,South,58,36.05
+2024-10-19,Thingamajig,South,95,147.74
+2024-06-02,Widget B,West,30,17.26
+2024-06-08,Widget A,South,67,182.01
+2024-06-13,Gadget Y,West,6,12.78
+2024-11-11,Widget A,East,95,56.35
+2024-09-19,Widget B,West,84,78.81
+2024-10-21,Widget A,East,49,194.67
+2024-04-17,Gadget Y,East,45,99.94
+2024-08-20,Widget A,South,57,37.29
+2024-02-17,Thingamajig,East,28,34.3
+2024-03-12,Doohickey,North,85,49.92
+2024-06-24,Widget A,West,87,98.37
+2024-04-19,Widget B,West,3,52.52
+2024-03-19,Doohickey,South,18,127.76
+2024-01-19,Widget B,North,22,55.36
+2024-03-17,Gadget Y,North,93,146.95
+2024-05-03,Widget B,West,78,198.59
+2024-08-06,Widget B,West,77,32.83
+2024-10-27,Widget B,East,22,146.22
+2024-06-15,Doohickey,North,30,78.75
+2024-03-04,Widget A,South,67,172.62
+2024-09-22,Gadget Y,South,78,23.78
+2024-08-20,Doohickey,North,69,103.15
+2024-02-03,Gadget Y,South,78,110.16
+2024-01-25,Thingamajig,West,67,87.03
+2024-01-23,Doohickey,West,30,187.99
+2024-08-26,Gadget Y,East,76,161.9
+2024-12-19,Widget A,West,18,54.63
+2024-04-28,Widget A,East,77,175.97
+2024-07-09,Widget B,North,91,150.01
+2024-01-19,Doohickey,North,67,6.4
+2024-11-07,Thingamajig,East,53,75.64
+2024-03-14,Thingamajig,East,34,171.72
+2024-07-19,Gadget X,East,88,82.5
+2024-04-14,Doohickey,West,23,77.19
+2024-09-16,Gadget X,East,74,72.15
+2024-12-13,Thingamajig,South,85,28.22
+2024-04-15,Thingamajig,South,13,46.82
+2024-07-26,Gadget X,North,21,80.88
+2024-11-01,Widget A,South,61,185.54
+2024-07-03,Widget A,East,29,77.31
+2024-10-02,Thingamajig,West,52,124.72
+2024-09-10,Thingamajig,North,100,164.94
+2024-11-16,Gadget Y,North,26,170.86
+2024-09-10,Widget B,North,77,104.56
+2024-12-08,Doohickey,South,87,12.03
+2024-04-21,Widget A,South,12,199.38
+2024-07-12,Thingamajig,West,52,119.29
+2024-09-01,Thingamajig,North,12,112.17
+2024-12-27,Doohickey,East,45,192.84
+2024-05-08,Doohickey,South,59,186.29
+2024-10-01,Gadget X,South,53,103.72
+2024-09-03,Doohickey,East,44,189.67
+2024-09-09,Doohickey,East,89,91.34
+2024-07-19,Gadget Y,South,97,71.23
+2024-08-22,Gadget Y,North,62,27.67
+2024-02-13,Thingamajig,South,87,141.73
+2024-06-14,Gadget X,North,90,167.27
+2024-04-10,Widget A,West,87,151.01
+2024-06-03,Doohickey,South,61,66.21
+2024-04-19,Gadget X,South,96,138.21
+2024-04-16,Thingamajig,South,31,148.41
+2024-05-07,Widget B,South,32,168.09
+2024-06-05,Widget A,North,11,136.78
+2024-11-16,Doohickey,North,98,172.13
+2024-01-28,Gadget Y,East,80,66.51
+2024-10-28,Gadget X,West,24,196.96
+2024-09-09,Gadget Y,South,97,117.45
+2024-01-17,Gadget Y,West,70,11.35
+2024-06-13,Thingamajig,South,59,195.42
+2024-12-17,Gadget Y,East,89,6.64
+2024-11-07,Gadget Y,North,42,75.51
+2024-05-06,Doohickey,East,31,57.53
+2024-10-11,Gadget X,South,64,87.67
+2024-07-23,Gadget X,East,52,59.53
+2024-03-19,Widget B,South,13,145.56
+2024-04-18,Gadget Y,West,26,33.44
+2024-12-05,Gadget Y,North,23,87.2
+2024-03-28,Thingamajig,East,63,63.51
+2024-09-28,Doohickey,North,51,24.3
+2024-03-02,Widget B,East,61,168.6
+2024-02-15,Thingamajig,East,34,75.39
+2024-09-18,Gadget X,East,3,85.29
+2024-06-28,Thingamajig,South,74,117.3
+2024-11-18,Widget B,East,46,68.39
+2024-09-16,Thingamajig,West,11,79.31
+2024-05-15,Thingamajig,South,22,129.91
+2024-06-14,Thingamajig,West,10,20.43
+2024-06-08,Gadget X,East,84,61.81
+2024-05-20,Thingamajig,West,35,178.1
+2024-06-24,Doohickey,West,53,37.63
+2024-01-05,Thingamajig,South,85,54.07
+2024-12-23,Thingamajig,North,27,37.55
+2024-02-04,Widget A,West,71,15.5
+2024-07-17,Widget A,North,34,125.53
+2024-02-21,Gadget Y,East,30,53.24
+2024-05-15,Thingamajig,South,17,107.71
+2024-03-01,Widget A,East,42,173.53
+2024-08-28,Doohickey,East,71,91.74
+2024-12-18,Widget B,West,81,151.04
+2024-10-14,Doohickey,East,45,98.92
+2024-04-26,Widget A,West,40,76.33
+2024-05-05,Gadget X,North,1,107.05
+2024-03-12,Gadget X,West,69,6.62
+2024-08-25,Gadget Y,East,2,154.34
+2024-05-20,Widget B,North,71,77.86
+2024-07-18,Gadget Y,West,32,36.84
+2024-12-21,Gadget Y,West,29,56.28
+2024-07-21,Widget B,East,37,131.45
+2024-09-26,Gadget X,West,25,171.43
+2024-03-05,Gadget X,North,82,93.79
+2024-08-09,Thingamajig,West,25,67.53
+2024-03-02,Doohickey,North,24,194.6
+2024-05-09,Widget B,West,94,6.6
+2024-02-05,Widget A,West,28,71.67
+2024-05-26,Gadget Y,East,60,140.9
+2024-01-11,Widget A,South,8,56.97
+2024-07-03,Doohickey,West,24,42.48
+2024-05-27,Gadget Y,North,16,195.05
+2024-12-08,Gadget Y,West,32,148.84
+2024-01-07,Gadget Y,North,67,134.87
+2024-04-16,Gadget Y,East,42,35.93
+2024-12-02,Thingamajig,North,33,98.84
+2024-05-07,Gadget X,North,86,47.47
+2024-02-08,Thingamajig,West,42,7.94
+2024-05-19,Widget A,West,32,6.74
+2024-01-19,Thingamajig,West,89,121.26
+2024-06-25,Widget A,South,21,102.48
+2024-11-20,Gadget X,North,8,74.33
+2024-03-23,Doohickey,North,17,100.13
+2024-06-18,Thingamajig,East,57,147.97
+2024-01-23,Gadget Y,East,93,31.27
+2024-01-16,Thingamajig,West,72,62.47
+2024-12-16,Widget B,South,70,72.79
+2024-12-15,Gadget X,South,9,108.57
+2024-08-10,Gadget X,East,59,5.14
+2024-11-17,Gadget Y,South,3,125.85
+2024-06-25,Doohickey,South,42,145.6
+2024-11-18,Gadget Y,South,68,138.23
+2024-09-05,Doohickey,East,42,84.91
+2024-06-04,Widget A,North,6,167.86
+2024-03-06,Widget A,South,14,99.65
+2024-02-02,Doohickey,West,85,100.53
+2024-10-23,Doohickey,East,7,76.44
+2024-10-23,Widget A,North,27,132.87
+2024-02-15,Thingamajig,North,47,113.81
+2024-07-27,Gadget X,North,79,56.83
+2024-01-24,Widget A,East,10,189.2
+2024-09-04,Widget A,South,69,80.14
+2024-04-17,Thingamajig,South,73,126.94
+2024-03-18,Thingamajig,West,96,25.58
+2024-11-19,Gadget X,West,90,134.72
+2024-02-06,Widget B,West,65,70.82
+2024-03-18,Doohickey,West,46,180.98
+2024-09-11,Gadget X,West,98,128.48
+2024-12-11,Doohickey,South,73,111.4
+2024-07-25,Doohickey,East,47,192.52
+2024-08-13,Widget A,North,37,121.17
+2024-09-05,Gadget X,North,39,196.96
+2024-04-28,Gadget X,North,99,165.28
+2024-12-27,Gadget X,South,13,12.36
+2024-06-05,Widget B,East,47,178.48
+2024-04-08,Gadget X,East,12,116.24
+2024-10-07,Thingamajig,North,93,68.31
+2024-08-06,Gadget Y,North,77,130.24
+2024-01-24,Doohickey,West,11,157.12
+2024-06-12,Gadget Y,West,16,174.61
+2024-04-24,Thingamajig,North,82,156.6
+2024-07-02,Gadget X,North,41,110.29
+2024-03-11,Doohickey,South,20,14.85
+2024-12-13,Gadget Y,North,29,89.23
+2024-07-05,Widget B,East,11,97.79
+2024-12-02,Doohickey,West,34,21.59
+2024-09-14,Thingamajig,South,98,31.3
+2024-09-07,Gadget Y,West,84,116.41
+2024-09-20,Thingamajig,South,32,18.97
+2024-07-11,Thingamajig,North,15,135.99
+2024-07-12,Gadget X,South,42,72.18
+2024-11-01,Gadget X,South,45,125.16
+2024-08-20,Widget B,West,6,185.22
+2024-04-07,Thingamajig,East,20,152.76
+2024-02-04,Thingamajig,North,32,190.04
+2024-03-28,Gadget X,North,44,140.29
+2024-02-10,Gadget Y,West,3,69.72
+2024-12-18,Widget B,South,70,107.04
+2024-05-18,Gadget Y,South,89,141.26
+2024-01-13,Doohickey,North,33,38.21
+2024-05-07,Thingamajig,East,7,95.67
+2024-01-03,Gadget Y,East,85,171.16
+2024-11-12,Widget A,North,38,174.15
+2024-11-13,Widget B,West,66,195.44
+2024-02-11,Gadget Y,North,24,43.78
+2024-08-18,Thingamajig,North,6,53.24
+2024-09-10,Gadget X,West,51,150.16
+2024-01-12,Thingamajig,East,46,126.92
+2024-04-17,Gadget X,North,81,55.25
+2024-07-27,Widget A,East,29,34.58
+2024-07-22,Widget B,North,94,79.53
+2024-11-20,Thingamajig,South,54,51.87
+2024-03-14,Gadget X,East,58,110.74
+2024-04-21,Widget B,South,18,65.25
+2024-12-17,Widget B,West,99,33.3
+2024-10-06,Gadget X,North,72,108.93
+2024-12-04,Widget B,East,19,146.78
+2024-06-14,Gadget Y,East,57,150.39
+2024-11-24,Gadget X,South,100,41.65
+2024-03-06,Widget A,East,78,115.57
+2024-04-20,Widget B,South,88,10.09
+2024-02-23,Gadget Y,South,65,170.0
+2024-08-23,Thingamajig,East,24,171.17
+2024-08-16,Widget B,South,25,49.12
+2024-07-25,Widget A,East,53,48.4
+2024-11-07,Widget B,North,23,185.79
+2024-08-28,Doohickey,West,89,68.35
+2024-08-08,Gadget Y,West,100,13.16
+2024-12-27,Gadget Y,East,51,124.24
+2024-12-19,Doohickey,North,67,26.32
+2024-08-27,Widget A,South,67,109.88
+2024-12-02,Doohickey,West,67,154.21
+2024-01-07,Gadget X,West,51,177.46
+2024-05-15,Widget B,West,38,124.56
+2024-01-23,Doohickey,South,60,166.83
+2024-08-03,Thingamajig,North,24,156.85
+2024-12-18,Widget B,West,53,68.07
+2024-01-06,Gadget Y,South,59,22.59
+2024-06-23,Thingamajig,South,92,147.99
+2024-02-04,Thingamajig,West,82,75.77
+2024-09-23,Gadget Y,South,49,112.32
+2024-01-25,Widget B,East,73,174.9
+2024-03-06,Widget B,South,99,143.85
+2024-07-10,Gadget X,West,37,127.16
+2024-02-05,Widget B,North,80,154.25
+2024-01-15,Gadget Y,West,70,162.45
+2024-10-16,Widget B,South,76,133.6
+2024-08-14,Gadget Y,North,77,122.02
+2024-04-18,Gadget X,South,7,41.04
+2024-01-21,Gadget X,North,19,171.5
+2024-11-19,Doohickey,East,43,184.48
+2024-01-04,Gadget Y,South,21,136.06
+2024-10-22,Thingamajig,South,59,151.12
+2024-06-02,Widget A,East,42,76.87
+2024-07-27,Widget A,West,71,17.66
+2024-08-05,Widget A,East,43,107.78
+2024-09-07,Thingamajig,South,79,16.35
+2024-10-24,Thingamajig,North,62,146.19
+2024-10-26,Thingamajig,East,55,123.72
+2024-06-09,Doohickey,East,17,124.79
+2024-08-17,Thingamajig,West,64,162.56
+2024-10-08,Thingamajig,East,25,5.31
+2024-01-15,Thingamajig,North,95,170.37
+2024-10-14,Gadget Y,North,43,73.18
+2024-11-07,Widget A,South,89,59.92
+2024-02-10,Gadget X,East,99,6.2
+2024-11-11,Gadget X,West,93,115.94
+2024-01-27,Widget B,South,43,167.6
+2024-11-16,Gadget Y,North,83,31.47
+2024-03-21,Gadget Y,East,60,157.88
+2024-07-24,Widget A,East,73,146.37
+2024-06-18,Doohickey,North,27,117.59
+2024-06-26,Gadget X,North,20,59.69
+2024-01-11,Gadget Y,South,74,123.11
+2024-03-20,Widget A,East,91,172.27
+2024-12-02,Gadget X,West,12,101.93
+2024-04-12,Gadget Y,East,28,107.39
+2024-03-04,Gadget X,North,100,44.41
+2024-02-15,Doohickey,North,62,181.47
+2024-03-07,Gadget X,West,94,175.41
+2024-05-25,Gadget X,South,99,175.0
+2024-09-22,Widget B,South,93,12.13
+2024-07-23,Doohickey,North,1,65.64
+2024-01-22,Doohickey,North,43,96.04
+2024-01-04,Doohickey,East,3,117.62
+2024-05-21,Widget B,East,26,42.55
+2024-05-18,Gadget X,West,86,27.94
+2024-03-06,Gadget X,North,2,191.87
+2024-09-17,Widget A,South,70,73.31
+2024-06-09,Widget B,East,74,52.74
+2024-02-10,Doohickey,East,70,91.51
+2024-03-01,Gadget Y,North,14,79.8
+2024-02-14,Gadget Y,South,91,121.24
+2024-10-21,Thingamajig,West,79,74.35
+2024-06-27,Widget B,North,97,154.06
+2024-10-05,Widget A,West,13,93.84
+2024-11-21,Thingamajig,West,61,50.18
+2024-04-05,Doohickey,East,47,81.45
+2024-12-22,Gadget X,East,59,100.06
+2024-02-16,Widget A,East,62,94.94
+2024-03-10,Gadget X,South,66,25.07
+2024-12-26,Widget A,East,72,131.64
+2024-05-18,Gadget Y,West,76,85.62
+2024-10-08,Doohickey,South,62,79.84
+2024-06-07,Thingamajig,West,56,115.61
+2024-06-18,Thingamajig,South,23,134.21
+2024-02-24,Thingamajig,West,15,120.47
+2024-08-11,Doohickey,North,57,39.35
+2024-07-03,Doohickey,North,88,163.74
+2024-07-11,Gadget Y,North,12,47.43
+2024-03-19,Thingamajig,North,97,33.61
+2024-03-15,Doohickey,East,50,125.04
+2024-08-07,Widget B,East,39,116.2
+2024-11-10,Gadget Y,East,12,118.63
+2024-10-17,Gadget Y,South,38,17.17
+2024-09-02,Widget A,East,15,172.94
+2024-01-08,Gadget Y,West,81,67.03
+2024-07-13,Gadget Y,West,70,46.19
+2024-03-16,Widget B,South,72,80.0
+2024-06-27,Gadget Y,South,37,199.5
+2024-11-05,Widget B,North,10,131.44
+2024-03-24,Gadget Y,West,18,21.51
+2024-11-26,Gadget Y,West,90,122.86
+2024-07-20,Widget B,West,66,87.7
+2024-08-13,Gadget X,South,24,87.83
+2024-01-19,Gadget Y,South,92,102.84
+2024-07-18,Doohickey,East,5,195.76
+2024-10-16,Thingamajig,East,15,118.15
+2024-12-03,Widget B,East,60,105.81
+2024-09-20,Widget A,South,61,127.98
+2024-11-22,Widget A,East,79,15.29
+2024-06-18,Widget A,West,59,104.97
+2024-08-19,Thingamajig,East,54,73.82
+2024-05-10,Widget B,North,89,184.96
+2024-12-10,Thingamajig,East,8,127.71
+2024-10-06,Doohickey,North,85,198.12
+2024-12-20,Widget A,East,63,21.09
+2024-09-03,Gadget X,East,17,125.08
+2024-05-28,Gadget X,North,95,26.75
+2024-03-19,Thingamajig,South,85,92.1
+2024-03-09,Thingamajig,South,63,40.26
+2024-09-28,Widget A,East,11,193.63
+2024-10-27,Widget B,West,97,198.75
+2024-07-08,Thingamajig,West,93,129.33
+2024-04-19,Thingamajig,East,7,130.24
+2024-02-02,Widget B,West,52,97.87
+2024-08-24,Doohickey,South,49,138.28
+2024-07-16,Gadget X,South,68,174.7
+2024-01-10,Gadget Y,West,87,66.56
+2024-09-22,Widget A,North,69,129.3
+2024-07-20,Thingamajig,East,43,57.71
+2024-02-09,Thingamajig,West,60,155.76
+2024-12-08,Thingamajig,South,67,70.79
+2024-12-06,Gadget X,North,87,6.65
+2024-02-01,Gadget Y,North,68,25.26
+2024-08-12,Widget B,East,33,42.65
+2024-01-20,Widget A,North,77,133.04
+2024-04-20,Thingamajig,North,91,191.77
+2024-02-28,Doohickey,South,49,133.0
+2024-11-19,Widget B,North,90,40.93
+2024-05-15,Thingamajig,North,82,93.42
+2024-05-25,Gadget Y,East,33,36.58
+2024-02-09,Widget A,West,50,69.87
+2024-01-09,Gadget X,South,57,18.53
+2024-04-20,Gadget Y,South,83,100.95
+2024-03-18,Gadget Y,South,79,130.45
+2024-08-23,Gadget X,North,5,19.22
+2024-10-24,Gadget X,West,3,179.82
+2024-03-21,Thingamajig,North,5,134.6
+2024-05-05,Thingamajig,East,51,117.05
+2024-09-23,Gadget Y,West,56,83.76
+2024-12-25,Widget A,South,1,79.96
+2024-12-27,Gadget Y,North,73,109.38
+2024-06-11,Thingamajig,East,52,15.76
+2024-11-03,Gadget X,East,11,169.03
+2024-05-21,Widget B,South,71,12.67
+2024-07-22,Widget B,East,90,81.07
+2024-02-21,Thingamajig,East,63,21.55
+2024-11-15,Thingamajig,South,18,11.96
+2024-01-24,Doohickey,South,63,80.81
+2024-09-21,Gadget X,West,69,193.17
+2024-08-01,Widget A,East,8,70.86
+2024-12-02,Gadget Y,North,28,162.39
+2024-11-17,Gadget Y,South,95,117.97
+2024-02-02,Thingamajig,South,63,132.5
+2024-08-20,Widget A,South,90,131.51
+2024-01-06,Thingamajig,North,40,165.04
+2024-02-15,Doohickey,South,76,17.47
+2024-02-04,Gadget Y,South,9,161.87
+2024-07-11,Thingamajig,West,42,28.56
+2024-11-19,Doohickey,South,42,168.1
+2024-04-25,Widget A,South,43,17.33
+2024-05-05,Gadget Y,South,90,77.14
+2024-03-15,Widget B,North,18,24.49
+2024-11-20,Gadget Y,South,3,176.53
+2024-02-01,Widget A,South,12,142.81
+2024-10-10,Gadget Y,West,89,29.74
+2024-03-21,Gadget X,West,53,51.65
+2024-03-20,Thingamajig,North,77,40.1
+2024-08-20,Widget A,East,45,86.66
+2024-09-08,Widget B,North,68,195.47
+2024-10-12,Doohickey,South,60,155.21
+2024-11-07,Gadget X,North,25,26.97
+2024-03-22,Gadget Y,West,23,36.15
+2024-01-02,Thingamajig,East,37,45.87
+2024-05-11,Doohickey,West,6,25.36
+2024-01-18,Widget B,South,4,99.59
+2024-02-03,Widget B,West,76,118.05
+2024-07-07,Thingamajig,East,30,156.9
+2024-06-08,Widget A,South,95,85.46
+2024-04-13,Widget B,North,61,119.09
+2024-01-14,Widget B,South,79,93.72
+2024-07-12,Widget B,West,93,42.86
+2024-06-09,Widget B,East,17,11.26
+2024-10-02,Gadget X,South,15,171.07
+2024-08-14,Widget B,East,29,177.85
+2024-10-06,Thingamajig,South,74,194.18
+2024-04-03,Gadget Y,West,28,120.36
+2024-08-09,Widget A,West,95,175.16
+2024-04-11,Gadget Y,South,76,189.52
+2024-10-01,Gadget Y,North,6,198.3
+2024-12-25,Doohickey,North,55,108.57
+2024-08-26,Thingamajig,North,58,101.58
+2024-02-18,Widget A,West,28,30.88
+2024-05-08,Thingamajig,North,3,98.56
+2024-05-06,Thingamajig,West,74,150.72
+2024-01-15,Gadget Y,South,91,84.05
+2024-06-21,Gadget Y,North,81,18.79
+2024-12-11,Doohickey,North,38,88.05
+2024-05-23,Doohickey,South,88,20.79
+2024-06-24,Widget A,East,7,26.64
+2024-06-15,Doohickey,North,47,76.45
+2024-11-18,Thingamajig,North,72,143.32
+2024-04-05,Gadget X,South,70,27.14
+2024-08-24,Doohickey,South,97,150.28
+2024-04-11,Gadget X,East,65,137.64
+2024-05-02,Widget A,East,45,93.22
+2024-09-17,Widget A,West,91,108.72
+2024-09-10,Gadget Y,East,87,189.35
+2024-02-07,Gadget Y,North,11,81.18
+2024-03-10,Widget A,North,22,58.81
+2024-12-05,Gadget Y,South,27,106.53
+2024-11-01,Gadget X,West,88,110.58
+2024-03-16,Gadget X,West,57,148.85
+2024-01-10,Widget B,North,3,175.0
+2024-04-27,Doohickey,East,53,117.85
+2024-11-21,Gadget X,West,76,134.84
+2024-09-27,Doohickey,West,59,64.3
+2024-03-26,Gadget X,South,34,49.22
+2024-06-10,Widget A,South,46,60.45
+2024-03-20,Widget B,East,24,194.78
+2024-12-23,Thingamajig,South,21,51.39
+2024-01-11,Doohickey,South,57,55.78
+2024-03-07,Doohickey,North,86,66.8
+2024-06-05,Gadget X,West,70,195.22
+2024-09-10,Widget A,North,52,186.56
+2024-03-15,Gadget X,South,1,194.18
+2024-09-17,Gadget X,East,61,179.72
+2024-10-22,Widget B,West,44,139.38
+2024-12-16,Widget A,South,87,112.44
+2024-05-01,Gadget Y,South,58,74.69
+2024-06-02,Doohickey,South,75,107.65
+2024-05-07,Widget A,North,69,170.64
+2024-11-22,Widget A,West,25,100.64
+2024-10-20,Doohickey,North,86,75.41
+2024-03-23,Gadget Y,East,50,77.7
+2024-05-12,Gadget X,East,58,175.49
+2024-02-07,Thingamajig,West,95,198.56
+2024-08-10,Widget B,West,94,179.8
+2024-03-27,Doohickey,North,19,45.52
+2024-08-28,Doohickey,East,9,186.96
+2024-10-25,Gadget Y,North,1,84.84
+2024-05-14,Widget B,West,91,115.74
+2024-03-07,Widget B,West,38,113.0
+2024-01-27,Gadget X,East,64,114.06
+2024-08-08,Widget A,North,20,56.22
+2024-11-27,Thingamajig,West,16,132.49
+2024-05-14,Widget B,West,89,130.73
+2024-01-04,Gadget X,West,9,121.78
+2024-06-19,Gadget Y,West,34,127.46
+2024-08-23,Widget A,East,66,147.93
+2024-01-28,Gadget X,South,75,16.41
+2024-06-15,Thingamajig,South,46,36.85
+2024-05-12,Gadget Y,East,7,61.52
+2024-09-21,Widget A,South,99,127.47
+2024-02-20,Widget B,East,41,166.23
+2024-11-26,Gadget X,East,88,141.1
+2024-06-04,Doohickey,East,19,7.52
+2024-09-10,Gadget X,West,53,71.36
+2024-03-04,Widget B,South,65,48.12
+2024-04-26,Doohickey,North,54,94.8
+2024-02-04,Widget B,North,62,72.9
+2024-12-12,Widget B,West,77,107.01
+2024-06-06,Thingamajig,East,4,150.17
+2024-02-08,Widget B,South,89,49.18
+2024-03-07,Widget B,North,55,139.71
+2024-02-03,Widget A,West,97,89.09
+2024-04-04,Widget A,North,61,28.19
+2024-05-02,Widget A,East,86,7.0
+2024-02-26,Widget A,South,76,180.73
+2024-03-22,Gadget X,North,12,33.38
+2024-12-09,Doohickey,East,46,36.31
+2024-09-25,Thingamajig,South,65,116.2
+2024-02-27,Doohickey,North,68,47.31
+2024-04-10,Widget B,North,93,24.24
+2024-04-17,Thingamajig,West,47,141.14
+2024-03-15,Thingamajig,North,24,167.77
+2024-07-14,Widget B,South,53,27.0
+2024-06-04,Gadget Y,North,67,31.5
+2024-06-23,Gadget X,North,11,68.98
+2024-02-13,Gadget X,West,77,148.55
+2024-11-27,Gadget Y,South,71,84.42
+2024-07-07,Widget A,West,87,76.65
+2024-01-22,Gadget Y,North,51,90.42
+2024-11-22,Widget A,North,19,81.99
+2024-12-19,Widget A,South,9,75.92
+2024-04-11,Widget B,West,16,50.41
+2024-07-24,Gadget Y,East,98,144.13
+2024-10-19,Gadget X,West,46,97.79
+2024-10-13,Gadget Y,East,19,154.76
+2024-02-04,Gadget X,West,64,50.01
+2024-03-01,Widget A,North,9,102.14
+2024-01-06,Gadget Y,East,20,64.04
+2024-10-04,Widget A,West,60,44.38
+2024-11-16,Gadget Y,East,70,72.01
+2024-09-18,Widget A,North,56,176.62
+2024-02-13,Gadget Y,East,49,91.3
+2024-01-02,Widget B,East,91,37.01
+2024-07-05,Gadget X,West,63,153.98
+2024-10-22,Gadget Y,West,61,114.64
+2024-03-17,Widget A,West,34,101.46
+2024-07-20,Thingamajig,East,99,195.67
+2024-06-02,Widget A,North,17,168.2
+2024-06-26,Thingamajig,North,98,178.81
+2024-06-13,Widget A,West,45,198.43
+2024-07-12,Widget A,South,32,50.75
+2024-05-19,Widget A,North,40,27.32
+2024-03-01,Doohickey,East,5,94.88
+2024-07-19,Doohickey,West,35,8.98
+2024-08-19,Widget A,East,49,116.22
+2024-06-19,Widget A,West,13,139.72
+2024-04-11,Gadget Y,East,22,124.89
+2024-06-14,Widget B,West,82,170.23
+2024-02-27,Doohickey,South,37,56.71
+2024-05-19,Gadget Y,South,80,149.86
+2024-02-23,Doohickey,North,76,70.68
+2024-02-19,Doohickey,West,55,45.9
+2024-02-21,Gadget X,East,56,134.37
+2024-06-07,Gadget Y,West,33,126.87
+2024-08-22,Doohickey,South,3,127.43
+2024-09-28,Widget B,West,28,133.86
+2024-12-15,Gadget X,West,73,146.69
+2024-01-17,Widget B,East,60,33.81
+2024-03-24,Thingamajig,East,56,85.0
+2024-02-21,Widget B,West,35,165.62
+2024-11-06,Gadget X,South,52,51.5
+2024-03-07,Widget A,South,40,95.51
+2024-09-14,Gadget Y,North,26,36.07
+2024-03-01,Gadget X,East,85,112.39
+2024-11-28,Widget A,West,3,15.79
+2024-02-11,Doohickey,East,9,180.61
+2024-07-12,Thingamajig,North,51,188.92
+2024-12-27,Widget B,South,15,116.34
+2024-09-04,Doohickey,East,64,177.49
+2024-04-20,Widget A,East,43,167.31
+2024-12-13,Thingamajig,South,55,47.51
+2024-02-06,Widget B,East,57,84.63
+2024-10-02,Gadget Y,East,90,190.0
+2024-06-18,Gadget Y,West,88,53.04
+2024-05-26,Widget B,East,61,144.56
+2024-05-01,Thingamajig,North,95,134.13
+2024-01-23,Thingamajig,South,33,112.78
+2024-05-21,Thingamajig,East,88,28.8
+2024-04-28,Gadget Y,West,2,182.41
+2024-07-09,Gadget X,North,97,50.91
+2024-04-28,Widget B,West,81,66.85
+2024-11-14,Widget A,East,11,165.52
+2024-08-16,Thingamajig,West,43,144.89
+2024-02-27,Widget B,East,65,17.94
+2024-07-20,Thingamajig,East,59,140.57
+2024-01-21,Thingamajig,South,81,91.46
+2024-11-05,Widget A,West,26,127.52
+2024-06-19,Widget A,North,21,53.67
+2024-12-25,Thingamajig,South,77,138.72
+2024-06-15,Gadget Y,South,34,38.83
+2024-10-27,Gadget X,East,26,21.46
+2024-06-06,Gadget Y,West,74,48.77
+2024-01-18,Thingamajig,South,12,194.95
+2024-04-09,Thingamajig,South,7,83.2
+2024-07-20,Gadget X,South,12,191.82
+2024-03-19,Widget A,North,92,107.54
+2024-08-27,Thingamajig,West,16,48.77
+2024-04-07,Gadget X,East,96,101.36
+2024-03-14,Widget B,South,37,146.71
+2024-04-14,Widget B,West,19,10.61
+2024-05-08,Doohickey,West,32,77.08
+2024-11-21,Gadget Y,North,2,96.43
+2024-06-23,Gadget Y,South,92,79.78
+2024-07-24,Doohickey,East,10,23.58
+2024-01-02,Gadget X,South,61,182.1
+2024-10-22,Doohickey,North,1,54.46
+2024-10-13,Gadget X,West,86,77.33
+2024-09-02,Doohickey,South,34,38.12
+2024-08-11,Gadget Y,South,12,66.88
+2024-09-14,Widget B,East,15,66.09
+2024-03-16,Gadget X,East,56,60.17
+2024-05-20,Gadget X,East,56,179.07
+2024-06-24,Gadget Y,South,72,171.34
+2024-11-21,Gadget Y,North,25,33.98
+2024-04-06,Widget A,West,34,36.89
+2024-08-14,Widget A,West,6,91.1
+2024-12-18,Gadget Y,West,64,26.94
+2024-12-28,Widget B,North,45,23.25
+2024-05-06,Widget B,East,73,178.72
+2024-10-07,Doohickey,North,68,154.54
+2024-03-14,Widget A,South,99,102.13
+2024-02-11,Widget A,East,88,196.36
+2024-02-13,Gadget X,North,42,34.99
+2024-02-15,Thingamajig,West,59,127.53
+2024-05-20,Thingamajig,North,43,194.11
+2024-11-20,Gadget Y,East,94,199.97
+2024-10-05,Widget B,North,83,60.18
+2024-01-24,Widget A,West,12,82.78
+2024-03-08,Gadget Y,North,3,171.21
+2024-03-13,Gadget Y,East,83,151.75
+2024-11-05,Widget A,East,63,161.21
+2024-12-26,Gadget X,South,46,134.78
+2024-06-17,Widget B,West,58,177.66
+2024-08-09,Doohickey,West,12,152.52
+2024-06-20,Widget B,West,81,88.07
+2024-01-17,Gadget X,West,87,48.72
+2024-11-23,Widget B,West,68,127.76
+2024-09-03,Gadget X,West,56,20.44
+2024-08-10,Widget B,South,88,181.07
+2024-04-17,Gadget Y,East,73,14.31
+2024-02-02,Doohickey,North,66,87.86
+2024-02-15,Thingamajig,East,46,54.7
+2024-02-25,Doohickey,North,15,149.4
+2024-08-06,Widget B,West,6,21.24
+2024-12-10,Gadget X,West,97,135.7
+2024-10-26,Gadget X,East,24,46.16
+2024-02-24,Doohickey,East,87,25.73
+2024-09-01,Widget A,West,15,7.59
+2024-11-16,Gadget Y,West,85,193.33
+2024-10-24,Gadget Y,East,80,163.56
+2024-10-12,Thingamajig,West,39,22.09
+2024-03-01,Widget B,North,3,140.73
+2024-04-28,Widget A,South,62,131.48
+2024-11-08,Gadget Y,South,12,63.68
+2024-08-05,Gadget Y,West,3,27.71
+2024-03-24,Thingamajig,West,63,96.94
+2024-08-19,Widget B,South,38,116.04
+2024-07-02,Gadget X,North,14,127.93
+2024-12-14,Gadget Y,West,95,117.84
+2024-12-18,Gadget X,North,63,82.94
+2024-09-19,Thingamajig,West,30,144.29
+2024-09-01,Gadget Y,East,71,17.38
+2024-11-14,Gadget Y,North,64,126.43
+2024-11-12,Gadget Y,West,3,36.46
+2024-12-07,Gadget Y,East,57,50.26
+2024-04-19,Thingamajig,East,78,171.42
+2024-12-22,Gadget Y,South,38,145.98
+2024-07-14,Thingamajig,East,61,160.95
+2024-03-20,Widget B,East,89,151.1
+2024-11-16,Widget B,South,26,35.48
+2024-08-04,Gadget Y,West,39,50.77
+2024-09-02,Widget A,East,34,74.62
+2024-03-06,Doohickey,North,9,70.86
+2024-02-20,Widget B,North,72,48.7
+2024-05-11,Gadget X,North,99,176.15
+2024-05-05,Thingamajig,North,91,14.83
+2024-08-26,Gadget Y,North,14,157.42
+2024-10-26,Widget A,North,65,25.56
+2024-11-04,Widget B,East,21,147.03
+2024-12-15,Doohickey,West,94,174.75
+2024-03-21,Gadget X,East,18,28.98
+2024-04-15,Gadget Y,North,32,167.79
+2024-08-11,Gadget X,South,11,56.87
+2024-12-25,Gadget Y,East,81,134.67
+2024-03-25,Doohickey,West,30,31.91
+2024-07-14,Gadget Y,West,67,159.95
+2024-06-01,Gadget Y,South,99,6.94
+2024-09-03,Widget A,East,41,83.32
+2024-03-14,Widget A,West,98,12.23
+2024-11-05,Doohickey,North,81,196.11
+2024-11-17,Gadget X,West,52,177.73
+2024-12-18,Gadget X,East,45,6.54
+2024-05-17,Doohickey,South,90,83.77
+2024-11-07,Doohickey,West,90,72.32
+2024-11-13,Widget B,East,11,12.21
+2024-06-13,Thingamajig,South,67,198.43
+2024-05-07,Widget A,East,67,71.44
+2024-11-06,Widget A,North,70,120.54
+2024-04-27,Gadget X,West,65,26.54
+2024-01-27,Gadget X,East,81,103.96
+2024-02-02,Thingamajig,North,58,63.1
+2024-12-01,Gadget Y,East,31,162.05
+2024-10-19,Thingamajig,South,45,63.34
+2024-11-26,Thingamajig,South,92,78.64
+2024-12-08,Widget A,East,67,118.56
+2024-06-15,Widget A,South,92,88.01
+2024-07-03,Widget A,North,55,178.26
+2024-08-07,Gadget Y,North,48,136.98
+2024-07-19,Doohickey,West,34,118.94
+2024-11-14,Gadget Y,West,94,194.79
+2024-03-05,Doohickey,South,63,143.67
+2024-03-23,Doohickey,North,89,46.47
+2024-08-02,Thingamajig,South,72,77.02
+2024-02-20,Gadget Y,North,16,77.07
+2024-05-02,Doohickey,South,16,77.44
+2024-06-10,Gadget X,West,4,159.28
+2024-03-26,Doohickey,West,7,187.68
+2024-05-10,Widget B,South,95,100.31
+2024-02-18,Gadget X,North,6,86.43
+2024-10-10,Doohickey,West,44,157.36
+2024-08-27,Thingamajig,South,98,32.01
+2024-11-15,Gadget Y,West,20,173.94
+2024-06-03,Doohickey,West,50,50.4
+2024-07-11,Doohickey,North,86,178.56
+2024-12-09,Thingamajig,North,22,142.91
+2024-10-21,Thingamajig,East,72,130.81
+2024-11-18,Widget A,South,80,110.66
+2024-01-19,Doohickey,South,97,97.79
+2024-01-04,Thingamajig,South,3,58.62
+2024-04-08,Thingamajig,West,11,162.35
+2024-10-11,Gadget Y,North,63,173.08
+2024-01-11,Gadget Y,South,54,9.69
+2024-09-11,Gadget Y,East,12,27.36
+2024-02-18,Widget B,East,19,40.62
+2024-02-05,Gadget X,West,87,37.99
+2024-10-11,Widget B,North,92,16.41
+2024-07-04,Gadget X,South,53,179.14
+2024-05-13,Widget A,North,26,51.73
+2024-10-19,Widget B,West,66,151.72
+2024-07-04,Gadget X,North,41,95.64
+2024-07-03,Gadget Y,North,53,128.54
+2024-01-09,Doohickey,North,32,153.78
+2024-11-26,Widget B,East,73,84.32
+2024-02-28,Thingamajig,South,19,77.79
+2024-03-26,Widget B,West,72,93.09
+2024-01-27,Gadget Y,East,84,194.56
+2024-01-02,Gadget Y,East,77,53.92
+2024-11-13,Gadget X,South,75,168.93
+2024-05-02,Widget B,North,39,22.49
+2024-12-04,Widget B,East,56,46.12
+2024-09-26,Gadget X,East,82,55.97
+2024-12-15,Gadget X,South,85,196.69
+2024-06-07,Gadget Y,East,3,183.23
+2024-03-21,Widget A,West,1,180.78
+2024-11-06,Gadget Y,West,98,81.59
+2024-02-26,Thingamajig,North,69,11.03
+2024-11-15,Thingamajig,North,46,194.55
+2024-07-27,Doohickey,East,50,39.55
+2024-12-01,Widget A,West,48,187.57
+2024-08-01,Widget B,North,98,59.82
+2024-12-12,Widget B,North,79,126.92
+2024-12-08,Widget B,West,47,12.18
+2024-08-23,Thingamajig,South,1,43.24
+2024-11-13,Widget A,East,73,102.56
+2024-03-18,Widget B,South,9,119.69
+2024-12-03,Widget B,East,73,171.82
+2024-09-24,Gadget X,South,87,9.51
+2024-12-22,Doohickey,East,88,114.22
+2024-08-01,Gadget Y,North,42,89.35
+2024-07-09,Widget A,West,64,75.49
+2024-01-24,Widget B,North,36,184.09
+2024-09-15,Gadget X,North,51,42.95
+2024-02-19,Widget A,South,89,87.64
+2024-02-08,Widget B,South,43,65.61
+2024-11-21,Widget A,North,62,89.23
+2024-01-19,Thingamajig,East,33,53.19
+2024-08-08,Gadget X,North,43,106.34
+2024-04-03,Doohickey,West,98,23.66
+2024-08-19,Widget A,North,8,183.76
+2024-07-11,Thingamajig,North,17,17.09
+2024-08-02,Gadget X,West,9,24.86
+2024-01-18,Widget A,East,49,83.33
+2024-10-25,Gadget Y,South,77,158.56
+2024-10-01,Gadget Y,West,60,160.06
+2024-10-20,Widget A,East,84,187.83
+2024-01-15,Doohickey,East,76,42.53
+2024-02-01,Doohickey,North,76,158.94
+2024-04-19,Widget B,East,46,87.1
+2024-12-20,Gadget Y,South,32,31.85
+2024-01-02,Widget B,East,75,89.99
+2024-11-25,Gadget X,East,75,177.62
+2024-03-05,Gadget Y,East,78,71.87
+2024-06-01,Doohickey,South,8,51.29
+2024-09-28,Widget A,West,45,43.1
+2024-04-21,Widget B,North,44,41.92
+2024-08-23,Thingamajig,West,77,140.02
+2024-10-19,Gadget X,East,54,69.08
+2024-02-15,Widget A,West,29,184.39
+2024-11-08,Thingamajig,South,60,126.66
+2024-04-16,Thingamajig,East,95,78.3
+2024-07-06,Widget A,East,2,19.38
+2024-01-18,Widget A,South,38,90.88
+2024-11-19,Gadget X,North,4,43.83
+2024-05-06,Widget B,East,93,38.99
+2024-09-08,Widget B,South,3,39.34
+2024-05-04,Widget A,South,49,132.7
+2024-02-11,Widget B,East,59,51.83
+2024-06-22,Widget B,West,92,17.75
+2024-03-05,Widget B,South,69,78.75
+2024-06-11,Doohickey,West,82,52.69
+2024-01-25,Doohickey,South,69,62.37
+2024-03-11,Widget B,North,81,160.14
+2024-03-28,Doohickey,West,27,146.82
+2024-08-26,Thingamajig,North,22,104.18
+2024-11-25,Doohickey,East,64,106.18
+2024-03-11,Thingamajig,East,68,140.43
+2024-12-16,Gadget Y,East,75,83.18
+2024-10-21,Widget A,South,29,179.5
+2024-08-28,Widget B,West,28,64.67
+2024-07-19,Widget B,East,33,112.36
+2024-03-25,Widget A,East,57,106.17
+2024-04-19,Widget A,West,66,126.12
+2024-07-15,Gadget Y,West,53,76.66
+2024-08-11,Gadget X,West,4,40.02
+2024-04-09,Thingamajig,North,46,180.79
+2024-05-27,Doohickey,North,36,185.69
+2024-02-04,Widget A,East,5,111.48
+2024-06-07,Thingamajig,East,33,64.03
+2024-11-28,Gadget X,South,91,122.79
+2024-03-28,Thingamajig,East,2,155.16
+2024-05-27,Gadget X,West,52,165.26
+2024-11-01,Gadget Y,South,51,49.38
+2024-12-24,Widget B,West,30,105.59
+2024-09-25,Gadget Y,West,44,159.42
+2024-06-28,Widget B,West,99,188.68
+2024-07-07,Gadget Y,West,72,10.87
+2024-03-19,Widget B,East,95,6.89
+2024-11-27,Gadget X,East,29,86.73
+2024-11-25,Gadget Y,East,42,119.46
+2024-10-26,Widget A,South,20,195.56
+2024-06-19,Thingamajig,West,49,44.82
+2024-07-03,Doohickey,West,25,97.58
+2024-06-19,Gadget Y,East,12,38.43
+2024-11-18,Widget B,North,89,122.66
+2024-01-06,Widget B,North,50,60.34
+2024-04-10,Thingamajig,North,59,16.2
+2024-09-01,Widget B,East,53,81.27
+2024-02-05,Doohickey,West,62,149.91
+2024-07-28,Widget B,South,27,65.4
+2024-12-22,Gadget Y,South,78,117.14
+2024-05-19,Widget B,West,36,44.33
+2024-03-15,Widget A,West,78,162.48
+2024-09-11,Doohickey,West,59,95.23
+2024-01-24,Widget A,East,83,176.79
+2024-08-12,Thingamajig,East,51,124.54
+2024-03-14,Widget B,South,80,147.98
+2024-08-13,Thingamajig,South,90,115.88
+2024-07-23,Widget A,South,21,58.39
+2024-11-18,Gadget X,North,90,146.67
+2024-04-16,Gadget Y,North,48,19.92
+2024-02-17,Gadget X,West,58,37.14
+2024-04-17,Widget A,West,4,19.27
+2024-12-22,Thingamajig,West,49,72.01
+2024-07-28,Widget B,West,5,7.09
+2024-02-23,Widget B,East,86,150.99
+2024-08-15,Widget A,North,71,133.12
+2024-12-15,Widget B,West,36,169.1
+2024-03-27,Widget A,North,23,62.36
+2024-09-24,Gadget Y,South,10,135.92
+2024-01-22,Gadget X,South,57,74.83
+2024-04-23,Widget A,South,57,140.86
+2024-11-26,Doohickey,North,50,139.62
+2024-08-02,Doohickey,North,7,155.62
+2024-04-08,Gadget X,South,26,22.82
+2024-07-01,Widget A,East,25,137.59
+2024-02-08,Widget A,South,93,37.57
+2024-07-17,Widget A,East,42,114.6
+2024-04-20,Widget B,West,55,28.56
+2024-04-04,Gadget X,East,23,7.92
+2024-11-11,Widget A,West,28,94.46
+2024-02-22,Gadget X,East,6,18.13
+2024-04-14,Gadget X,West,14,143.94
+2024-10-06,Gadget X,North,77,68.25
+2024-11-23,Gadget Y,South,43,39.19
+2024-12-11,Thingamajig,West,9,70.35
+2024-10-19,Gadget Y,West,66,129.92
+2024-04-17,Doohickey,North,30,9.14
+2024-02-10,Widget B,West,97,52.49
+2024-02-02,Widget B,East,64,62.84
+2024-03-13,Widget B,North,31,185.06
+2024-10-15,Thingamajig,East,18,59.23
+2024-11-26,Widget A,West,83,163.48
+2024-01-08,Thingamajig,East,44,52.24
+2024-09-02,Thingamajig,South,88,140.77
+2024-04-20,Gadget Y,East,24,91.26
+2024-01-03,Gadget Y,North,25,15.16
+2024-03-07,Widget B,North,23,120.56
+2024-04-08,Doohickey,North,55,146.37
+2024-05-06,Thingamajig,South,32,87.68
+2024-10-08,Gadget X,East,74,92.41
+2024-11-07,Gadget X,West,11,190.45
+2024-06-13,Gadget Y,South,61,91.07
+2024-09-20,Thingamajig,West,98,35.4
+2024-08-01,Gadget Y,West,11,152.98
+2024-05-20,Doohickey,South,71,146.7
+2024-05-13,Gadget Y,East,59,60.23
+2024-09-20,Gadget Y,North,43,31.65
+2024-08-07,Widget B,South,1,7.5
+2024-09-24,Thingamajig,East,63,83.89
+2024-07-13,Thingamajig,East,50,100.46
+2024-11-19,Widget A,West,5,198.53
+2024-02-13,Doohickey,South,25,153.78
+2024-05-25,Thingamajig,East,66,143.28
+2024-11-23,Gadget X,North,84,80.14
+2024-07-24,Widget B,South,62,11.73
+2024-06-21,Thingamajig,North,90,134.81
+2024-03-09,Doohickey,West,88,33.74
+2024-04-20,Doohickey,South,2,27.76
+2024-02-21,Thingamajig,West,51,142.68
+2024-02-17,Widget B,West,22,166.8
+2024-05-23,Gadget X,West,76,65.06
+2024-07-25,Thingamajig,North,14,129.06
+2024-06-27,Widget B,East,96,45.86
+2024-12-13,Thingamajig,East,1,197.47
+2024-08-01,Widget A,North,100,140.78
+2024-09-14,Thingamajig,East,94,89.04
+2024-03-12,Widget B,South,26,99.86
+2024-09-04,Gadget Y,South,24,44.18
+2024-12-06,Widget B,East,53,90.94
+2024-10-04,Thingamajig,South,11,62.16
+2024-07-04,Gadget X,North,44,10.78
+2024-04-16,Gadget Y,North,2,16.91
+2024-01-22,Doohickey,North,13,46.16
+2024-01-13,Doohickey,East,63,97.28
+2024-06-20,Gadget Y,East,48,137.96
+2024-06-11,Widget B,East,86,82.7
+2024-10-02,Gadget X,East,13,5.6
+2024-12-13,Thingamajig,South,4,122.37
+2024-09-09,Thingamajig,South,48,93.12
+2024-11-22,Gadget Y,West,85,41.65
+2024-11-27,Gadget X,North,82,75.24
+2024-01-26,Thingamajig,East,87,91.64
+2024-10-16,Gadget Y,North,45,88.44
+2024-08-22,Thingamajig,North,94,80.05
+2024-10-07,Thingamajig,South,67,175.87
+2024-12-17,Widget A,South,64,160.38
+2024-05-27,Thingamajig,West,22,179.8
+2024-02-16,Thingamajig,South,32,46.27
+2024-11-23,Widget A,North,56,198.71
+2024-01-06,Gadget X,West,99,59.67
+2024-12-09,Thingamajig,West,86,29.0
+2024-03-18,Thingamajig,West,12,160.13
+2024-06-28,Widget B,North,83,71.93
+2024-12-24,Thingamajig,West,84,130.21
+2024-09-28,Gadget Y,South,29,55.52
+2024-05-03,Widget A,North,44,149.41
+2024-04-24,Widget A,East,17,171.4
+2024-07-19,Thingamajig,North,40,17.07
+2024-09-07,Gadget Y,West,41,155.4
+2024-11-26,Widget B,South,14,82.09
+2024-09-28,Gadget Y,East,19,164.15
+2024-05-27,Widget B,West,88,93.88
+2024-10-10,Widget B,North,77,67.43
+2024-09-23,Widget A,East,91,116.92
+2024-11-27,Widget B,West,38,142.31
+2024-07-02,Gadget X,South,92,46.07
+2024-12-26,Widget B,North,100,39.91
+2024-08-24,Gadget Y,East,85,182.91
+2024-03-01,Doohickey,West,44,87.38
+2024-08-12,Gadget Y,West,10,107.93
+2024-05-10,Thingamajig,South,90,171.97
+2024-07-04,Widget B,East,97,159.3
+2024-01-28,Thingamajig,East,59,132.65
+2024-10-05,Gadget Y,West,38,179.96
+2024-04-07,Thingamajig,South,95,131.99
+2024-06-24,Doohickey,North,87,158.17
+2024-03-13,Gadget Y,South,8,23.73
+2024-08-06,Widget A,North,66,131.77
+2024-10-14,Widget B,West,32,11.63
+2024-04-13,Gadget Y,East,89,121.25
+2024-03-21,Thingamajig,West,100,139.9
+2024-11-22,Widget A,West,84,79.51
+2024-11-21,Gadget Y,East,2,28.4
+2024-02-04,Gadget Y,South,3,119.44
+2024-10-16,Gadget X,North,76,40.31
+2024-08-21,Thingamajig,West,39,116.43
+2024-02-11,Widget A,South,52,163.51
+2024-01-13,Doohickey,West,9,106.19
+2024-10-18,Thingamajig,North,97,151.83
+2024-11-04,Widget B,South,1,113.17
+2024-06-04,Widget A,South,74,45.21
+2024-03-03,Doohickey,East,97,11.83
+2024-02-17,Gadget X,East,70,38.46
+2024-11-01,Widget B,East,6,189.51
+2024-09-26,Gadget X,West,18,117.53
+2024-12-11,Doohickey,East,78,109.95
+2024-04-23,Widget A,North,31,12.16
+2024-03-10,Widget B,South,78,112.65
+2024-10-12,Gadget X,South,94,126.35
+2024-02-18,Gadget X,East,49,131.7
+2024-03-13,Gadget Y,North,33,136.92
+2024-12-05,Doohickey,South,10,127.77
+2024-05-21,Thingamajig,South,92,77.57
+2024-11-21,Doohickey,South,54,165.21
+2024-06-26,Gadget Y,West,4,192.98
+2024-04-03,Gadget X,North,69,26.45
+2024-09-14,Widget A,East,82,22.35
+2024-06-25,Gadget X,South,29,58.36
+2024-02-13,Widget B,West,14,157.63
+2024-02-06,Doohickey,East,76,165.16
+2024-08-04,Doohickey,East,90,116.57
+2024-05-18,Gadget X,North,7,38.3
+2024-07-06,Gadget X,West,62,120.5
+2024-05-01,Thingamajig,South,85,29.64
+2024-07-19,Thingamajig,East,7,184.1
+2024-11-12,Thingamajig,South,87,123.7
+2024-12-15,Widget B,West,46,160.7
+2024-09-10,Gadget X,West,67,188.63
+2024-04-10,Thingamajig,North,40,84.27
+2024-06-28,Widget A,North,10,147.34
+2024-02-06,Doohickey,North,11,149.96
+2024-09-16,Widget A,West,87,104.19
+2024-12-05,Gadget Y,West,66,138.6
+2024-11-18,Thingamajig,North,52,7.71
+2024-04-27,Thingamajig,North,92,87.87
+2024-09-24,Gadget X,South,95,133.93
+2024-09-22,Doohickey,North,78,92.49
+2024-03-22,Doohickey,South,23,19.65
+2024-03-17,Gadget X,North,55,101.62
+2024-03-12,Widget A,East,87,53.7
+2024-09-28,Widget A,East,39,99.21
+2024-05-07,Widget A,West,28,185.0
+2024-11-17,Widget A,West,80,170.43
+2024-01-12,Widget A,West,43,63.18
+2024-02-01,Gadget X,South,52,74.13
+2024-02-14,Gadget Y,South,11,108.17
+2024-03-14,Widget A,West,1,35.35
+2024-11-09,Widget B,West,51,77.99
+2024-06-14,Widget B,East,14,197.93
+2024-11-27,Gadget Y,South,18,73.98
+2024-07-01,Gadget X,South,15,41.97
+2024-01-05,Gadget Y,West,96,69.59
+2024-01-06,Thingamajig,South,62,192.14
+2024-05-04,Gadget Y,West,71,101.64
+2024-11-23,Widget B,East,97,154.06
+2024-07-17,Thingamajig,West,17,26.4
+2024-02-26,Widget A,South,20,72.1
+2024-01-25,Thingamajig,South,7,137.27
+2024-06-14,Doohickey,North,56,98.64
+2024-05-16,Widget A,West,32,125.43
+2024-12-17,Widget B,South,36,154.51
+2024-05-23,Widget B,West,26,97.41
+2024-02-23,Thingamajig,South,25,198.55
+2024-10-21,Thingamajig,South,30,28.49
+2024-07-02,Gadget X,South,19,88.13
+2024-10-07,Widget A,North,49,84.42
+2024-05-23,Thingamajig,South,29,70.55
+2024-08-02,Doohickey,West,83,15.07
+2024-02-09,Gadget X,East,45,143.76
+2024-04-11,Widget A,South,6,5.1
+2024-11-24,Gadget X,South,37,97.05
+2024-10-04,Gadget Y,South,33,189.92
+2024-06-11,Gadget X,North,13,135.44
+2024-11-18,Widget B,East,47,149.55
+2024-06-24,Doohickey,East,31,131.8
+2024-04-19,Gadget Y,North,14,30.44
+2024-12-20,Widget A,North,76,193.82
+2024-11-27,Widget B,South,91,91.93
+2024-02-03,Doohickey,East,39,146.44
+2024-04-18,Thingamajig,South,6,29.93
+2024-07-18,Thingamajig,East,98,171.42
+2024-09-12,Gadget X,West,81,144.88
+2024-07-03,Gadget Y,West,68,186.61
+2024-09-26,Widget A,South,77,58.46
+2024-03-10,Widget A,North,89,42.09
+2024-07-16,Thingamajig,North,22,90.36
+2024-09-13,Doohickey,West,52,123.41
+2024-04-06,Widget A,South,74,47.47
+2024-12-01,Doohickey,West,65,143.01
+2024-09-09,Gadget X,South,38,143.11
+2024-09-04,Widget B,South,6,109.05
+2024-05-02,Thingamajig,South,36,185.81
+2024-05-28,Widget A,South,27,109.25
+2024-01-21,Gadget X,East,42,21.23
+2024-12-18,Gadget X,South,53,180.18
+2024-05-11,Widget A,North,46,47.76
+2024-05-06,Gadget X,North,69,133.18
+2024-10-04,Thingamajig,West,84,55.18
+2024-11-21,Doohickey,South,57,48.02
+2024-05-07,Doohickey,West,20,91.98
+2024-12-24,Gadget Y,East,19,180.92
+2024-02-16,Widget B,West,24,164.04
+2024-03-07,Doohickey,West,94,40.18
+2024-05-01,Gadget X,South,23,164.41
+2024-11-20,Widget B,North,19,19.05
+2024-04-15,Thingamajig,West,13,146.24
+2024-03-24,Widget A,North,49,79.88
+2024-02-27,Widget A,North,17,53.43
+2024-02-09,Widget B,North,2,191.74
+2024-02-18,Thingamajig,East,91,21.57
+2024-03-16,Doohickey,West,21,64.94
+2024-08-05,Widget B,North,70,139.95
+2024-11-18,Widget A,North,6,25.05
+2024-05-04,Doohickey,West,19,5.24
+2024-04-01,Widget B,West,50,33.74
+2024-11-10,Widget B,West,88,177.42
+2024-02-16,Widget B,North,29,24.84
+2024-05-12,Widget A,East,16,75.3
+2024-02-02,Doohickey,South,23,88.58
+2024-06-20,Widget B,West,20,179.16
+2024-11-10,Doohickey,East,45,175.7
+2024-05-16,Thingamajig,East,34,163.09
+2024-12-26,Widget A,North,20,156.67
+2024-03-11,Widget B,West,58,145.66
+2024-08-27,Widget A,North,74,88.35
+2024-12-09,Widget B,North,42,198.98
+2024-03-25,Gadget Y,East,41,101.37
+2024-08-23,Gadget Y,East,18,161.42
+2024-11-08,Gadget Y,West,71,101.93
+2024-09-16,Doohickey,South,50,21.31
+2024-12-14,Doohickey,South,90,22.01
+2024-06-01,Widget B,North,47,113.88
+2024-03-04,Widget A,East,47,170.51
+2024-03-10,Gadget Y,South,71,194.5
+2024-07-08,Widget B,South,8,150.66
+2024-02-23,Thingamajig,South,49,147.95
+2024-12-14,Gadget X,North,90,25.67
+2024-10-03,Gadget Y,South,4,33.64
+2024-03-03,Widget B,North,2,115.99
+2024-07-05,Widget B,West,96,32.32
+2024-09-23,Gadget X,West,53,145.9
+2024-08-26,Thingamajig,North,37,26.7
+2024-01-21,Widget A,South,65,36.27
+2024-07-27,Gadget Y,West,71,143.72
+2024-05-19,Doohickey,East,91,49.33
+2024-03-09,Widget A,West,17,149.91
+2024-07-20,Widget A,South,51,40.82
+2024-12-18,Doohickey,North,89,96.35
+2024-06-21,Thingamajig,West,49,37.14
+2024-06-21,Gadget Y,South,35,26.14
+2024-02-12,Doohickey,East,4,51.71
+2024-03-18,Widget A,North,28,121.44
+2024-05-07,Doohickey,South,82,186.19
+2024-04-09,Widget A,North,73,197.37
+2024-08-02,Widget A,East,12,188.98
+2024-01-12,Gadget X,West,65,43.0
+2024-07-24,Gadget X,South,90,136.56
+2024-06-14,Thingamajig,North,65,162.46
+2024-03-01,Doohickey,West,62,119.34
+2024-01-10,Widget B,South,88,95.31
+2024-11-03,Thingamajig,South,28,162.46
+2024-11-05,Thingamajig,South,65,105.68
+2024-12-20,Thingamajig,East,58,158.14
+2024-06-10,Gadget X,West,6,178.68
+2024-11-13,Widget B,South,79,123.34
+2024-03-19,Thingamajig,West,13,161.92
+2024-03-25,Gadget X,North,64,23.35
+2024-06-06,Gadget X,South,9,59.62
+2024-06-12,Widget A,North,23,143.58
+2024-08-09,Gadget Y,East,98,175.95

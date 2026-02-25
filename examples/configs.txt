@@ -1,0 +1,203 @@
+=== CONFIGURATION COMPARISON ===
+
+--- PRODUCTION CONFIG ---
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "workers": 4,
+    "timeout_ms": 30000,
+    "max_connections": 1000,
+    "ssl": {
+      "enabled": true,
+      "cert": "/etc/ssl/cert.pem",
+      "key": "/etc/ssl/key.pem"
+    }
+  },
+  "database": {
+    "primary": {
+      "host": "db-primary.internal",
+      "port": 5432,
+      "pool_size": 20,
+      "ssl": true
+    },
+    "replica": {
+      "host": "db-replica.internal",
+      "port": 5432,
+      "pool_size": 10,
+      "ssl": true
+    },
+    "migrations": {
+      "auto_run": false,
+      "directory": "./migrations"
+    }
+  },
+  "cache": {
+    "provider": "redis",
+    "host": "cache.internal",
+    "port": 6379,
+    "ttl_seconds": 3600
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": [
+      "stdout",
+      "file"
+    ]
+  },
+  "features": {
+    "feature_0": true,
+    "feature_1": false,
+    "feature_2": true,
+    "feature_3": false,
+    "feature_4": true,
+    "feature_5": false,
+    "feature_6": false,
+    "feature_7": true,
+    "feature_8": true,
+    "feature_9": false,
+    "feature_10": false,
+    "feature_11": true,
+    "feature_12": true,
+    "feature_13": true,
+    "feature_14": false,
+    "feature_15": true,
+    "feature_16": true,
+    "feature_17": false,
+    "feature_18": true,
+    "feature_19": true,
+    "feature_20": true,
+    "feature_21": true,
+    "feature_22": false,
+    "feature_23": false,
+    "feature_24": false,
+    "feature_25": false,
+    "feature_26": true,
+    "feature_27": true,
+    "feature_28": false,
+    "feature_29": true,
+    "feature_30": false,
+    "feature_31": false,
+    "feature_32": true,
+    "feature_33": true,
+    "feature_34": false,
+    "feature_35": false,
+    "feature_36": false,
+    "feature_37": true,
+    "feature_38": false,
+    "feature_39": false,
+    "feature_40": false,
+    "feature_41": false,
+    "feature_42": false,
+    "feature_43": false,
+    "feature_44": true,
+    "feature_45": false,
+    "feature_46": false,
+    "feature_47": true,
+    "feature_48": true,
+    "feature_49": true
+  }
+}
+
+--- STAGING CONFIG ---
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 9090,
+    "workers": 8,
+    "timeout_ms": 30000,
+    "max_connections": 1000,
+    "ssl": {
+      "enabled": false,
+      "cert": "/etc/ssl/cert.pem",
+      "key": "/etc/ssl/key.pem"
+    }
+  },
+  "database": {
+    "primary": {
+      "host": "db-primary.internal",
+      "port": 5432,
+      "pool_size": 50,
+      "ssl": true
+    },
+    "replica": {
+      "host": "db-replica-v2.internal",
+      "port": 5432,
+      "pool_size": 10,
+      "ssl": true
+    },
+    "migrations": {
+      "auto_run": true,
+      "directory": "./migrations"
+    }
+  },
+  "cache": {
+    "provider": "redis",
+    "host": "cache.internal",
+    "port": 6379,
+    "ttl_seconds": 7200
+  },
+  "logging": {
+    "level": "debug",
+    "format": "json"
+  },
+  "features": {
+    "feature_0": true,
+    "feature_1": false,
+    "feature_2": true,
+    "feature_3": false,
+    "feature_4": true,
+    "feature_5": false,
+    "feature_6": false,
+    "feature_7": true,
+    "feature_8": true,
+    "feature_9": false,
+    "feature_10": false,
+    "feature_11": true,
+    "feature_12": true,
+    "feature_13": true,
+    "feature_14": false,
+    "feature_15": true,
+    "feature_16": true,
+    "feature_17": false,
+    "feature_18": true,
+    "feature_19": true,
+    "feature_20": true,
+    "feature_21": true,
+    "feature_22": false,
+    "feature_23": false,
+    "feature_24": false,
+    "feature_25": false,
+    "feature_26": true,
+    "feature_27": true,
+    "feature_28": false,
+    "feature_29": true,
+    "feature_30": false,
+    "feature_31": false,
+    "feature_32": true,
+    "feature_33": true,
+    "feature_34": false,
+    "feature_35": false,
+    "feature_36": false,
+    "feature_37": true,
+    "feature_38": false,
+    "feature_39": false,
+    "feature_40": false,
+    "feature_41": false,
+    "feature_42": false,
+    "feature_43": false,
+    "feature_44": true,
+    "feature_45": false,
+    "feature_46": false,
+    "feature_47": true,
+    "feature_48": true,
+    "feature_49": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "endpoint": "/metrics"
+  }
+}
+
+=== END ===
