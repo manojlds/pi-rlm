@@ -1,0 +1,53 @@
+{
+  "name": "pi-rlm",
+  "version": "1.0.0",
+  "description": "Recursive Language Model extension for pi",
+  "scripts": {
+    "check": "npm run typecheck",
+    "check:full": "npm run lint && npm run typecheck",
+    "typecheck": "tsc --noEmit src/rlm-engine.ts src/index.ts 2>&1 | grep -v 'Cannot find module'",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "test": "echo 'No tests yet'",
+    "copy": "cp src/*.ts .pi/extensions/rlm/"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "env": {
+      "node": true,
+      "es2022": true
+    }
+  },
+  "tsconfig": {
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "lib": ["ES2022"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
+  }
+}
