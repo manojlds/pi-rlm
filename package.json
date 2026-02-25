@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit src/rlm-engine.ts src/index.ts 2>&1 | grep -v 'Cannot find module'",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "test": "echo 'No tests yet'",
+    "test": "python3 tests/test-repl-standalone.py",
+    "test:integration": "./tests/run-tests.sh",
+    "test:fixtures": "npx tsx tests/generate-fixtures.ts",
     "copy": "cp src/*.ts .pi/extensions/rlm/"
   },
   "pi": {
