@@ -11,7 +11,7 @@
     "test": "python3 tests/test-repl-standalone.py",
     "test:integration": "./tests/run-tests.sh",
     "test:fixtures": "npx tsx tests/generate-fixtures.ts",
-    "copy": "cp src/*.ts .pi/extensions/rlm/"
+    "copy": "mkdir -p .pi/extensions/rlm && cp src/*.ts .pi/extensions/rlm/"
   },
   "pi": {
     "extensions": ["./src/index.ts"]

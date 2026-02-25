@@ -18,14 +18,25 @@ This means a small model using RLM can outperform a larger model on long-context
 
 ## Installation
 
+**Option A: Use as a pi package (recommended)**
 ```bash
-# Clone into your project
-cd your-project
-git clone https://github.com/your-user/pi-rlm .pi/extensions/pi-rlm
-
-# Or symlink for development
-ln -s /path/to/pi-rlm .pi/extensions/pi-rlm
+# From your project directory, add to .pi/settings.json:
+{ "extensions": ["/path/to/pi-rlm/src/index.ts"] }
 ```
+
+**Option B: Copy into project extensions**
+```bash
+cd your-project
+mkdir -p .pi/extensions/rlm
+cp /path/to/pi-rlm/src/*.ts .pi/extensions/rlm/
+```
+
+**Option C: Load directly with `-e` flag (for testing)**
+```bash
+pi -e /path/to/pi-rlm/src/index.ts
+```
+
+> ⚠️ Don't combine `-e` with auto-discovered `.pi/extensions/rlm/` — the tool name will conflict.
 
 ## Requirements
 
