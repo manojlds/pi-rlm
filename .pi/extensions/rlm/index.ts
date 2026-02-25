@@ -75,8 +75,9 @@ The context parameter accepts a string (text) or a file path to read from.`,
       const config: RLMConfig = {
         maxIterations: max_iterations ?? 15,
         maxLLMCalls: max_llm_calls ?? 30,
-        maxOutputChars: 10_000,
+        maxOutputChars: 20_000,
         maxDepth: max_depth ?? 1,
+        maxErrors: 5,
       };
 
       const engine = new RLMEngine(config, pi, ctx);

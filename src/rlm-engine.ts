@@ -25,6 +25,7 @@ export interface RLMConfig {
   maxLLMCalls: number;
   maxOutputChars: number;
   maxDepth: number;  // Maximum recursion depth for rlm_query
+  maxErrors: number;  // Maximum consecutive errors before stopping
 }
 
 export interface RLMTrajectoryStep {
@@ -76,38 +77,40 @@ interface REPLResult {
   showVars?: Record<string, unknown>;
 }
 
-// Enhanced system prompt - FORCE sub-LLM calls with examples
-const RLM_SYSTEM_PROMPT = `You are an RLM. Your ONLY job is to use llm_query() to analyze context in PARALLEL chunks.
+const RLM_SYSTEM_PROMPT = `You are an RLM (Recursive Language Model). You have a Python REPL environment with a \`context\` variable loaded. Your job is to answer the user's query about this context.
 
-## ABSOLUTE RULES:
-1. print() is FORBIDDEN for viewing context - ONLY use llm_query()
-2. CHUNK the context and use llm_query_batched() for PARALLEL analysis
-3. Every iteration MUST make multiple llm_query() calls
+## Available Functions:
+- \`context\` — the full input text, loaded as a string variable
+- \`llm_query(prompt, model=None)\` — call a sub-LLM for analysis (~500K char limit per call)
+- \`llm_query_batched(prompts, model=None)\` — concurrent sub-LLM calls, returns List[str]
+- \`rlm_query(prompt, model=None)\` — spawn a recursive child RLM with its own REPL
+- \`rlm_query_batched(prompts, model=None)\` — concurrent child RLMs
+- \`SHOW_VARS()\` — list all variables in your REPL namespace
+- \`FINAL(answer)\` — provide your final answer (as a string)
+- \`FINAL_VAR(variable_name)\` — return a REPL variable as the final answer. The variable MUST exist from a previous \\\`\\\`\\\`repl block.
+- \`SUBMIT(answer)\` — alias for FINAL
 
-## Chunking Strategy (REQUIRED):
-1. Split context into 3-5 chunks
-2. Use llm_query_batched() to analyze ALL chunks in parallel
-3. Aggregate results from all sub-LLM responses
-4. Call FINAL(aggregated_answer)
+## Execution Format:
+Write Python code inside \\\`\\\`\\\`repl blocks. You can use print() to inspect data.
 
-## VALID Code Examples:
-\`\`\`python
-# Good - chunk and batch
-chunk_size = len(context) // 4
-chunks = [context[i*chunk_size:(i+1)*chunk_size] for i in range(4)]
-prompts = [f"Analyze these files for: {chunk}" for chunk in chunks]
-results = llm_query_batched(prompts)
-final = combine_results(results)
-FINAL(final)
-\`\`\`
+\\\`\\\`\\\`repl
+# Your Python code here
+chunk = context[:5000]
+result = llm_query(f"Summarize: {chunk}")
+print(result)
+\\\`\\\`\\\`
 
-## INVALID (single huge call - AVOID):
-\`\`\`python
-# Bad - one giant call
-result = llm_query("analyze all: " + context)  # FORBIDDEN
-\`\`\`
+## Strategy for Large Contexts:
+1. First, check the context size: \`print(len(context))\`
+2. Split into manageable chunks (3-10 chunks depending on size)
+3. Use \`llm_query_batched()\` for parallel analysis of chunks
+4. Aggregate results and call \`FINAL(answer)\`
 
-FINAL(answer)`;
+## Important:
+- Do NOT pass the entire context to a single llm_query() call — it may exceed limits
+- Chunk the context and analyze pieces in parallel for best results
+- You can run multiple iterations — explore, then refine, then answer
+- Call FINAL(answer) when you have your answer`;
 
 const ITERATION_PROMPT_TEMPLATE = `## Iteration {iteration}/{maxIterations} (depth {depth})
 
@@ -118,11 +121,10 @@ Context metadata:
 - Length: {contextLength} characters ({contextLines} lines)
 - Preview (first 500 chars): {contextPreview}
 
+{firstIterationNote}
 {history}
 
-REMEMBER: Use llm_query() to analyze context - DO NOT use print() to view context directly.
-Your code MUST call llm_query() or rlm_query() for any analysis.
-Write your code now. Use FINAL(answer) when done.`;
+Write your Python code in a \`\`\`repl block. Call FINAL(answer) when done.`;
 
 /**
  * Persistent Python REPL that maintains state across code executions.
@@ -407,6 +409,17 @@ while True:
         except Exception as e:
             error = traceback.format_exc()
 
+        # Restore scaffold after exec (official RLM pattern)
+        _namespace['context'] = context
+        _namespace['llm_query'] = llm_query
+        _namespace['llm_query_batched'] = llm_query_batched
+        _namespace['rlm_query'] = rlm_query
+        _namespace['rlm_query_batched'] = rlm_query_batched
+        _namespace['SHOW_VARS'] = SHOW_VARS
+        _namespace['FINAL'] = FINAL
+        _namespace['FINAL_VAR'] = FINAL_VAR
+        _namespace['SUBMIT'] = SUBMIT
+
         sys.stdout = old_stdout
         sys.stderr = old_stderr
 
@@ -453,6 +466,7 @@ export class RLMEngine {
   private tempDir: string;
   private llmCallCount = 0;
   private rlmCallCount = 0;
+  private consecutiveErrors = 0;
   private currentDepth: number = 0;
   private callTree: RLMCallTree;
   private sessionId: string;
@@ -524,26 +538,26 @@ export class RLMEngine {
             let body = "";
             req.on("data", (chunk: Buffer) => { body += chunk.toString(); });
             req.on("end", async () => {
+              const { prompt, model } = JSON.parse(body);
+              const startTime = Date.now();
+              
+              // Track this call for live visualization
+              const callId = `llm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+              const call: RLMSubCall = {
+                id: callId,
+                type: "llm_query",
+                prompt: prompt.slice(0, 200),
+                model,
+                status: "running",
+                startTime,
+                duration: 0,
+              };
+              this.callTree.activeCalls.push(call);
+              
+              // Fire visualization callback
+              this.onSubCallStart?.(call);
+
               try {
-                const { prompt, model } = JSON.parse(body);
-                const startTime = Date.now();
-                
-                // Track this call for live visualization
-                const callId = `llm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-                const call: RLMSubCall = {
-                  id: callId,
-                  type: "llm_query",
-                  prompt: prompt.slice(0, 200),
-                  model,
-                  status: "running",
-                  startTime,
-                  duration: 0,
-                };
-                this.callTree.activeCalls.push(call);
-                
-                // Fire visualization callback
-                this.onSubCallStart?.(call);
-                
                 const answer = await this.callSubLLM(prompt, model, signal);
                 const duration = Date.now() - startTime;
                 
@@ -565,17 +579,13 @@ export class RLMEngine {
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ result: answer }));
               } catch (e: any) {
-                // Update call status on error
-                if (this.callTree.activeCalls.length > 0) {
-                  const call = this.callTree.activeCalls.pop();
-                  if (call) {
-                    call.status = "error";
-                    call.error = e.message;
-                    call.duration = Date.now() - (call.startTime || 0);
-                    this.callTree.completedCalls.push(call);
-                    this.onSubCallComplete?.(call);
-                  }
-                }
+                // Update call status on error (find by ID, not pop)
+                call.status = "error";
+                call.error = e.message;
+                call.duration = Date.now() - (call.startTime || 0);
+                this.callTree.activeCalls = this.callTree.activeCalls.filter(c => c.id !== callId);
+                this.callTree.completedCalls.push(call);
+                this.onSubCallComplete?.(call);
                 res.writeHead(500, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ error: e.message }));
               }
@@ -584,26 +594,26 @@ export class RLMEngine {
             let body = "";
             req.on("data", (chunk: Buffer) => { body += chunk.toString(); });
             req.on("end", async () => {
+              const { prompt, model } = JSON.parse(body);
+              const startTime = Date.now();
+              
+              // Track this call for live visualization
+              const callId = `rlm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+              const call: RLMSubCall = {
+                id: callId,
+                type: "rlm_query",
+                prompt: prompt.slice(0, 200),
+                model,
+                status: "running",
+                startTime,
+                duration: 0,
+              };
+              this.callTree.activeCalls.push(call);
+              
+              // Fire visualization callback
+              this.onSubCallStart?.(call);
+
               try {
-                const { prompt, model } = JSON.parse(body);
-                const startTime = Date.now();
-                
-                // Track this call for live visualization
-                const callId = `rlm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-                const call: RLMSubCall = {
-                  id: callId,
-                  type: "rlm_query",
-                  prompt: prompt.slice(0, 200),
-                  model,
-                  status: "running",
-                  startTime,
-                  duration: 0,
-                };
-                this.callTree.activeCalls.push(call);
-                
-                // Fire visualization callback
-                this.onSubCallStart?.(call);
-                
                 // Spawn a child RLM with its own REPL
                 const answer = await this.spawnChildRLM(prompt, context, model, signal);
                 const duration = Date.now() - startTime;
@@ -626,17 +636,13 @@ export class RLMEngine {
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ result: answer }));
               } catch (e: any) {
-                // Update call status on error
-                if (this.callTree.activeCalls.length > 0) {
-                  const call = this.callTree.activeCalls.pop();
-                  if (call) {
-                    call.status = "error";
-                    call.error = e.message;
-                    call.duration = Date.now() - (call.startTime || 0);
-                    this.callTree.completedCalls.push(call);
-                    this.onSubCallComplete?.(call);
-                  }
-                }
+                // Update call status on error (find by ID, not pop)
+                call.status = "error";
+                call.error = e.message;
+                call.duration = Date.now() - (call.startTime || 0);
+                this.callTree.activeCalls = this.callTree.activeCalls.filter(c => c.id !== callId);
+                this.callTree.completedCalls.push(call);
+                this.onSubCallComplete?.(call);
                 res.writeHead(500, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ error: e.message }));
               }
@@ -669,9 +675,13 @@ export class RLMEngine {
 
         const historyText = this.trajectory.length > 0
           ? "## Previous iterations:\n" + this.trajectory.map(s =>
-              `### Step ${s.iteration} (depth ${s.depth})\nReasoning: ${s.reasoning}\nCode:\n\`\`\`python\n${s.code}\n\`\`\`\nOutput:\n${s.output}`
+              `### Step ${s.iteration} (depth ${s.depth})\nReasoning: ${s.reasoning}\nCode:\n\`\`\`repl\n${s.code}\n\`\`\`\nOutput:\n${s.output}`
             ).join("\n\n")
           : "No previous iterations yet.";
+
+        const firstIterationNote = iteration === 1
+          ? "You have not interacted with the REPL environment or seen your context yet. Your next action should be to explore the context and figure out how to answer the query — don't provide a final answer yet."
+          : "";
 
         const iterationPrompt = ITERATION_PROMPT_TEMPLATE
           .replace("{iteration}", String(iteration))
@@ -681,6 +691,7 @@ export class RLMEngine {
           .replace("{contextLength}", String(context.length))
           .replace("{contextLines}", String(contextLines))
           .replace("{contextPreview}", contextPreview)
+          .replace("{firstIterationNote}", firstIterationNote)
           .replace("{history}", historyText);
 
         // Call the root LLM via pi's complete() function
@@ -733,6 +744,16 @@ export class RLMEngine {
 
         const output = this.formatOutput(result);
         this.trajectory.push({ iteration, depth: this.currentDepth, reasoning, code, output });
+
+        // Track consecutive errors
+        if (result.error) {
+          this.consecutiveErrors++;
+          if (this.consecutiveErrors >= this.config.maxErrors) {
+            throw new Error(`Too many consecutive errors (${this.consecutiveErrors}), stopping RLM`);
+          }
+        } else {
+          this.consecutiveErrors = 0;
+        }
         
         const iterDuration = Date.now() - iterStartTime;
         this.onIterationComplete?.(this.currentDepth, iteration, iterDuration);
@@ -832,9 +853,6 @@ export class RLMEngine {
     if (this.llmCallCount >= this.config.maxLLMCalls) {
       throw new Error(`Sub-LLM call limit reached (${this.config.maxLLMCalls})`);
     }
-    this.llmCallCount++;
-    
-    // For now, use the same model - could be extended to support different models
     return this.callLLM(prompt, undefined, signal);
   }
 
@@ -842,14 +860,23 @@ export class RLMEngine {
     // Extract ALL code blocks - various formats
     const codeBlocks: string[] = [];
     
-    // Try markdown code blocks: ```python ... ```
-    let regex = /```(?:python|py|repl)?\s*\n([\s\S]*?)```/g;
+    // Try ```repl ... ``` blocks first (official format)
+    let regex = /```repl\s*\n([\s\S]*?)```/g;
     let match: RegExpExecArray | null;
     let firstMatchIndex = -1;
 
     while ((match = regex.exec(response)) !== null) {
       if (firstMatchIndex === -1) firstMatchIndex = match.index;
       codeBlocks.push(match[1].trim());
+    }
+
+    // Fallback to ```python/py``` blocks
+    if (codeBlocks.length === 0) {
+      regex = /```(?:python|py)?\s*\n([\s\S]*?)```/g;
+      while ((match = regex.exec(response)) !== null) {
+        if (firstMatchIndex === -1) firstMatchIndex = match.index;
+        codeBlocks.push(match[1].trim());
+      }
     }
 
     // Try <repl>...</repl> style tags
