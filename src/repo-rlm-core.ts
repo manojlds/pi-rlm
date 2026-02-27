@@ -125,6 +125,17 @@ interface ReviewFinding {
   evidence: FindingEvidence[];
 }
 
+interface FindingCluster {
+  cluster_id: string;
+  title: string;
+  domain: string;
+  severity: FindingSeverity;
+  confidence: number;
+  finding_ids: string[];
+  affected_paths: string[];
+  count: number;
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
@@ -211,6 +222,31 @@ function mapSeverityToCodeClimate(severity: FindingSeverity): "blocker" | "criti
 function safeRelPath(cwd: string, p: string): string {
   const rel = relative(cwd, p);
   return rel || p;
+}
+
+function normalizeTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function firstPathSegment(p: string): string {
+  const norm = p.replace(/\\/g, "/").replace(/^\/+/, "");
+  const seg = norm.split("/")[0] || norm;
+  return seg || "(root)";
+}
+
+function objectiveFocusTags(objective: string): string[] {
+  const o = objective.toLowerCase();
+  const tags: string[] = [];
+  if (/security|auth|injection|xss|crypto|secret/.test(o)) tags.push("security");
+  if (/performance|latency|throughput|cpu|memory|scale/.test(o)) tags.push("performance");
+  if (/quality|correctness|bug|reliability|type/.test(o)) tags.push("quality");
+  if (/docs|documentation|readme|guide|wiki/.test(o)) tags.push("docs");
+  if (/architecture|design|module|structure/.test(o)) tags.push("architecture");
+  return Array.from(new Set(tags));
 }
 
 export class RepoRLMStore {
@@ -1250,7 +1286,48 @@ export class RepoRLMStore {
     });
   }
 
+  private clusterFindings(findings: ReviewFinding[]): FindingCluster[] {
+    const byCluster = new Map<string, FindingCluster>();
+
+    for (const f of findings) {
+      const firstEvidence = f.evidence[0];
+      const moduleHint = firstPathSegment(firstEvidence.path);
+      const titleKey = normalizeTitle(f.title).split(" ").slice(0, 8).join(" ");
+      const clusterKey = `${f.domain}|${moduleHint}|${titleKey}`;
+
+      const existing = byCluster.get(clusterKey);
+      if (!existing) {
+        byCluster.set(clusterKey, {
+          cluster_id: `cluster_${createHash("sha1").update(clusterKey).digest("hex").slice(0, 12)}`,
+          title: f.title,
+          domain: f.domain,
+          severity: f.severity,
+          confidence: f.confidence,
+          finding_ids: [f.id],
+          affected_paths: Array.from(new Set(f.evidence.map((e) => e.path))),
+          count: 1,
+        });
+        continue;
+      }
+
+      existing.finding_ids.push(f.id);
+      existing.count += 1;
+      if (severityRank(f.severity) > severityRank(existing.severity)) existing.severity = f.severity;
+      existing.confidence = Math.max(existing.confidence, f.confidence);
+      const merged = new Set([...existing.affected_paths, ...f.evidence.map((e) => e.path)]);
+      existing.affected_paths = Array.from(merged).sort();
+    }
+
+    return Array.from(byCluster.values()).sort((a, b) => {
+      const ds = severityRank(b.severity) - severityRank(a.severity);
+      if (ds !== 0) return ds;
+      if (b.count !== a.count) return b.count - a.count;
+      return b.confidence - a.confidence;
+    });
+  }
+
   private synthesizeWikiArtifacts(runId: string): Array<{ kind: string; path: string }> {
+    const run = this.getRun(runId);
     const runDir = this.runDir(runId);
     const outDir = join(runDir, "artifacts", "wiki");
     mkdirSync(outDir, { recursive: true });
@@ -1262,12 +1339,61 @@ export class RepoRLMStore {
       .map((a) => a.path);
 
     const uniqueNodeDocs = Array.from(new Set(nodeDocs)).sort();
+    const objectiveTags = objectiveFocusTags(run.objective);
+
+    const summarySnippets = results
+      .map((r) => `- ${r.node_id}: ${r.summary}`)
+      .slice(0, 30);
+
+    const moduleCounts = new Map<string, number>();
+    for (const p of uniqueNodeDocs) {
+      const seg = firstPathSegment(p);
+      moduleCounts.set(seg, (moduleCounts.get(seg) ?? 0) + 1);
+    }
+
+    const moduleIndexPath = join(outDir, "module-index.md");
+    const moduleLines = [
+      "# Module Index",
+      "",
+      ...(moduleCounts.size > 0
+        ? Array.from(moduleCounts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .map(([name, count]) => `- ${name}: ${count} node documents`)
+        : ["- (none)"]),
+    ];
+    writeFileSync(moduleIndexPath, moduleLines.join("\n") + "\n", "utf-8");
+
+    const architecturePath = join(outDir, "architecture-summary.md");
+    const architectureLines = [
+      "# Architecture Summary",
+      "",
+      `Run: ${runId}`,
+      `Objective: ${run.objective}`,
+      `Focus tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
+      "",
+      "## Recursive Coverage",
+      "",
+      `- Node documents: ${uniqueNodeDocs.length}`,
+      `- Result nodes summarized: ${results.length}`,
+      "",
+      "## Summary Snippets",
+      "",
+      ...(summarySnippets.length ? summarySnippets : ["- (none)"]),
+    ];
+    writeFileSync(architecturePath, architectureLines.join("\n") + "\n", "utf-8");
 
     const indexPath = join(outDir, "index.md");
     const lines = [
       "# Repository Wiki",
       "",
       `Generated from run ${runId}.`,
+      "",
+      "## Overview",
+      "",
+      `- Objective: ${run.objective}`,
+      `- Focus tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
+      `- Architecture summary: [architecture-summary.md](architecture-summary.md)`,
+      `- Module index: [module-index.md](module-index.md)`,
       "",
       "## Node Documents",
       "",
@@ -1282,24 +1408,73 @@ export class RepoRLMStore {
 
     return [
       { kind: "wiki_index", path: join("artifacts", "wiki", "index.md") },
+      { kind: "wiki_module_index", path: join("artifacts", "wiki", "module-index.md") },
+      { kind: "wiki_architecture_summary", path: join("artifacts", "wiki", "architecture-summary.md") },
       ...uniqueNodeDocs.map((p) => ({ kind: "wiki_node", path: p })),
     ];
   }
 
   private synthesizeReviewArtifacts(runId: string): Array<{ kind: string; path: string }> {
+    const run = this.getRun(runId);
     const runDir = this.runDir(runId);
     const outDir = join(runDir, "artifacts", "review");
     mkdirSync(outDir, { recursive: true });
 
     const rawFindings = this.extractReviewFindings(runId);
     const ranked = this.dedupeAndRankFindings(rawFindings);
+    const clusters = this.clusterFindings(ranked);
+    const objectiveTags = objectiveFocusTags(run.objective);
+
+    const severityCounts: Record<FindingSeverity, number> = {
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      info: 0,
+    };
+    ranked.forEach((f) => {
+      severityCounts[f.severity] = (severityCounts[f.severity] ?? 0) + 1;
+    });
+
+    const riskScore = ranked.reduce((acc, f) => acc + severityRank(f.severity) * Math.max(0.2, Math.min(1, f.confidence)), 0);
 
     const rankedPath = join(outDir, "findings-ranked.json");
     writeJson(rankedPath, {
       run_id: runId,
+      objective: run.objective,
+      objective_tags: objectiveTags,
       raw_count: rawFindings.length,
       deduped_count: ranked.length,
+      cluster_count: clusters.length,
+      risk_score: Number(riskScore.toFixed(2)),
+      severity_counts: severityCounts,
       findings: ranked,
+    });
+
+    const clustersPath = join(outDir, "findings-clusters.json");
+    writeJson(clustersPath, {
+      run_id: runId,
+      clusters,
+    });
+
+    const summaryPath = join(outDir, "summary.json");
+    writeJson(summaryPath, {
+      run_id: runId,
+      objective: run.objective,
+      objective_tags: objectiveTags,
+      raw_findings: rawFindings.length,
+      deduped_findings: ranked.length,
+      clusters: clusters.length,
+      risk_score: Number(riskScore.toFixed(2)),
+      severity_counts: severityCounts,
+      top_hotspots: clusters.slice(0, 10).map((c) => ({
+        cluster_id: c.cluster_id,
+        title: c.title,
+        domain: c.domain,
+        severity: c.severity,
+        count: c.count,
+        affected_paths: c.affected_paths,
+      })),
     });
 
     const reportPath = join(outDir, "report.md");
@@ -1307,8 +1482,33 @@ export class RepoRLMStore {
       "# Review Report",
       "",
       `Run: ${runId}`,
+      `Objective: ${run.objective}`,
+      `Objective tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
       `Raw findings: ${rawFindings.length}`,
       `Deduped findings: ${ranked.length}`,
+      `Clusters: ${clusters.length}`,
+      `Risk score: ${riskScore.toFixed(2)}`,
+      "",
+      "## Severity Breakdown",
+      "",
+      `- Critical: ${severityCounts.critical}`,
+      `- High: ${severityCounts.high}`,
+      `- Medium: ${severityCounts.medium}`,
+      `- Low: ${severityCounts.low}`,
+      `- Info: ${severityCounts.info}`,
+      "",
+      "## Cluster Hotspots",
+      "",
+      ...(clusters.slice(0, 20).map((c, i) => {
+        const paths = c.affected_paths.slice(0, 5).join(", ");
+        return [
+          `${i + 1}. **[${c.severity.toUpperCase()}]** ${c.title}`,
+          `   - Domain: ${c.domain}`,
+          `   - Findings: ${c.count}`,
+          `   - Confidence: ${c.confidence.toFixed(2)}`,
+          `   - Paths: ${paths || "(none)"}`,
+        ].join("\n");
+      }) ?? ["(none)"]),
       "",
       "## Top Findings",
       "",
@@ -1349,7 +1549,7 @@ export class RepoRLMStore {
     const rules = Array.from(
       new Map(
         ranked.map((f) => {
-          const id = `${f.domain}:${f.title}`;
+          const id = `${f.domain}:${normalizeTitle(f.title).replace(/\s+/g, "-")}`;
           return [id, { id, name: f.title, shortDescription: { text: f.title }, help: { text: f.description || f.title } }];
         }),
       ).values(),
@@ -1366,7 +1566,7 @@ export class RepoRLMStore {
           },
           results: ranked.map((f) => {
             const e = f.evidence[0];
-            const ruleId = `${f.domain}:${f.title}`;
+            const ruleId = `${f.domain}:${normalizeTitle(f.title).replace(/\s+/g, "-")}`;
             const level = severityRank(f.severity) >= 4 ? "error" : severityRank(f.severity) >= 3 ? "warning" : "note";
             return {
               ruleId,
@@ -1389,6 +1589,8 @@ export class RepoRLMStore {
 
     return [
       { kind: "review_ranked_findings", path: join("artifacts", "review", "findings-ranked.json") },
+      { kind: "review_clusters", path: join("artifacts", "review", "findings-clusters.json") },
+      { kind: "review_summary", path: join("artifacts", "review", "summary.json") },
       { kind: "review_report", path: join("artifacts", "review", "report.md") },
       { kind: "review_codequality", path: join("artifacts", "review", "codequality.json") },
       { kind: "review_sarif", path: join("artifacts", "review", "sarif.json") },

@@ -217,6 +217,14 @@ function runReviewEvidence(base) {{
   const rankedPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'findings-ranked.json');
   const ranked = JSON.parse(fs.readFileSync(rankedPath, 'utf-8'));
   assert(ranked.raw_count >= ranked.deduped_count, 'dedupe count invariant broken');
+  assert(Array.isArray(ranked.findings), 'ranked findings missing');
+
+  const clustersPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'findings-clusters.json');
+  const summaryPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'summary.json');
+  const clusters = JSON.parse(fs.readFileSync(clustersPath, 'utf-8'));
+  const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
+  assert(Array.isArray(clusters.clusters), 'clusters missing');
+  assert(typeof summary.risk_score === 'number', 'risk score missing');
 
   const codeQualityPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'codequality.json');
   const sarifPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'sarif.json');

@@ -1,6 +1,6 @@
 # Phase 3 Implementation Plan (RLM-First)
 
-Status: **Partially Completed (Scaffold)**  
+Status: **Partially Completed (Enhanced Scaffold)**  
 Updated on: 2026-02-27
 
 This phase focuses on objective-driven synthesis from recursive outputs.
@@ -14,8 +14,8 @@ This phase focuses on objective-driven synthesis from recursive outputs.
 - ✅ P3-03 Review dedup + ranking scaffold (`findings-ranked.json`, `report.md`)
 - ✅ P3-04 Export scaffold for CI (`codequality.json`, `sarif.json`)
 - ✅ P3-05 Synthesis test coverage (deterministic core tests)
-- ⏳ P3-06 Rich objective semantics (pending)
-- ⏳ P3-07 Advanced ranking / cross-node semantic merge (pending)
+- 🟡 P3-06 Rich objective semantics (objective tags + architecture summary scaffolding)
+- 🟡 P3-07 Advanced ranking / cross-node semantic merge (deterministic clustering scaffold)
 
 ---
 
@@ -42,6 +42,8 @@ Targets:
 Implemented:
 - wiki node artifact collection
 - generated index at `artifacts/wiki/index.md`
+- generated module index at `artifacts/wiki/module-index.md`
+- generated architecture summary at `artifacts/wiki/architecture-summary.md`
 - run output index merge/update
 
 ---
@@ -67,6 +69,10 @@ Implemented review exports:
 - GitLab Code Quality-like report: `artifacts/review/codequality.json`
 - SARIF: `artifacts/review/sarif.json`
 
+Additional outputs:
+- `artifacts/review/summary.json`
+- `artifacts/review/findings-clusters.json`
+
 ---
 
 ## P3-05: Tests
@@ -74,31 +80,45 @@ Implemented review exports:
 **Status:** ✅ Done
 
 Updated `tests/test-repo-rlm-core.py` coverage to assert:
-- wiki synthesis artifact creation
+- wiki synthesis artifact creation (`index`, `module-index`, `architecture-summary` path coverage via synthesis output)
 - review synthesis dedupe invariant (`raw_count >= deduped_count`)
+- review cluster and summary outputs
 - codequality + sarif file generation
 
 ---
 
-## Remaining Phase 3 Work
+## P3-06: Rich Objective Semantics
 
-### P3-06: Rich Objective Semantics
+**Status:** 🟡 Partial
 
-Pending:
-- objective-specific synthesis prompts/handlers
-- stronger architecture narratives for wiki mode
-- domain-specific review pass contracts
+Implemented now:
+- objective tag extraction from run objective text
+- objective tags propagated into review ranked/summary outputs
+- architecture summary scaffolding includes objective + focus tags
 
-### P3-07: Advanced Ranking & Merge
+Remaining:
+- objective-specific prompt/LLM synthesis passes for higher semantic quality
+- deeper architecture narratives tied to code graph semantics
 
-Pending:
-- semantic clustering across related findings
-- cross-node evidence merging
-- confidence calibration from multi-signal scoring
+---
+
+## P3-07: Advanced Ranking & Merge
+
+**Status:** 🟡 Partial
+
+Implemented now:
+- deterministic finding clustering by domain/module/title signature
+- cluster hotspot summaries in report
+- risk score + severity distribution
+
+Remaining:
+- semantic similarity clustering (beyond lexical signatures)
+- cross-node evidence fusion and confidence calibration
+- contradiction detection across findings
 
 ---
 
 ## Notes
 
-Phase 3 currently delivers a practical synthesis/export scaffold suitable for iteration and CI integration.  
-Next upgrades should improve semantic quality, not just file-format coverage.
+Phase 3 now delivers an enhanced synthesis/export scaffold suitable for iterative use and CI artifact publication.  
+Next improvements should focus on semantic depth (LLM-assisted synthesis) and ranking fidelity.
