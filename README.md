@@ -131,6 +131,45 @@ For the repo-scale recursive design (wiki generation, deep review, persistent re
 - `docs/schemas/rlm-result.schema.json`
 - `docs/schemas/rlm-run.schema.json`
 
+## Repo-Scale RLM Workflow (Phase 3)
+
+The extension now includes repo-level recursive tools:
+
+- `repo_rlm_start`
+- `repo_rlm_step`
+- `repo_rlm_run`
+- `repo_rlm_synthesize`
+- `repo_rlm_status`
+- `repo_rlm_export`
+
+A typical flow inside pi:
+
+1. Start a run
+```text
+Use repo_rlm_start with objective "full review of this repository" and mode "review".
+```
+
+2. Execute recursion
+```text
+Use repo_rlm_run for that run_id with max_nodes 500.
+```
+
+3. Generate deterministic synthesis artifacts
+```text
+Use repo_rlm_synthesize for that run_id with target "review".
+```
+
+4. Optionally generate semantic synthesis artifacts
+```text
+Use repo_rlm_synthesize for that run_id with target "review" and semantic true.
+# optional: semantic_model "anthropic/claude-sonnet-4-5"
+```
+
+5. Export summary/topology
+```text
+Use repo_rlm_export for that run_id in markdown and json formats.
+```
+
 ## License
 
 MIT
