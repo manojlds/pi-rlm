@@ -125,6 +125,7 @@ For the repo-scale recursive design (wiki generation, deep review, persistent re
 
 - `docs/rlm-first-spec-v1.md`
 - `docs/phase-1-implementation-plan.md`
+- `docs/phase-2-implementation-plan.md`
 - `docs/schemas/rlm-node.schema.json`
 - `docs/schemas/rlm-result.schema.json`
 - `docs/schemas/rlm-run.schema.json`
