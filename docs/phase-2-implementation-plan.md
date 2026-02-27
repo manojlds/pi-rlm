@@ -1,120 +1,121 @@
 # Phase 2 Implementation Plan (RLM-First)
 
-Status: Ready for execution
+Status: **Partially Completed**  
+Updated on: 2026-02-27
 
-This phase wires the actual recursive engine on top of Phase 1 lifecycle scaffolding.
+This phase wires the recursive engine on top of Phase 1 lifecycle scaffolding.
+
+---
+
+## Completion Snapshot
+
+- ✅ P2-01 Recursive scheduler core
+- ✅ P2-02 Leaf/split policy engine
+- ✅ P2-03 Child node generation
+- ✅ P2-04 Leaf worker adapter (heuristic)
+- ✅ P2-05 Minimal parent aggregation
+- ✅ P2-06 Status enhancements
+- ⏳ P2-07 Tests (pending)
 
 ---
 
 ## P2-01: Recursive Scheduler Core
 
-**Goal**
-Implement node execution loop with explicit `leaf|split` decisions.
+**Status:** ✅ Done
 
-**Deliverables**
-- scheduler loop (`bfs` default; `dfs` optional)
-- node state transitions in `nodes.jsonl`
-- queue events for enqueue/dequeue/start/finish
+Implemented in `src/repo-rlm.ts`:
+- bounded scheduler execution via `executeStep()` and `runUntil()`
+- queue selection for `bfs` and `dfs` modes
+- node lifecycle transitions and queue events
 
-**Acceptance Criteria**
-- root node moves from `queued -> running -> completed|failed`
-- split nodes create child nodes and enqueue them
-- run remains consistent after process restart/resume
+Tool surface added:
+- `repo_rlm_step`
+- `repo_rlm_run`
 
 ---
 
 ## P2-02: Leaf/Split Policy Engine
 
-**Goal**
-Formalize deterministic split heuristics.
+**Status:** ✅ Done
 
-**Inputs**
-- depth
-- scope size (file count, bytes, line counts)
-- remaining budget
-- objective mode
+Decision logic includes explicit reasons:
+- `deadline_exceeded`
+- `max_depth_reached`
+- `llm_budget_exhausted`
+- `token_budget_exhausted`
+- `scope_too_large`
+- `scope_small_enough`
 
-**Acceptance Criteria**
-- policy returns explicit reason code for each decision
-- max depth and budget constraints enforced
-- policy decision logged in node metadata
+Decision reason is stored on node updates (`decision_reason`).
 
 ---
 
 ## P2-03: Child Node Generation
 
-**Goal**
-Create consistent decomposition by scope type.
+**Status:** ✅ Done
 
-**Strategy (v1)**
-- `repo -> dir/module groups`
-- `dir/module -> file_group`
-- optional `file_group -> file_slice`
-
-**Acceptance Criteria**
-- child nodes are non-overlapping or explicitly marked overlapping
-- each child has `parent_id`, incremented `depth`, scoped `scope_ref`
-- parent stores `child_ids`
+Current decomposition strategy:
+- split to directory children when subdirectories exist
+- fallback to chunked `file_group` children (size=8)
+- child nodes include parent linkage, depth increment, scope refs, and distributed budgets
 
 ---
 
 ## P2-04: Worker Execution Adapter
 
-**Goal**
-Connect scheduler to the existing RLM worker execution path.
+**Status:** ✅ Done (heuristic adapter)
 
-**Deliverables**
-- bounded execution for leaf nodes
-- node-level result persistence to `results.jsonl`
+Leaf execution currently uses bounded heuristic analysis:
+- scope metrics and extension distribution
+- review-mode pattern findings (with evidence pointers)
+- wiki-mode node markdown artifact emission
 
-**Acceptance Criteria**
-- each completed leaf has a persisted `RepoRLMResult`
-- failed leaf captures structured error object
-- budget accounting updates after each worker run
+Results persist to `results.jsonl` as `RepoRLMResult`.
 
 ---
 
 ## P2-05: Parent Aggregation (Minimal)
 
-**Goal**
-Aggregate child summaries upward to produce parent summaries.
+**Status:** ✅ Done
 
-**Acceptance Criteria**
-- parent completion waits for all children terminal states
-- parent summary references child node ids
-- parent status becomes `partial` when child failures exist
+Implemented behavior:
+- split parent remains `running` until all children terminal
+- parent aggregation emits result summary referencing child node outputs
+- parent result uses `partial` status when child failures exist
+- parent node transitions to `completed` or `failed`
 
 ---
 
 ## P2-06: Status/UI Enhancements
 
-**Goal**
-Make recursion visible during runs.
+**Status:** ✅ Done
 
-**Deliverables**
-- `repo_rlm_status` adds depth histogram + active branch preview
-- optional lightweight progress updates from tool execution
+`repo_rlm_status` now includes:
+- depth histogram
+- active branch preview
+- bounded textual summary for quick operator visibility
 
-**Acceptance Criteria**
-- operator can see recursion growth and active work at a glance
-- status output remains bounded and readable
+`repo_rlm_export` includes these derived fields in json/markdown outputs.
 
 ---
 
 ## P2-07: Tests
 
-**Goal**
-Establish confidence in recursive behavior.
+**Status:** ⏳ Pending
 
-**Required tests**
-- split/leaf policy boundaries
-- scheduler progression
-- resume from interrupted run
-- parent aggregation under partial failures
+Planned tests:
+- split/leaf boundary policy tests
+- scheduler progression tests
+- resume consistency tests
+- parent aggregation partial-failure tests
 
-**Acceptance Criteria**
-- deterministic fixture-based tests for recursion tree shape
-- no data loss across restart/resume
+---
+
+## Remaining Work Before Phase 3
+
+1. Add deterministic fixture tests for scheduler/policy/aggregation.
+2. Replace heuristic leaf adapter with objective-driven worker calls where needed.
+3. Add optional lightweight progress streaming updates from tool execution.
 
 ---
 
