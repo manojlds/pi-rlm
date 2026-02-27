@@ -10,8 +10,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "test": "python3 tests/test-repl-standalone.py && python3 tests/test-repo-rlm-core.py",
     "test:integration": "./tests/run-tests.sh",
-    "test:fixtures": "npx tsx tests/generate-fixtures.ts",
-    "copy": "mkdir -p .pi/extensions/rlm && cp src/*.ts .pi/extensions/rlm/"
+    "test:fixtures": "npx tsx tests/generate-fixtures.ts"
   },
   "pi": {
     "extensions": ["./src/index.ts"]

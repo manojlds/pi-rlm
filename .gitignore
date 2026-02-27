@@ -3,3 +3,9 @@ dist/
 /tmp/
 *.log
 tests/fixtures/
+
+# Local pi runtime state
+.pi/rlm/
+
+# Generated local agent output
+rlm-result.md
