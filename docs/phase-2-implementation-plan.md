@@ -1,9 +1,9 @@
 # Phase 2 Implementation Plan (RLM-First)
 
-Status: **Partially Completed**  
+Status: **Completed (Scaffold)**  
 Updated on: 2026-02-27
 
-This phase wires the recursive engine on top of Phase 1 lifecycle scaffolding.
+This phase wired the recursive engine on top of Phase 1 lifecycle scaffolding.
 
 ---
 
@@ -15,7 +15,7 @@ This phase wires the recursive engine on top of Phase 1 lifecycle scaffolding.
 - ✅ P2-04 Leaf worker adapter (heuristic)
 - ✅ P2-05 Minimal parent aggregation
 - ✅ P2-06 Status enhancements
-- ⏳ P2-07 Tests (pending)
+- ✅ P2-07 Deterministic core tests
 
 ---
 
@@ -23,12 +23,12 @@ This phase wires the recursive engine on top of Phase 1 lifecycle scaffolding.
 
 **Status:** ✅ Done
 
-Implemented in `src/repo-rlm.ts`:
+Implemented in `src/repo-rlm-core.ts`:
 - bounded scheduler execution via `executeStep()` and `runUntil()`
 - queue selection for `bfs` and `dfs` modes
 - node lifecycle transitions and queue events
 
-Tool surface added:
+Tool surface in `src/repo-rlm.ts`:
 - `repo_rlm_step`
 - `repo_rlm_run`
 
@@ -46,7 +46,7 @@ Decision logic includes explicit reasons:
 - `scope_too_large`
 - `scope_small_enough`
 
-Decision reason is stored on node updates (`decision_reason`).
+Decision reason is persisted on node updates (`decision_reason`).
 
 ---
 
@@ -90,7 +90,7 @@ Implemented behavior:
 
 **Status:** ✅ Done
 
-`repo_rlm_status` now includes:
+`repo_rlm_status` includes:
 - depth histogram
 - active branch preview
 - bounded textual summary for quick operator visibility
@@ -99,23 +99,30 @@ Implemented behavior:
 
 ---
 
-## P2-07: Tests
+## P2-07: Deterministic Core Tests
 
-**Status:** ⏳ Pending
+**Status:** ✅ Done
 
-Planned tests:
-- split/leaf boundary policy tests
-- scheduler progression tests
-- resume consistency tests
-- parent aggregation partial-failure tests
+Added:
+- `tests/test-repo-rlm-core.py`
+
+Coverage includes:
+- leaf completion path
+- split and root aggregation path
+- cancel/resume/requeue path
+- review findings with evidence pointers
+- export contract checks (json + markdown, depth histogram)
+
+`npm test` now runs:
+- `tests/test-repl-standalone.py`
+- `tests/test-repo-rlm-core.py`
 
 ---
 
-## Remaining Work Before Phase 3
+## Notes
 
-1. Add deterministic fixture tests for scheduler/policy/aggregation.
-2. Replace heuristic leaf adapter with objective-driven worker calls where needed.
-3. Add optional lightweight progress streaming updates from tool execution.
+Phase 2 is complete as a recursive scaffold.
+The leaf worker remains heuristic and bounded; Phase 3 should focus on richer objective-driven synthesis (wiki/review quality upgrades).
 
 ---
 
