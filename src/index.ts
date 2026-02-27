@@ -9,7 +9,7 @@ export default function (pi: ExtensionAPI) {
     label: "RLM",
     description: `Recursive Language Model — process large contexts that exceed effective LLM limits.
 Instead of feeding a huge context directly into the prompt (which causes "context rot"),
-RLM gives you a sandboxed Python REPL where you explore the context programmatically.
+RLM gives you an isolated Python REPL session where you explore the context programmatically.
 
 How it works:
 1. The context is loaded into a Python variable in a REPL environment
@@ -41,7 +41,7 @@ The context parameter accepts a string (text) or a file path to read from.`,
       query: Type.String({ description: "The question or task to answer about the context" }),
       context: Type.String({ description: "The large context to analyze — either raw text or a file path (prefix with 'file:' to read from disk, e.g. 'file:/path/to/data.txt')" }),
       max_iterations: Type.Optional(Type.Number({ description: "Maximum REPL iterations (default: 15)", minimum: 1, maximum: 50 })),
-      max_llm_calls: Type.Optional(Type.Number({ description: "Maximum sub-LLM calls (default: 30)", minimum: 1, maximum: 100 })),
+      max_llm_calls: Type.Optional(Type.Number({ description: "Maximum sub-LLM calls (default: 50)", minimum: 1, maximum: 100 })),
       max_depth: Type.Optional(Type.Number({ description: "Maximum recursion depth for rlm_query (default: 1)", minimum: 1, maximum: 5 })),
     }),
 
@@ -74,7 +74,7 @@ The context parameter accepts a string (text) or a file path to read from.`,
 
       const config: RLMConfig = {
         maxIterations: max_iterations ?? 15,
-        maxLLMCalls: max_llm_calls ?? 30,
+        maxLLMCalls: max_llm_calls ?? 50,
         maxOutputChars: 20_000,
         maxDepth: max_depth ?? 1,
         maxErrors: 5,
@@ -87,6 +87,7 @@ The context parameter accepts a string (text) or a file path to read from.`,
       
       engine.onSubCallStart = (call: RLMSubCall) => {
         const icon = call.type === "rlm_query" ? "🔁" : "⚡";
+        process.stderr.write(`  ${icon} ${call.type} started: "${call.prompt.slice(0, 60)}…"\n`);
         const status = `${icon} ${call.type.toUpperCase()} started: "${call.prompt.slice(0, 40)}..."`;
         if (status !== lastStatus) {
           lastStatus = status;
@@ -112,6 +113,8 @@ The context parameter accepts a string (text) or a file path to read from.`,
       engine.onSubCallComplete = (call: RLMSubCall) => {
         const icon = call.type === "rlm_query" ? "🔁" : "⚡";
         const check = call.status === "completed" ? "✅" : "❌";
+        const resultPreview = call.result?.slice(0, 80) || call.error?.slice(0, 80) || "";
+        process.stderr.write(`  ${check} ${icon} ${call.type} done (${call.duration}ms): ${resultPreview}\n`);
         const status = `${check} ${icon} ${call.type} completed (${call.duration}ms): "${call.prompt.slice(0, 40)}..."`;
         if (status !== lastStatus) {
           lastStatus = status;
@@ -134,6 +137,7 @@ The context parameter accepts a string (text) or a file path to read from.`,
       
       engine.onIterationStart = (depth, iteration) => {
         const status = `📍 Iteration ${iteration} (depth ${depth})`;
+        process.stderr.write(`\n${status}\n`);
         if (status !== lastStatus) {
           lastStatus = status;
           const callTree = engine.getCallTree();
@@ -157,6 +161,22 @@ The context parameter accepts a string (text) or a file path to read from.`,
         const callTree = engine.getCallTree();
         const liveStatus = formatLiveStatus(callTree);
         const viz = formatCallTreeVisualization(callTree);
+
+        // Write trajectory step to stderr for visibility in -p mode
+        const trajectory = engine.getTrajectory();
+        const step = trajectory[trajectory.length - 1];
+        if (step) {
+          const depthTag = step.depth > 0 ? ` [depth ${step.depth}]` : "";
+          let stderrOut = `✅ Iteration ${step.iteration}${depthTag} (${duration}ms)\n`;
+          if (step.reasoning) stderrOut += `  Reasoning: ${step.reasoning.slice(0, 200)}\n`;
+          stderrOut += `  Code:\n${step.code.split("\n").map(l => "    " + l).join("\n")}\n`;
+          if (step.output) {
+            const out = step.output.length > 500 ? step.output.slice(0, 500) + "…" : step.output;
+            stderrOut += `  Output: ${out}\n`;
+          }
+          process.stderr.write(stderrOut);
+        }
+
         if (liveStatus !== lastStatus) {
           lastStatus = liveStatus;
           onUpdate?.({
@@ -206,6 +226,8 @@ The context parameter accepts a string (text) or a file path to read from.`,
         
         // Generate final visualization
         const visualization = formatCallTreeVisualization(callTree);
+
+        process.stderr.write(`\n═══ RLM Complete (${trajectory.length} iterations, ${callTree.totalLLMCalls} llm_query, ${callTree.totalRLMCalls} rlm_query, depth ${callTree.maxDepth}) ═══\n`);
         
         return {
           content: [{ type: "text", text: result }],
@@ -326,3 +348,4 @@ function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
 }
+

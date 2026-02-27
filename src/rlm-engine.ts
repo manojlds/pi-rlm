@@ -77,6 +77,11 @@ interface REPLResult {
   showVars?: Record<string, unknown>;
 }
 
+interface SharedRLMState {
+  llmCalls: number;
+  rlmCalls: number;
+}
+
 const RLM_SYSTEM_PROMPT = `You are an RLM (Recursive Language Model). You have a Python REPL environment with a \`context\` variable loaded. Your job is to answer the user's query about this context.
 
 ## Available Functions:
@@ -85,6 +90,7 @@ const RLM_SYSTEM_PROMPT = `You are an RLM (Recursive Language Model). You have a
 - \`llm_query_batched(prompts, model=None)\` — concurrent sub-LLM calls, returns List[str]
 - \`rlm_query(prompt, model=None)\` — spawn a recursive child RLM with its own REPL
 - \`rlm_query_batched(prompts, model=None)\` — concurrent child RLMs
+- \`strip_fences(text)\` — remove markdown code fences from llm_query output (use before json.loads)
 - \`SHOW_VARS()\` — list all variables in your REPL namespace
 - \`FINAL(answer)\` — provide your final answer (as a string)
 - \`FINAL_VAR(variable_name)\` — return a REPL variable as the final answer. The variable MUST exist from a previous \\\`\\\`\\\`repl block.
@@ -100,11 +106,18 @@ result = llm_query(f"Summarize: {chunk}")
 print(result)
 \\\`\\\`\\\`
 
+## When to use Python vs llm_query():
+- **Use Python alone** for computation, parsing, grep, filtering, math, decoding
+- **Use llm_query()** when you need SEMANTIC understanding: summarizing text, identifying themes, classifying content, extracting meaning, comparing ideas
+- **Use llm_query_batched()** to analyze multiple text chunks in parallel
+
 ## Strategy for Large Contexts:
 1. First, check the context size: \`print(len(context))\`
-2. Split into manageable chunks (3-10 chunks depending on size)
-3. Use \`llm_query_batched()\` for parallel analysis of chunks
-4. Aggregate results and call \`FINAL(answer)\`
+2. If the task requires semantic understanding (summarization, theme extraction, classification):
+   a. Split context into meaningful chunks (by section, document, or fixed size)
+   b. Use \`llm_query_batched()\` to analyze each chunk
+   c. Aggregate results and call \`FINAL(answer)\`
+3. If the task is computational (math, parsing, pattern matching): use Python directly
 
 ## Important:
 - Do NOT pass the entire context to a single llm_query() call — it may exceed limits
@@ -322,11 +335,23 @@ def rlm_query_batched(prompts, model=None):
         results = list(executor.map(single_query, prompts))
     return results
 
+# Utility: strip markdown fences from LLM output (common need when parsing JSON)
+def strip_fences(text):
+    """Remove markdown code fences from LLM output. Useful when parsing JSON from llm_query results."""
+    import re as _re
+    t = text.strip()
+    fence = chr(96) * 3  # three backticks
+    pattern = fence + '(?:\\\\w+)?\\\\s*\\\\n([\\\\s\\\\S]*?)\\\\n?\\\\s*' + fence + '\\\\s*$'
+    m = _re.match(pattern, t, _re.S)
+    if m:
+        return m.group(1).strip()
+    return t
+
 # Show all variables
 def SHOW_VARS():
     """Return all user-created variables in the REPL."""
     user_vars = {k: v for k, v in _namespace.items() 
-                 if not k.startswith('_') and k not in ['context', 'llm_query', 'llm_query_batched', 'rlm_query', 'rlm_query_batched', 'SHOW_VARS', 'FINAL', 'FINAL_VAR', 'SUBMIT', 'print', '__builtins__']}
+                 if not k.startswith('_') and k not in ['context', 'llm_query', 'llm_query_batched', 'rlm_query', 'rlm_query_batched', 'SHOW_VARS', 'FINAL', 'FINAL_VAR', 'SUBMIT', 'strip_fences', 'print', '__builtins__']}
     return user_vars
 
 # FINAL answer markers
@@ -361,6 +386,7 @@ _namespace = {
     'FINAL': FINAL,
     'FINAL_VAR': FINAL_VAR,
     'SUBMIT': SUBMIT,
+    'strip_fences': strip_fences,
     '__builtins__': __builtins__,
 }
 
@@ -395,6 +421,7 @@ while True:
         _namespace['FINAL'] = FINAL
         _namespace['FINAL_VAR'] = FINAL_VAR
         _namespace['SUBMIT'] = SUBMIT
+        _namespace['strip_fences'] = strip_fences
 
         old_stdout = sys.stdout
         old_stderr = sys.stderr
@@ -419,6 +446,7 @@ while True:
         _namespace['FINAL'] = FINAL
         _namespace['FINAL_VAR'] = FINAL_VAR
         _namespace['SUBMIT'] = SUBMIT
+        _namespace['strip_fences'] = strip_fences
 
         sys.stdout = old_stdout
         sys.stderr = old_stderr
@@ -464,12 +492,12 @@ export class RLMEngine {
   private ctx: ExtensionContext;
   private trajectory: RLMTrajectoryStep[] = [];
   private tempDir: string;
-  private llmCallCount = 0;
-  private rlmCallCount = 0;
   private consecutiveErrors = 0;
   private currentDepth: number = 0;
   private callTree: RLMCallTree;
   private sessionId: string;
+  private sharedState: SharedRLMState;
+  private forcedModelId?: string;
   
   // Visualization callbacks
   public onSubCallStart?: SubCallStartCallback;
@@ -477,7 +505,15 @@ export class RLMEngine {
   public onIterationStart?: IterationStartCallback;
   public onIterationComplete?: IterationCompleteCallback;
 
-  constructor(config: RLMConfig, pi: ExtensionAPI, ctx: ExtensionContext, depth: number = 0, parentTree?: RLMCallTree) {
+  constructor(
+    config: RLMConfig,
+    pi: ExtensionAPI,
+    ctx: ExtensionContext,
+    depth: number = 0,
+    parentTree?: RLMCallTree,
+    sharedState?: SharedRLMState,
+    forcedModelId?: string,
+  ) {
     this.config = config;
     this.pi = pi;
     this.ctx = ctx;
@@ -499,6 +535,9 @@ export class RLMEngine {
         completedCalls: [],
       };
     }
+
+    this.sharedState = sharedState ?? { llmCalls: 0, rlmCalls: 0 };
+    this.forcedModelId = forcedModelId;
   }
 
   getTrajectory(): RLMTrajectoryStep[] {
@@ -513,11 +552,19 @@ export class RLMEngine {
     return this.sessionId;
   }
 
+  private recordStep(step: RLMTrajectoryStep) {
+    this.trajectory.push(step);
+    this.callTree.iterations.push(step);
+    this.callTree.maxDepth = Math.max(this.callTree.maxDepth, step.depth);
+  }
+
   async run(query: string, context: string, signal?: AbortSignal): Promise<string> {
     let server: Server | null = null;
     let repl: PersistentREPL | null = null;
 
-    this.callTree.rootQuery = query;
+    if (this.currentDepth === 0 || !this.callTree.rootQuery) {
+      this.callTree.rootQuery = query;
+    }
 
     const debugLog = (msg: string) => {
       try { writeFileSync(`/tmp/rlm-${this.sessionId}.log`, msg + "\n", { flag: "a" }); } catch {}
@@ -538,7 +585,17 @@ export class RLMEngine {
             let body = "";
             req.on("data", (chunk: Buffer) => { body += chunk.toString(); });
             req.on("end", async () => {
-              const { prompt, model } = JSON.parse(body);
+              let payload: any;
+              try {
+                payload = JSON.parse(body || "{}");
+              } catch {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Invalid JSON body" }));
+                return;
+              }
+
+              const prompt = String(payload.prompt ?? "");
+              const model = typeof payload.model === "string" ? payload.model : undefined;
               const startTime = Date.now();
               
               // Track this call for live visualization
@@ -560,9 +617,6 @@ export class RLMEngine {
               try {
                 const answer = await this.callSubLLM(prompt, model, signal);
                 const duration = Date.now() - startTime;
-                
-                this.llmCallCount++;
-                this.callTree.totalLLMCalls++;
                 
                 // Update call status
                 call.status = "completed";
@@ -594,7 +648,17 @@ export class RLMEngine {
             let body = "";
             req.on("data", (chunk: Buffer) => { body += chunk.toString(); });
             req.on("end", async () => {
-              const { prompt, model } = JSON.parse(body);
+              let payload: any;
+              try {
+                payload = JSON.parse(body || "{}");
+              } catch {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Invalid JSON body" }));
+                return;
+              }
+
+              const prompt = String(payload.prompt ?? "");
+              const model = typeof payload.model === "string" ? payload.model : undefined;
               const startTime = Date.now();
               
               // Track this call for live visualization
@@ -609,6 +673,8 @@ export class RLMEngine {
                 duration: 0,
               };
               this.callTree.activeCalls.push(call);
+              this.sharedState.rlmCalls++;
+              this.callTree.totalRLMCalls = this.sharedState.rlmCalls;
               
               // Fire visualization callback
               this.onSubCallStart?.(call);
@@ -617,9 +683,6 @@ export class RLMEngine {
                 // Spawn a child RLM with its own REPL
                 const answer = await this.spawnChildRLM(prompt, context, model, signal);
                 const duration = Date.now() - startTime;
-                
-                this.rlmCallCount++;
-                this.callTree.totalRLMCalls++;
                 
                 // Update call status
                 call.status = "completed";
@@ -707,7 +770,7 @@ export class RLMEngine {
         debugLog(`[ITER ${iteration}] Code generated (${code.length} chars): ${code.slice(0, 200)}...`);
 
         if (!code) {
-          this.trajectory.push({
+          this.recordStep({
             iteration,
             depth: this.currentDepth,
             reasoning: reasoning || llmResponse,
@@ -727,7 +790,7 @@ export class RLMEngine {
           this.onIterationComplete?.(this.currentDepth, iteration, iterDuration);
           
           const output = `FINAL: ${finalAnswer}`;
-          this.trajectory.push({
+          this.recordStep({
             iteration,
             depth: this.currentDepth,
             reasoning,
@@ -735,15 +798,11 @@ export class RLMEngine {
             output,
           });
           
-          // Update call tree
-          this.callTree.iterations = [...this.trajectory];
-          this.callTree.maxDepth = Math.max(this.callTree.maxDepth, this.currentDepth);
-          
           return finalAnswer;
         }
 
         const output = this.formatOutput(result);
-        this.trajectory.push({ iteration, depth: this.currentDepth, reasoning, code, output });
+        this.recordStep({ iteration, depth: this.currentDepth, reasoning, code, output });
 
         // Track consecutive errors
         if (result.error) {
@@ -757,9 +816,6 @@ export class RLMEngine {
         
         const iterDuration = Date.now() - iterStartTime;
         this.onIterationComplete?.(this.currentDepth, iteration, iterDuration);
-        
-        // Update call tree
-        this.callTree.iterations = [...this.trajectory];
       }
 
       // Max iterations reached — extract best-effort answer
@@ -784,7 +840,15 @@ export class RLMEngine {
       ...this.config,
     };
 
-    const childEngine = new RLMEngine(childConfig, this.pi, this.ctx, this.currentDepth + 1, this.callTree);
+    const childEngine = new RLMEngine(
+      childConfig,
+      this.pi,
+      this.ctx,
+      this.currentDepth + 1,
+      this.callTree,
+      this.sharedState,
+      model,
+    );
     
     // Propagate callbacks
     childEngine.onSubCallStart = this.onSubCallStart;
@@ -796,11 +860,32 @@ export class RLMEngine {
     return childEngine.run(prompt, context, signal);
   }
 
+  private async resolveModel(modelId?: string): Promise<any> {
+    if (!modelId) return this.ctx.model;
+
+    const registryAny = this.ctx.modelRegistry as any;
+    let resolved =
+      registryAny?.getModelById?.(modelId) ??
+      registryAny?.getModel?.(modelId) ??
+      registryAny?.models?.find?.((m: any) => m?.id === modelId);
+
+    if (resolved && typeof resolved.then === "function") {
+      resolved = await resolved;
+    }
+
+    return resolved ?? this.ctx.model;
+  }
+
   /**
    * Call the LLM using pi's complete() function.
    */
-  private async callLLM(prompt: string, systemPrompt?: string, signal?: AbortSignal): Promise<string> {
-    const model = this.ctx.model;
+  private async callLLM(
+    prompt: string,
+    systemPrompt?: string,
+    signal?: AbortSignal,
+    modelOverrideId?: string,
+  ): Promise<string> {
+    const model = await this.resolveModel(modelOverrideId ?? this.forcedModelId);
     if (!model) throw new Error("No model configured");
 
     const apiKey = await this.ctx.modelRegistry.getApiKey(model);
@@ -850,15 +935,26 @@ export class RLMEngine {
    * Optionally uses a specific model if provided.
    */
   private async callSubLLM(prompt: string, modelId?: string, signal?: AbortSignal): Promise<string> {
-    if (this.llmCallCount >= this.config.maxLLMCalls) {
+    if (this.sharedState.llmCalls >= this.config.maxLLMCalls) {
       throw new Error(`Sub-LLM call limit reached (${this.config.maxLLMCalls})`);
     }
-    return this.callLLM(prompt, undefined, signal);
+
+    this.sharedState.llmCalls++;
+    this.callTree.totalLLMCalls = this.sharedState.llmCalls;
+
+    return this.callLLM(prompt, undefined, signal, modelId);
   }
 
   private parseResponse(response: string): { reasoning: string; code: string } {
     // Extract ALL code blocks - various formats
     const codeBlocks: string[] = [];
+    const decodePrompt = (value: string) =>
+      value
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&amp;/g, "&")
+        .trim();
     
     // Try ```repl ... ``` blocks first (official format)
     let regex = /```repl\s*\n([\s\S]*?)```/g;
@@ -917,9 +1013,8 @@ export class RLMEngine {
     regex = /<llm_query>\s*<param name="prompt">([\s\S]*?)<\/param>\s*<\/llm_query>/g;
     while ((match = regex.exec(response)) !== null) {
       if (firstMatchIndex === -1) firstMatchIndex = match.index;
-      let prompt = match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
-      prompt = prompt.slice(0, 100) + (prompt.length > 100 ? "..." : "");
-      codeBlocks.push(`result = llm_query("${prompt}")`);
+      const prompt = decodePrompt(match[1]);
+      codeBlocks.push(`result = llm_query(${JSON.stringify(prompt)})`);
     }
 
     // Try <llm_query_batched>...</llm_query_batched> tags (standalone)
@@ -933,9 +1028,8 @@ export class RLMEngine {
     regex = /<invoke name="llm_query">\s*([\s\S]*?)\s*<\/invoke>/g;
     while ((match = regex.exec(response)) !== null) {
       if (firstMatchIndex === -1) firstMatchIndex = match.index;
-      let prompt = match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
-      prompt = prompt.slice(0, 100) + (prompt.length > 100 ? "..." : "");
-      codeBlocks.push(`result = llm_query("${prompt}")`);
+      const prompt = decodePrompt(match[1]);
+      codeBlocks.push(`result = llm_query(${JSON.stringify(prompt)})`);
     }
 
     // Try <invoke name="llm_query_batched"> format
@@ -951,11 +1045,10 @@ export class RLMEngine {
       if (firstMatchIndex === -1) firstMatchIndex = match.index;
       const content = match[1];
       // Extract prompt param
-      const promptMatch = content.match(/<param name="prompt">([\s\S]*?)</);
+      const promptMatch = content.match(/<param name="prompt">([\s\S]*?)<\/param>/);
       if (promptMatch) {
-        let prompt = promptMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-        prompt = prompt.slice(0, 100) + (prompt.length > 100 ? "..." : "");
-        codeBlocks.push(`result = llm_query("${prompt}")`);
+        const prompt = decodePrompt(promptMatch[1]);
+        codeBlocks.push(`result = llm_query(${JSON.stringify(prompt)})`);
       }
     }
 
@@ -1068,7 +1161,6 @@ export function formatCallTreeVisualization(tree: RLMCallTree): string {
       if (!steps || steps.length === 0) continue;
       
       const depthIndent = "  ".repeat(d);
-      const pipe = d < maxDepth ? "│  " : "   ";
       
       output += `${depthIndent}┌── Depth ${d} (${steps.length} iters)\n`;
       
@@ -1105,7 +1197,6 @@ export function formatCallTreeVisualization(tree: RLMCallTree): string {
  */
 export function formatLiveStatus(tree: RLMCallTree): string {
   const active = tree.activeCalls?.length || 0;
-  const completed = tree.completedCalls?.length || 0;
   const iters = tree.iterations.length;
   
   // Build active calls string

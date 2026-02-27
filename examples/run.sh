@@ -135,6 +135,33 @@ List each difference with the path, old value, and new value.
 Context: file:${EXAMPLES_DIR}/configs.txt"
 }
 
+run_papers() {
+  echo -e "${CYAN}╔══════════════════════════════════════════════════════════════╗${NC}"
+  echo -e "${CYAN}║  Example: Research Papers Analysis (semantic, uses llm_query)║${NC}"
+  echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+  echo ""
+  echo -e "${DIM}15 research paper abstracts across 5 topics, with peer review${NC}"
+  echo -e "${DIM}discussion text (~150K chars total). The task requires SEMANTIC${NC}"
+  echo -e "${DIM}understanding — Python grep can't synthesize research themes.${NC}"
+  echo -e "${DIM}The RLM must chunk the corpus and use llm_query() to analyze${NC}"
+  echo -e "${DIM}each paper's contributions, then aggregate findings.${NC}"
+  echo ""
+  echo -e "${YELLOW}Query: Identify cross-cutting themes and novel techniques across papers.${NC}"
+  echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
+  echo ""
+
+  pi -e ./src/index.ts -p \
+    "Use the rlm tool to analyze this corpus of research papers. The corpus is too large to read at once, so you MUST:
+1. Split the corpus into individual papers
+2. Use llm_query() or llm_query_batched() to semantically analyze each paper's key contribution and technique
+3. Synthesize the results to find cross-cutting themes across all 5 topic areas
+4. Identify which papers introduce techniques that could be applied to other topic areas
+
+This task REQUIRES using llm_query() for semantic analysis — Python string matching alone cannot synthesize research themes.
+
+Context: file:${EXAMPLES_DIR}/papers.txt"
+}
+
 # ── Main ────────────────────────────────────────────────────────────────
 
 show_help() {
@@ -147,6 +174,7 @@ show_help() {
   echo -e "  ${GREEN}logs${NC}      — Investigate 5000-line server log (find error patterns)"
   echo -e "  ${GREEN}puzzle${NC}    — Decode a ROT13+Base64 cipher (requires code execution)"
   echo -e "  ${GREEN}configs${NC}   — Diff two large JSON configs (find 10 differences)"
+  echo -e "  ${GREEN}papers${NC}    — Analyze 15 research papers (uses llm_query sub-calls)"
   echo -e "  ${GREEN}all${NC}       — Run all examples sequentially"
   echo ""
   echo "Each example runs pi with the RLM extension and a task that"
@@ -158,6 +186,7 @@ case "${1:-}" in
   logs)     run_logs ;;
   puzzle)   run_puzzle ;;
   configs)  run_configs ;;
+  papers)   run_papers ;;
   all)
     run_sales
     echo -e "\n\n"
@@ -166,6 +195,8 @@ case "${1:-}" in
     run_puzzle
     echo -e "\n\n"
     run_configs
+    echo -e "\n\n"
+    run_papers
     ;;
   *)        show_help ;;
 esac

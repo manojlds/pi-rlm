@@ -40,7 +40,7 @@ pi -e /path/to/pi-rlm/src/index.ts
 
 ## Requirements
 
-- **Python 3** — for the sandboxed REPL environment
+- **Python 3** — for the isolated REPL environment (not a hardened security sandbox)
 - **pi** coding agent
 
 ## Quick Start
@@ -81,7 +81,8 @@ Context: file:/var/log/app.log
 | `query` | string | required | The question/task about the context |
 | `context` | string | required | Raw text or `file:/path` to read from disk |
 | `max_iterations` | number | 15 | Maximum REPL interaction loops |
-| `max_llm_calls` | number | 30 | Maximum sub-LLM calls budget |
+| `max_llm_calls` | number | 50 | Maximum sub-LLM calls budget (shared across recursive calls) |
+| `max_depth` | number | 1 | Maximum recursion depth for `rlm_query` |
 
 ### How it works inside
 
@@ -111,7 +112,7 @@ User: "Find the magic number in this 1M-line file"
 │  - Spawns Python REPL processes     │
 │  - Runs HTTP server for llm_query   │
 ├─────────────────────────────────────┤
-│  Python REPL (sandboxed)            │
+│  Python REPL (isolated session)     │
 │  - context variable loaded          │
 │  - llm_query() → HTTP → sub-LLM    │
 │  - SUBMIT() → signal completion     │

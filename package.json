@@ -5,7 +5,7 @@
   "scripts": {
     "check": "npm run typecheck",
     "check:full": "npm run lint && npm run typecheck",
-    "typecheck": "tsc --noEmit src/rlm-engine.ts src/index.ts 2>&1 | grep -v 'Cannot find module'",
+    "typecheck": "bash -lc 'out=$(tsc --noEmit src/rlm-engine.ts src/index.ts 2>&1 || true); filtered=$(echo \"$out\" | grep -v \"Cannot find module\" || true); if [ -n \"$filtered\" ]; then echo \"$filtered\"; exit 1; fi'",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "test": "python3 tests/test-repl-standalone.py",
@@ -21,19 +21,5 @@
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
     "typescript": "^5.0.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-    "parserOptions": {
-      "ecmaVersion": 2022,
-      "sourceType": "module"
-    },
-    "env": {
-      "node": true,
-      "es2022": true
-    }
   }
 }

@@ -1,0 +1,1434 @@
+
+================================================================================
+TOPIC AREA: DISTRIBUTED SYSTEMS
+================================================================================
+
+--- Paper 1: [distributed systems] ---
+Title: Research Paper #1
+Authors: Chen et al.
+Published: 2024-08
+
+Abstract:
+We present a novel consensus protocol for geo-distributed databases that achieves sub-100ms commit latencies while maintaining strict serializability. Our approach, called FastPaxos-GD, extends Multi-Paxos with speculative execution and regional quorum optimizations. In a 5-region deployment across AWS, we measured 67ms median commit latency (p99: 142ms), a 3.2x improvement over standard Multi-Paxos. The key insight is that most transactions access data within a single region, allowing us to use fast-path local commits for 87% of operations. Cross-region transactions use a two-phase protocol with pipelined prepare messages. We prove that our protocol maintains linearizability under all network partition scenarios. Evaluation on TPC-C shows 45,000 transactions/second with 5 replicas, compared to 14,000 for CockroachDB and 28,000 for Spanner-like systems.
+
+Review Scores: 3.9, 3.7, 3.5 (avg: 3.7)
+
+Peer Review Discussion:
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 8, line 17. Also, reference [14] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] Minor: typo on page 2, line 42. Also, reference [32] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer C] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer A] Performance claim of 3.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 38% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Minor: typo on page 1, line 33. Also, reference [3] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 6, line 10. Also, reference [29] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 11, line 6. Also, reference [32] has wrong venue name.
+  [Reviewer B] Performance claim of 2.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer C] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer A] Minor: typo on page 7, line 22. Also, reference [24] has wrong venue name.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer B] Performance claim of 5.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 9, line 45. Also, reference [6] has wrong venue name.
+  [Reviewer A] Minor: typo on page 6, line 8. Also, reference [22] has wrong venue name.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Performance claim of 3.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] Performance claim of 10.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 5, line 33. Also, reference [18] has wrong venue name.
+  [Reviewer A] Performance claim of 9.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 70% of claimed experiments.
+  [Reviewer C] Minor: typo on page 10, line 4. Also, reference [33] has wrong venue name.
+  [Reviewer B] Performance claim of 8.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 6, line 2. Also, reference [25] has wrong venue name.
+  [Reviewer B] Minor: typo on page 2, line 43. Also, reference [28] has wrong venue name.
+  [Reviewer A] Performance claim of 6.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] Minor: typo on page 7, line 14. Also, reference [9] has wrong venue name.
+  [Reviewer C] Minor: typo on page 12, line 24. Also, reference [14] has wrong venue name.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 62% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 72% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+
+--- End Paper 1 ---
+
+--- Paper 2: [distributed systems] ---
+Title: Research Paper #2
+Authors: Chen et al.
+Published: 2024-01
+
+Abstract:
+This paper addresses the challenge of live migration for stateful stream processing operators across edge computing nodes. Current approaches require pausing the operator during state transfer, causing latency spikes of 500ms-2s. We propose StreamMove, a technique that uses dual-write logging and incremental state synchronization to achieve zero-downtime migration. During migration, both source and destination nodes process incoming events, with a reconciliation protocol ensuring exactly-once semantics. Our evaluation on Apache Flink shows migration times of 200ms-1.5s depending on state size (1MB-1GB), with zero observable latency impact on downstream operators. We demonstrate the system handling 500K events/second during migration without data loss. The approach is applicable to any operator with checkpoint-serializable state.
+
+Review Scores: 3.0, 4.8, 4.9 (avg: 4.2)
+
+Peer Review Discussion:
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer C] Minor: typo on page 10, line 28. Also, reference [35] has wrong venue name.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Performance claim of 5.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Performance claim of 5.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Performance claim of 5.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer C] Performance claim of 3.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 6, line 18. Also, reference [11] has wrong venue name.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Performance claim of 2.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 4 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 9, line 47. Also, reference [29] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 38% of claimed experiments.
+  [Reviewer B] Performance claim of 2.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 73% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 45% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 23% of claimed experiments.
+  [Reviewer B] Performance claim of 3.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 9, line 36. Also, reference [31] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Performance claim of 2.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 44% of claimed experiments.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] Minor: typo on page 11, line 15. Also, reference [27] has wrong venue name.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 59% of claimed experiments.
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 12, line 44. Also, reference [2] has wrong venue name.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 35% of claimed experiments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] Performance claim of 2.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 25% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] Minor: typo on page 1, line 37. Also, reference [37] has wrong venue name.
+  [Reviewer A] Performance claim of 4.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] Performance claim of 9.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 12, line 25. Also, reference [37] has wrong venue name.
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer A] Performance claim of 5.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer C] Minor: typo on page 4, line 24. Also, reference [9] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer A] Minor: typo on page 1, line 21. Also, reference [11] has wrong venue name.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+
+--- End Paper 2 ---
+
+--- Paper 3: [distributed systems] ---
+Title: Research Paper #3
+Authors: Kim et al.
+Published: 2024-09
+
+Abstract:
+We study the problem of resource allocation in heterogeneous computing clusters where nodes have varying CPU, memory, and GPU capabilities. Traditional bin-packing schedulers like Kubernetes' default scheduler achieve only 62% average utilization. We introduce HeteroSched, a reinforcement learning-based scheduler that learns placement policies from historical workload patterns. HeteroSched uses a graph neural network to encode cluster topology and workload dependencies, producing placement decisions in under 5ms. On a 200-node cluster running mixed ML training and web serving workloads, HeteroSched achieves 84% average utilization (vs 62% default, 71% Volcano scheduler). It also reduces job completion time by 28% for ML training workloads by learning GPU affinity patterns. The model is trained online with a replay buffer, adapting to changing workload mixes within 2 hours.
+
+Review Scores: 5.0, 3.4, 3.6 (avg: 4.0)
+
+Peer Review Discussion:
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 66% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] Performance claim of 2.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 30% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 55% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 67% of claimed experiments.
+  [Reviewer B] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 4 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] Performance claim of 6.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 6, line 50. Also, reference [40] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 53% of claimed experiments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Performance claim of 6.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 3 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 7, line 20. Also, reference [9] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer C] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer C] Performance claim of 10.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 25% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 31% of claimed experiments.
+  [Reviewer C] Performance claim of 5.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 4, line 27. Also, reference [34] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer C] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] Figure 5 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer C] Performance claim of 1.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Performance claim of 9.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 36% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 22% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer A] Minor: typo on page 4, line 5. Also, reference [37] has wrong venue name.
+  [Reviewer C] Performance claim of 8.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Performance claim of 6.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 2.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Performance claim of 6.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 2, line 42. Also, reference [36] has wrong venue name.
+  [Reviewer A] Minor: typo on page 12, line 13. Also, reference [31] has wrong venue name.
+  [Reviewer B] Minor: typo on page 6, line 43. Also, reference [39] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+
+--- End Paper 3 ---
+
+
+================================================================================
+TOPIC AREA: MACHINE LEARNING
+================================================================================
+
+--- Paper 4: [machine learning] ---
+Title: Research Paper #4
+Authors: Garcia et al.
+Published: 2024-02
+
+Abstract:
+We propose Sparse Mixture-of-Experts Attention (SMoE-Attn), an architecture that replaces dense self-attention with a learned routing mechanism directing each token to a subset of specialized attention heads. Unlike standard MoE applied to FFN layers, our approach applies mixture-of-experts to the attention computation itself. Each expert head specializes in different attention patterns: local, global, positional, and semantic. On language modeling benchmarks, a 7B parameter SMoE-Attn model matches the performance of a 13B dense transformer while using 40% fewer FLOPs at inference. The routing overhead is negligible (0.3% additional compute) since the router is a simple linear projection. We observe emergent specialization: head clusters automatically learn syntactic (nearby tokens), semantic (related concepts), and positional (fixed-distance) attention patterns without explicit supervision.
+
+Review Scores: 4.0, 4.2, 4.1 (avg: 4.1)
+
+Peer Review Discussion:
+  [Reviewer C] Minor: typo on page 8, line 42. Also, reference [8] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 20% of claimed experiments.
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] Performance claim of 1.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 6.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Performance claim of 7.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 37% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer C] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 46% of claimed experiments.
+  [Reviewer C] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] Minor: typo on page 10, line 10. Also, reference [7] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Minor: typo on page 9, line 34. Also, reference [15] has wrong venue name.
+  [Reviewer C] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] Performance claim of 6.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] Performance claim of 7.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 72% of claimed experiments.
+  [Reviewer B] Figure 2 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer A] Performance claim of 1.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 26% of claimed experiments.
+  [Reviewer A] Performance claim of 7.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 8, line 36. Also, reference [29] has wrong venue name.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 23% of claimed experiments.
+  [Reviewer A] Minor: typo on page 8, line 27. Also, reference [5] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer B] Figure 5 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Performance claim of 3.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Performance claim of 2.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 44% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 12, line 11. Also, reference [40] has wrong venue name.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 10 runs.
+
+--- End Paper 4 ---
+
+--- Paper 5: [machine learning] ---
+Title: Research Paper #5
+Authors: Smith et al.
+Published: 2024-06
+
+Abstract:
+Fine-tuning large language models on domain-specific data often causes catastrophic forgetting of general capabilities. We introduce Elastic Weight Consolidation for LLMs (EWC-LLM), adapting the classic EWC approach to transformer architectures. Our key contribution is an efficient Fisher Information Matrix approximation that requires only 2% additional memory overhead, compared to the full diagonal Fisher which requires storing one scalar per parameter. We evaluate on medical, legal, and code domains: after fine-tuning on 50K domain-specific examples, models retain 94% of original general benchmark performance (vs 71% with standard fine-tuning, 89% with LoRA). The approach is complementary to LoRA and when combined (EWC-LoRA), achieves 97% retention while matching full fine-tuning domain performance. Training overhead is 15% wall-clock time increase.
+
+Review Scores: 5.0, 4.6, 4.0 (avg: 4.5)
+
+Peer Review Discussion:
+  [Reviewer A] Performance claim of 3.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 72% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 68% of claimed experiments.
+  [Reviewer A] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 44% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 50% of claimed experiments.
+  [Reviewer A] Performance claim of 2.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 2 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Performance claim of 9.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Performance claim of 2.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] Performance claim of 4.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 6, line 44. Also, reference [31] has wrong venue name.
+  [Reviewer C] Minor: typo on page 10, line 21. Also, reference [18] has wrong venue name.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer A] Figure 3 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] Minor: typo on page 12, line 32. Also, reference [1] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 9, line 27. Also, reference [35] has wrong venue name.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 24% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Performance claim of 6.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 58% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 52% of claimed experiments.
+  [Reviewer A] Minor: typo on page 6, line 31. Also, reference [2] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 69% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 70% of claimed experiments.
+  [Reviewer B] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 79% of claimed experiments.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] Performance claim of 4.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Performance claim of 6.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 4, line 47. Also, reference [5] has wrong venue name.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] Performance claim of 9.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer C] Minor: typo on page 2, line 32. Also, reference [39] has wrong venue name.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] Performance claim of 3.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] Performance claim of 8.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 31% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 9, line 6. Also, reference [5] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 58% of claimed experiments.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+
+--- End Paper 5 ---
+
+--- Paper 6: [machine learning] ---
+Title: Research Paper #6
+Authors: Patel et al.
+Published: 2024-03
+
+Abstract:
+We investigate the scaling laws governing in-context learning in transformer models. Through controlled experiments on synthetic tasks (linear regression, classification, automata simulation), we find that ICL ability follows a phase transition rather than smooth scaling. Models below a critical size (approximately 350M parameters for our task suite) show near-zero ICL performance, while models above this threshold rapidly approach Bayes-optimal prediction. The critical size scales as O(d^1.5) where d is the intrinsic dimensionality of the task. We also discover that ICL performance is highly sensitive to the formatting of examples — using structured delimiters improves ICL accuracy by 15-40% across all model sizes. These findings suggest that ICL emerges from a specific circuit formation that requires minimum model capacity, rather than being a gradual capability.
+
+Review Scores: 4.5, 4.0, 3.7 (avg: 4.1)
+
+Peer Review Discussion:
+  [Reviewer A] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 3, line 50. Also, reference [18] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Performance claim of 7.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 61% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer C] Performance claim of 9.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 55% of claimed experiments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 55% of claimed experiments.
+  [Reviewer A] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Minor: typo on page 10, line 23. Also, reference [3] has wrong venue name.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 28% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 78% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer C] Minor: typo on page 1, line 44. Also, reference [32] has wrong venue name.
+  [Reviewer A] Performance claim of 2.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 3, line 26. Also, reference [38] has wrong venue name.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 78% of claimed experiments.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] Minor: typo on page 11, line 21. Also, reference [24] has wrong venue name.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Minor: typo on page 12, line 4. Also, reference [22] has wrong venue name.
+  [Reviewer C] Performance claim of 5.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 37% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 40% of claimed experiments.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 7, line 48. Also, reference [23] has wrong venue name.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 22% of claimed experiments.
+  [Reviewer C] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 9, line 50. Also, reference [2] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer B] Figure 1 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer B] Performance claim of 7.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 45% of claimed experiments.
+  [Reviewer A] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer A] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 80% of claimed experiments.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 48% of claimed experiments.
+  [Reviewer B] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] Performance claim of 9.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+
+--- End Paper 6 ---
+
+
+================================================================================
+TOPIC AREA: SECURITY
+================================================================================
+
+--- Paper 7: [security] ---
+Title: Research Paper #7
+Authors: Kim et al.
+Published: 2024-04
+
+Abstract:
+We present SideGuard, a hardware-software co-design for mitigating speculative execution side-channel attacks (Spectre variants) with minimal performance overhead. Existing software mitigations (retpoline, LFENCE) incur 10-30% overhead for server workloads. SideGuard introduces a speculative taint tracking mechanism in the CPU pipeline that prevents tainted (speculative) loads from influencing cache state. When a misspeculation is detected, only the tainted cache lines are invalidated, rather than the entire speculative window. On modified gem5 simulations, SideGuard eliminates all known Spectre-V1 and V2 attack vectors while incurring only 2.1% performance overhead on SPEC2017 (vs 14.7% for full retpoline). The hardware cost is approximately 3,200 additional flip-flops per core, a negligible area increase of 0.02%. We prove the security guarantee formally using an information flow type system.
+
+Review Scores: 3.5, 3.2, 5.0 (avg: 3.9)
+
+Peer Review Discussion:
+  [Reviewer C] Minor: typo on page 7, line 44. Also, reference [32] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 67% of claimed experiments.
+  [Reviewer B] Minor: typo on page 5, line 19. Also, reference [39] has wrong venue name.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 38% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] Performance claim of 4.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer B] Performance claim of 3.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 29% of claimed experiments.
+  [Reviewer B] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 63% of claimed experiments.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Minor: typo on page 10, line 43. Also, reference [25] has wrong venue name.
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Performance claim of 7.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 3, line 20. Also, reference [10] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer C] Performance claim of 4.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] Minor: typo on page 7, line 25. Also, reference [27] has wrong venue name.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer C] Figure 2 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Performance claim of 9.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 1, line 48. Also, reference [38] has wrong venue name.
+  [Reviewer B] Performance claim of 2.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] Minor: typo on page 5, line 43. Also, reference [32] has wrong venue name.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 28% of claimed experiments.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer A] Performance claim of 4.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 4.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 59% of claimed experiments.
+  [Reviewer A] Minor: typo on page 6, line 19. Also, reference [3] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 43% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Performance claim of 2.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 68% of claimed experiments.
+  [Reviewer C] Minor: typo on page 3, line 50. Also, reference [27] has wrong venue name.
+  [Reviewer C] Performance claim of 4.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Minor: typo on page 12, line 48. Also, reference [14] has wrong venue name.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer A] Minor: typo on page 11, line 34. Also, reference [33] has wrong venue name.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] Minor: typo on page 2, line 21. Also, reference [25] has wrong venue name.
+  [Reviewer B] Performance claim of 3.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 9, line 10. Also, reference [38] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+
+--- End Paper 7 ---
+
+--- Paper 8: [security] ---
+Title: Research Paper #8
+Authors: Chen et al.
+Published: 2024-09
+
+Abstract:
+This paper presents the first practical attack against post-quantum lattice-based key encapsulation mechanisms (KEMs) deployed in production TLS. We demonstrate a chosen-ciphertext timing attack against the reference implementation of Kyber-768 running on Intel and ARM processors. The attack exploits a subtle timing variation (2.3ns difference) in the decapsulation rejection sampling step. Using 45,000 carefully crafted ciphertexts, we recover the full secret key in approximately 3 hours on a co-located VM. We responsibly disclosed this to the NIST PQC team and the vulnerability was patched in CRYSTALS-Kyber v3.0.1. The fix adds constant-time comparison and rejection sampling, with 0.8% performance overhead. We discuss implications for PQC deployment and recommend extended constant-time testing as part of certification.
+
+Review Scores: 3.6, 4.1, 3.3 (avg: 3.6)
+
+Peer Review Discussion:
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 59% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 54% of claimed experiments.
+  [Reviewer B] Minor: typo on page 7, line 47. Also, reference [31] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 64% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 72% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 58% of claimed experiments.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 10, line 14. Also, reference [22] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer B] Performance claim of 1.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 53% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] Performance claim of 7.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 7.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 1, line 4. Also, reference [30] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer A] Figure 6 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 25% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Performance claim of 6.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 36% of claimed experiments.
+  [Reviewer B] Minor: typo on page 3, line 11. Also, reference [5] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] Performance claim of 2.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] Minor: typo on page 11, line 29. Also, reference [2] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 54% of claimed experiments.
+  [Reviewer C] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer A] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer B] Performance claim of 10.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 23% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 28% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 51% of claimed experiments.
+  [Reviewer B] Performance claim of 3.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Performance claim of 5.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] Performance claim of 2.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 1, line 28. Also, reference [6] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 6, line 44. Also, reference [14] has wrong venue name.
+  [Reviewer B] Minor: typo on page 9, line 36. Also, reference [16] has wrong venue name.
+  [Reviewer A] Performance claim of 2.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] Figure 2 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer A] The theoretical analysis in Theorem 4 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Minor: typo on page 6, line 48. Also, reference [21] has wrong venue name.
+  [Reviewer C] Performance claim of 8.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 3.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Minor: typo on page 2, line 20. Also, reference [22] has wrong venue name.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer B] Performance claim of 5.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+
+--- End Paper 8 ---
+
+--- Paper 9: [security] ---
+Title: Research Paper #9
+Authors: Kim et al.
+Published: 2024-02
+
+Abstract:
+We analyze the security of zero-knowledge proof systems used in modern blockchain rollups (zkRollups). Through formal verification of three production circuits (zkSync Era, Polygon zkEVM, Scroll), we discover 4 soundness bugs that could allow an attacker to forge proofs for invalid state transitions. The most critical bug in [redacted] allows minting arbitrary tokens by exploiting an unconstrained wire in the ECDSA verification circuit. We developed an automated verification framework, zkAudit, that checks common vulnerability patterns: unconstrained variables, under-constrained arithmetic, and missing range checks. zkAudit found all 4 known bugs plus 2 additional low-severity issues in under 30 minutes of analysis time per circuit. All findings were responsibly disclosed and patched. We open-source zkAudit and propose a taxonomy of 12 ZK circuit vulnerability classes.
+
+Review Scores: 3.4, 3.4, 3.4 (avg: 3.4)
+
+Peer Review Discussion:
+  [Reviewer A] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 44% of claimed experiments.
+  [Reviewer B] Minor: typo on page 10, line 13. Also, reference [20] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 68% of claimed experiments.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 6, line 20. Also, reference [40] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer B] Figure 1 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 77% of claimed experiments.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 77% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 60% of claimed experiments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 67% of claimed experiments.
+  [Reviewer C] Figure 4 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 10, line 41. Also, reference [17] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 12, line 45. Also, reference [15] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 24% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] Minor: typo on page 8, line 46. Also, reference [24] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer B] Figure 1 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] Minor: typo on page 2, line 19. Also, reference [15] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 61% of claimed experiments.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] Performance claim of 6.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer C] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Minor: typo on page 6, line 32. Also, reference [15] has wrong venue name.
+  [Reviewer A] Minor: typo on page 11, line 50. Also, reference [21] has wrong venue name.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 54% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Minor: typo on page 8, line 21. Also, reference [17] has wrong venue name.
+  [Reviewer B] Figure 5 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer B] Figure 1 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer B] Minor: typo on page 4, line 12. Also, reference [5] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 36% of claimed experiments.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 7, line 1. Also, reference [38] has wrong venue name.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Performance claim of 4.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] Minor: typo on page 11, line 46. Also, reference [10] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer B] Figure 5 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 37% of claimed experiments.
+  [Reviewer C] Performance claim of 9.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 9 runs.
+
+--- End Paper 9 ---
+
+
+================================================================================
+TOPIC AREA: PROGRAMMING LANGUAGES
+================================================================================
+
+--- Paper 10: [programming languages] ---
+Title: Research Paper #10
+Authors: Patel et al.
+Published: 2024-03
+
+Abstract:
+We introduce Gradual Ownership Types, a type system that smoothly integrates Rust-like ownership and borrowing with traditional garbage-collected programming. Programmers can annotate performance-critical regions with ownership types while leaving the rest of the program dynamically managed. At ownership boundaries, the compiler inserts runtime checks (average overhead: 4ns per crossing) that verify the ownership contract. We implement this in an extension of Java called JOwn, where ownership-annotated code achieves performance within 8% of equivalent Rust code, while unannotated code behaves identically to standard Java. In a case study porting a high-frequency trading system, developers annotated 12% of the codebase (the hot path), achieving a 3.4x latency reduction (from 340μs to 100μs p99) compared to the original Java implementation.
+
+Review Scores: 3.3, 4.4, 4.2 (avg: 4.0)
+
+Peer Review Discussion:
+  [Reviewer B] Performance claim of 4.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Minor: typo on page 8, line 37. Also, reference [37] has wrong venue name.
+  [Reviewer B] Figure 2 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 62% of claimed experiments.
+  [Reviewer C] Performance claim of 8.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 1, line 23. Also, reference [33] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 10, line 33. Also, reference [29] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer A] Minor: typo on page 3, line 43. Also, reference [29] has wrong venue name.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 11, line 28. Also, reference [27] has wrong venue name.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 3, line 22. Also, reference [1] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 47% of claimed experiments.
+  [Reviewer B] Minor: typo on page 8, line 27. Also, reference [25] has wrong venue name.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Performance claim of 9.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer A] Performance claim of 2.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer A] Minor: typo on page 9, line 1. Also, reference [36] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Figure 4 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer B] Minor: typo on page 4, line 32. Also, reference [31] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 70% of claimed experiments.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Performance claim of 7.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 69% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 72% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 77% of claimed experiments.
+  [Reviewer A] Minor: typo on page 1, line 12. Also, reference [15] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes convexity which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Minor: typo on page 5, line 16. Also, reference [5] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 4 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 8, line 42. Also, reference [13] has wrong venue name.
+  [Reviewer B] Figure 5 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] Performance claim of 9.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 6, line 11. Also, reference [13] has wrong venue name.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 35% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] Performance claim of 8.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 29% of claimed experiments.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+
+--- End Paper 10 ---
+
+--- Paper 11: [programming languages] ---
+Title: Research Paper #11
+Authors: Smith et al.
+Published: 2024-01
+
+Abstract:
+We present Incremental Type Error Recovery, a technique for providing useful type error messages in languages with Hindley-Milner type inference. Current implementations (GHC, OCaml) often report errors far from the actual mistake due to the global nature of unification. Our approach maintains a history of unification steps and, upon failure, uses a SAT-solver-based diagnosis to find the minimum set of program locations that, if changed, would make the program well-typed. On a corpus of 50,000 student Haskell programs with type errors, our technique points to the correct error location 78% of the time (vs 34% for GHC, 41% for OCaml). The diagnostic overhead is acceptable: median 50ms, p99 800ms, compared to base type-checking time of 5-20ms. We implement this as a GHC plugin available on Hackage.
+
+Review Scores: 4.0, 4.1, 3.7 (avg: 3.9)
+
+Peer Review Discussion:
+  [Reviewer C] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 7, line 23. Also, reference [7] has wrong venue name.
+  [Reviewer A] Figure 7 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 37% of claimed experiments.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 7, line 31. Also, reference [29] has wrong venue name.
+  [Reviewer B] Performance claim of 2.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] Performance claim of 5.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Performance claim of 4.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 9, line 50. Also, reference [16] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer A] Performance claim of 5.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 1, line 35. Also, reference [21] has wrong venue name.
+  [Reviewer C] Minor: typo on page 7, line 37. Also, reference [33] has wrong venue name.
+  [Reviewer B] Performance claim of 9.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 4 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 1 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer A] Performance claim of 8.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 6.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Minor: typo on page 6, line 13. Also, reference [9] has wrong venue name.
+  [Reviewer C] Minor: typo on page 4, line 9. Also, reference [25] has wrong venue name.
+  [Reviewer C] Figure 4 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] Performance claim of 6.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 32% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Figure 6 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 5 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 50% of claimed experiments.
+  [Reviewer A] Figure 7 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 46% of claimed experiments.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Performance claim of 2.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 10, line 16. Also, reference [5] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 1, line 4. Also, reference [25] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+
+--- End Paper 11 ---
+
+--- Paper 12: [programming languages] ---
+Title: Research Paper #12
+Authors: Garcia et al.
+Published: 2024-06
+
+Abstract:
+Effect systems have struggled with practical adoption due to syntactic overhead and limited composability. We present EffKt, an effect system for Kotlin that uses intersection and union types to achieve lightweight effect polymorphism. Effects are declared as sealed interfaces and handled with when-expressions, making them familiar to Kotlin developers. The compiler eliminates effect wrappers through specialization, achieving zero-overhead effect handling for monomorphic call sites. In benchmarks, EffKt coroutine-based effects are 2x faster than Kotlin's built-in coroutines for structured concurrency patterns, because the compiler can eliminate suspension points when the effect handler is statically known. We evaluate developer experience through a study with 24 Kotlin developers: 87% found EffKt effects easier to use than explicit Result/Either types for error handling.
+
+Review Scores: 3.6, 4.8, 3.7 (avg: 4.0)
+
+Peer Review Discussion:
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 35% of claimed experiments.
+  [Reviewer C] Performance claim of 4.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer A] Minor: typo on page 9, line 29. Also, reference [8] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 60% of claimed experiments.
+  [Reviewer A] Performance claim of 7.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Minor: typo on page 8, line 18. Also, reference [11] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 1, line 26. Also, reference [1] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 2, line 18. Also, reference [37] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer C] Minor: typo on page 2, line 1. Also, reference [5] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] Figure 2 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer C] Figure 2 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] Performance claim of 3.3x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 9, line 16. Also, reference [35] has wrong venue name.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 8, line 15. Also, reference [29] has wrong venue name.
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 74% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 22% of claimed experiments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] Performance claim of 8.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 64% of claimed experiments.
+  [Reviewer C] Minor: typo on page 10, line 15. Also, reference [11] has wrong venue name.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] Minor: typo on page 5, line 6. Also, reference [34] has wrong venue name.
+  [Reviewer B] Performance claim of 5.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer A] Figure 3 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 74% of claimed experiments.
+  [Reviewer C] Minor: typo on page 4, line 19. Also, reference [28] has wrong venue name.
+  [Reviewer B] Minor: typo on page 3, line 20. Also, reference [38] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] Performance claim of 4.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 22% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Minor: typo on page 2, line 10. Also, reference [26] has wrong venue name.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 64% of claimed experiments.
+  [Reviewer C] Minor: typo on page 10, line 1. Also, reference [20] has wrong venue name.
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 50% of claimed experiments.
+  [Reviewer B] Minor: typo on page 6, line 38. Also, reference [26] has wrong venue name.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 50% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer A] Performance claim of 6.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 41% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Performance claim of 4.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 64% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 41% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+
+--- End Paper 12 ---
+
+
+================================================================================
+TOPIC AREA: DATABASES
+================================================================================
+
+--- Paper 13: [databases] ---
+Title: Research Paper #13
+Authors: Chen et al.
+Published: 2024-01
+
+Abstract:
+We present LearnedLSM, a system that replaces the level structure of LSM-tree storage engines with a learned model that predicts optimal compaction strategies. Traditional LSM-trees use fixed size ratios (typically T=10) across levels, which is suboptimal for skewed workloads. LearnedLSM trains a lightweight neural network (50K parameters) on access pattern statistics to dynamically adjust level sizes, compaction triggers, and merge policies. On RocksDB, LearnedLSM reduces write amplification by 40% for Zipfian workloads while maintaining equivalent read latency. For uniform workloads, it matches the default policy (within 3%). The model retrains every 10 minutes using recent statistics, with a training cost of 200ms on a single CPU core. We also prove theoretical bounds showing that the learned policy converges to the workload-optimal Dostoevsky configuration within O(log n) retraining epochs.
+
+Review Scores: 3.4, 4.1, 4.5 (avg: 4.0)
+
+Peer Review Discussion:
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 45% of claimed experiments.
+  [Reviewer A] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Figure 4 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer B] Performance claim of 3.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 39% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 36% of claimed experiments.
+  [Reviewer A] Performance claim of 6.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] Minor: typo on page 10, line 2. Also, reference [16] has wrong venue name.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 60% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 77% of claimed experiments.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 55% of claimed experiments.
+  [Reviewer A] Figure 3 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer B] Performance claim of 5.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 6, line 6. Also, reference [30] has wrong venue name.
+  [Reviewer B] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] Figure 4 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] Minor: typo on page 8, line 5. Also, reference [22] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 59% of claimed experiments.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 6, line 28. Also, reference [1] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 78% of claimed experiments.
+  [Reviewer C] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Performance claim of 3.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 3 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 1, line 4. Also, reference [2] has wrong venue name.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 3 about network partitions is too restrictive for real deployments.
+  [Reviewer B] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer B] Minor: typo on page 10, line 6. Also, reference [23] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 66% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 68% of claimed experiments.
+  [Reviewer B] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 10, line 37. Also, reference [17] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Performance claim of 3.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 54% of claimed experiments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 44% of claimed experiments.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] Figure 2 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Figure 3 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 64% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer A] Figure 5 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 51% of claimed experiments.
+  [Reviewer B] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer C] Performance claim of 4.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 31% of claimed experiments.
+  [Reviewer A] Minor: typo on page 5, line 14. Also, reference [10] has wrong venue name.
+
+--- End Paper 13 ---
+
+--- Paper 14: [databases] ---
+Title: Research Paper #14
+Authors: Chen et al.
+Published: 2024-09
+
+Abstract:
+This paper introduces temporal indexing for event sourcing databases. Event sourcing stores all state changes as an append-only log of events, but querying the state at an arbitrary point in time requires replaying events from the beginning. We propose ChronoIndex, a persistent data structure that maintains a time-indexed snapshot tree with O(log n) point-in-time query complexity. ChronoIndex uses a copy-on-write B+tree variant where each modification creates a new root, and historical roots are indexed by timestamp. On a 100M-event dataset, point-in-time queries complete in 2.3ms (vs 4.5 seconds for replay). The space overhead is 2.1x compared to a plain event log, which we reduce to 1.3x using page-level deduplication. We integrate ChronoIndex into EventStoreDB and PostgreSQL (via an extension), demonstrating compatibility with existing event sourcing frameworks.
+
+Review Scores: 4.5, 4.5, 3.3 (avg: 4.1)
+
+Peer Review Discussion:
+  [Reviewer A] Performance claim of 7.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 6 would benefit from error bars showing confidence intervals across 6 runs.
+  [Reviewer B] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Performance claim of 7.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 1 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 3 about side channels is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 71% of claimed experiments.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Performance claim of 8.5x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 8, line 11. Also, reference [31] has wrong venue name.
+  [Reviewer C] Minor: typo on page 3, line 31. Also, reference [7] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 3 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 62% of claimed experiments.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 22% of claimed experiments.
+  [Reviewer A] Figure 6 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer B] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer A] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 27% of claimed experiments.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] Minor: typo on page 10, line 10. Also, reference [11] has wrong venue name.
+  [Reviewer C] Minor: typo on page 5, line 50. Also, reference [19] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 52% of claimed experiments.
+  [Reviewer A] Figure 2 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer A] Performance claim of 7.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Performance claim of 7.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 3, line 26. Also, reference [1] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes stationarity which may not hold in practice.
+  [Reviewer B] Minor: typo on page 10, line 39. Also, reference [8] has wrong venue name.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer C] Minor: typo on page 4, line 25. Also, reference [29] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 20% of claimed experiments.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer B] Minor: typo on page 5, line 24. Also, reference [19] has wrong venue name.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes stationarity which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes i.i.d. data which may not hold in practice.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer C] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 6, line 25. Also, reference [34] has wrong venue name.
+  [Reviewer B] Figure 4 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] Figure 2 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer A] Minor: typo on page 6, line 36. Also, reference [37] has wrong venue name.
+  [Reviewer B] Performance claim of 6.9x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Figure 7 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 8 runs.
+  [Reviewer B] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer A] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] Performance claim of 8.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Figure 8 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer B] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 21% of claimed experiments.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] The threat model assumption in section 5 about side channels is too restrictive for real deployments.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 5 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The theoretical analysis in Theorem 2 assumes convexity which may not hold in practice.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 55% of claimed experiments.
+  [Reviewer C] Minor: typo on page 11, line 6. Also, reference [3] has wrong venue name.
+  [Reviewer C] Figure 1 would benefit from error bars showing confidence intervals across 3 runs.
+  [Reviewer A] Performance claim of 3.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 7 runs.
+
+--- End Paper 14 ---
+
+--- Paper 15: [databases] ---
+Title: Research Paper #15
+Authors: Kim et al.
+Published: 2024-08
+
+Abstract:
+Query optimization for heterogeneous data lakes remains challenging because statistics on semi-structured data (JSON, Parquet with nested schemas) are expensive to collect and quickly become stale. We present SkylineOpt, a query optimizer that uses data sketches (HyperLogLog, Count-Min, T-Digest) computed during ingestion to estimate selectivities for arbitrary predicates on nested data. SkylineOpt extends the cascade optimization framework with sketch-aware cardinality estimation rules. On the TPC-DS benchmark adapted for JSON data, SkylineOpt produces plans within 1.3x of optimal (computed by exhaustive enumeration) while taking 15ms optimization time (vs 2.5 seconds for exhaustive). For 78% of queries, SkylineOpt finds the optimal plan. The sketch storage overhead is 0.1% of data size, and sketch updates are lock-free, adding less than 1% overhead to ingestion throughput.
+
+Review Scores: 3.6, 3.0, 3.8 (avg: 3.5)
+
+Peer Review Discussion:
+  [Reviewer C] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] The related work section should discuss SIGMOD 2024 papers on similar topics.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer B] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer A] Figure 6 would benefit from error bars showing confidence intervals across 10 runs.
+  [Reviewer B] Minor: typo on page 4, line 17. Also, reference [37] has wrong venue name.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The experimental methodology in section 2 needs more detail on the baseline comparison setup.
+  [Reviewer C] Code availability: authors should provide reproduction scripts. Current artifact only has 78% of claimed experiments.
+  [Reviewer B] Performance claim of 3.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer C] Minor: typo on page 4, line 7. Also, reference [39] has wrong venue name.
+  [Reviewer B] The experimental methodology in section 4 needs more detail on the baseline comparison setup.
+  [Reviewer C] Minor: typo on page 5, line 12. Also, reference [4] has wrong venue name.
+  [Reviewer B] Performance claim of 1.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 4 assumes convexity which may not hold in practice.
+  [Reviewer C] Performance claim of 1.8x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 12, line 42. Also, reference [29] has wrong venue name.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes convexity which may not hold in practice.
+  [Reviewer B] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 28% of claimed experiments.
+  [Reviewer C] Figure 7 would benefit from error bars showing confidence intervals across 5 runs.
+  [Reviewer C] Performance claim of 4.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer B] Minor: typo on page 12, line 38. Also, reference [10] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 4 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer A] Performance claim of 6.1x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 41% of claimed experiments.
+  [Reviewer B] Minor: typo on page 3, line 42. Also, reference [35] has wrong venue name.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer B] The threat model assumption in section 4 about adversarial inputs is too restrictive for real deployments.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] Performance claim of 4.6x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The experimental methodology in section 5 needs more detail on the baseline comparison setup.
+  [Reviewer B] Minor: typo on page 7, line 35. Also, reference [19] has wrong venue name.
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 53% of claimed experiments.
+  [Reviewer A] Figure 8 would benefit from error bars showing confidence intervals across 4 runs.
+  [Reviewer C] Performance claim of 3.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] Minor: typo on page 1, line 15. Also, reference [39] has wrong venue name.
+  [Reviewer A] The related work section should discuss SOSP 2023 papers on similar topics.
+  [Reviewer A] The threat model assumption in section 5 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer B] Performance claim of 2.7x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] Minor: typo on page 1, line 29. Also, reference [20] has wrong venue name.
+  [Reviewer A] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 6 needs more detail on the baseline comparison setup.
+  [Reviewer C] The experimental methodology in section 3 needs more detail on the baseline comparison setup.
+  [Reviewer C] The threat model assumption in section 4 about side channels is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 8, line 3. Also, reference [29] has wrong venue name.
+  [Reviewer C] Minor: typo on page 6, line 38. Also, reference [13] has wrong venue name.
+  [Reviewer A] The threat model assumption in section 3 about Byzantine faults is too restrictive for real deployments.
+  [Reviewer C] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes stationarity which may not hold in practice.
+  [Reviewer A] The related work section should discuss ICML 2024 papers on similar topics.
+  [Reviewer A] Minor: typo on page 8, line 33. Also, reference [20] has wrong venue name.
+  [Reviewer B] Minor: typo on page 8, line 41. Also, reference [40] has wrong venue name.
+  [Reviewer B] Figure 6 would benefit from error bars showing confidence intervals across 9 runs.
+  [Reviewer C] Performance claim of 9.0x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The theoretical analysis in Theorem 2 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The related work section should discuss NeurIPS 2024 papers on similar topics.
+  [Reviewer B] Minor: typo on page 1, line 28. Also, reference [22] has wrong venue name.
+  [Reviewer C] The threat model assumption in section 5 about network partitions is too restrictive for real deployments.
+  [Reviewer A] Code availability: authors should provide reproduction scripts. Current artifact only has 41% of claimed experiments.
+  [Reviewer B] Code availability: authors should provide reproduction scripts. Current artifact only has 65% of claimed experiments.
+  [Reviewer C] The theoretical analysis in Theorem 1 assumes bounded gradients which may not hold in practice.
+  [Reviewer A] The threat model assumption in section 4 about network partitions is too restrictive for real deployments.
+  [Reviewer C] Minor: typo on page 1, line 23. Also, reference [11] has wrong venue name.
+  [Reviewer B] Performance claim of 7.4x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer B] The related work section should discuss OSDI 2024 papers on similar topics.
+  [Reviewer B] Figure 8 would benefit from error bars showing confidence intervals across 7 runs.
+  [Reviewer C] Performance claim of 5.2x improvement needs statistical significance testing (p-value < 0.05).
+  [Reviewer C] The theoretical analysis in Theorem 2 assumes i.i.d. data which may not hold in practice.
+  [Reviewer B] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer C] The theoretical analysis in Theorem 3 assumes stationarity which may not hold in practice.
+  [Reviewer B] Figure 7 would benefit from error bars showing confidence intervals across 8 runs.
+
+--- End Paper 15 ---
