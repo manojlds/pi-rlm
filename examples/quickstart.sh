@@ -5,6 +5,9 @@
 # Creates a tiny file and runs the RLM on it. Takes ~30 seconds.
 # Watch the REPL iterations in your terminal.
 #
+# Uses project autoload by default. To force explicit extension loading:
+#   PI_RLM_LOAD_MODE=explicit ./examples/quickstart.sh
+#
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -31,12 +34,23 @@ for i in range(200):
 echo "Created test file: $TMPFILE (200 lines)"
 echo "Hidden: MAGIC_NUMBER=65543 on line 137"
 echo ""
-echo "Running: pi -e ./src/index.ts -p '...find the MAGIC_NUMBER...'"
+ROOT_DIR="$(pwd)"
+PI_CMD=(pi)
+PI_RUN_CWD="$ROOT_DIR"
+if [ "${PI_RLM_LOAD_MODE:-autoload}" = "explicit" ]; then
+  PI_CMD=(pi -e "${ROOT_DIR}/src/index.ts")
+  PI_RUN_CWD="/tmp"
+fi
+
+echo "Running: ${PI_CMD[*]} -p '...find the MAGIC_NUMBER...'"
 echo "─────────────────────────────────────────────────────────"
 echo ""
 
-pi -e ./src/index.ts -p \
-  "Use the rlm tool to find the MAGIC_NUMBER value in this file. Search through the data and return the exact number. Context: file:$TMPFILE"
+(
+  cd "$PI_RUN_CWD"
+  "${PI_CMD[@]}" -p \
+    "Use the rlm tool to find the MAGIC_NUMBER value in this file. Search through the data and return the exact number. Context: file:$TMPFILE"
+)
 
 echo ""
 echo "─────────────────────────────────────────────────────────"

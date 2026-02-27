@@ -10,9 +10,9 @@
 #   ./examples/run.sh configs          # Run the config diff example
 #   ./examples/run.sh all              # Run all examples sequentially
 #
-# Each example uses `pi -e ./src/index.ts` to load the RLM extension,
-# then sends a prompt that triggers the rlm tool. You'll see the
-# iteration loop, sub-LLM calls, and REPL code execution in real time.
+# By default, examples rely on project autoload (`.pi/extensions/rlm/index.ts`).
+# If you want explicit loading instead, run with:
+#   PI_RLM_LOAD_MODE=explicit ./examples/run.sh <example>
 #
 # Prerequisites:
 #   - pi CLI installed and configured
@@ -35,7 +35,24 @@ if [ ! -f examples/sales.csv ]; then
   echo ""
 fi
 
-EXAMPLES_DIR="$(pwd)/examples"
+ROOT_DIR="$(pwd)"
+EXAMPLES_DIR="${ROOT_DIR}/examples"
+
+PI_CMD=(pi)
+PI_RUN_CWD="$ROOT_DIR"
+if [ "${PI_RLM_LOAD_MODE:-autoload}" = "explicit" ]; then
+  PI_CMD=(pi -e "${ROOT_DIR}/src/index.ts")
+  # Run outside repo root so project autoload does not double-register tools.
+  PI_RUN_CWD="/tmp"
+fi
+
+run_pi_prompt() {
+  local prompt="$1"
+  (
+    cd "$PI_RUN_CWD"
+    "${PI_CMD[@]}" -p "$prompt"
+  )
+}
 
 # ── Example definitions ────────────────────────────────────────────────
 
@@ -53,8 +70,7 @@ run_sales() {
   echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
   echo ""
 
-  pi -e ./src/index.ts -p \
-    "Use the rlm tool to analyze this sales CSV file. Calculate:
+  run_pi_prompt "Use the rlm tool to analyze this sales CSV file. Calculate:
 1. Total revenue (units × price_each for each row, then sum all)
 2. Which product has the highest total revenue?
 3. Which region has the highest total revenue?
@@ -76,8 +92,7 @@ run_logs() {
   echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
   echo ""
 
-  pi -e ./src/index.ts -p \
-    "Use the rlm tool to investigate these server logs. Find:
+  run_pi_prompt "Use the rlm tool to investigate these server logs. Find:
 1. Any burst of errors from a single service (multiple errors in a short time)
 2. Any CRITICAL level messages
 3. What are the most concerning patterns?
@@ -104,8 +119,7 @@ run_puzzle() {
   echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
   echo ""
 
-  pi -e ./src/index.ts -p \
-    "Use the rlm tool to decode the hidden message in this file. The file contains an encoded message somewhere — it was encoded with ROT13 and then Base64. Find it, decode it, and return the plaintext.
+  run_pi_prompt "Use the rlm tool to decode the hidden message in this file. The file contains an encoded message somewhere — it was encoded with ROT13 and then Base64. Find it, decode it, and return the plaintext.
 
 Context: file:${EXAMPLES_DIR}/puzzle.txt"
 }
@@ -124,8 +138,7 @@ run_configs() {
   echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
   echo ""
 
-  pi -e ./src/index.ts -p \
-    "Use the rlm tool to compare the two JSON configurations in this file (PRODUCTION CONFIG vs STAGING CONFIG). Find ALL differences:
+  run_pi_prompt "Use the rlm tool to compare the two JSON configurations in this file (PRODUCTION CONFIG vs STAGING CONFIG). Find ALL differences:
 - Values that changed
 - Keys that were added
 - Keys that were removed
@@ -150,8 +163,7 @@ run_papers() {
   echo -e "${DIM}─────────────────────────────────────────────────────────────────${NC}"
   echo ""
 
-  pi -e ./src/index.ts -p \
-    "Use the rlm tool to analyze this corpus of research papers. The corpus is too large to read at once, so you MUST:
+  run_pi_prompt "Use the rlm tool to analyze this corpus of research papers. The corpus is too large to read at once, so you MUST:
 1. Split the corpus into individual papers
 2. Use llm_query() or llm_query_batched() to semantically analyze each paper's key contribution and technique
 3. Synthesize the results to find cross-cutting themes across all 5 topic areas
@@ -179,6 +191,8 @@ show_help() {
   echo ""
   echo "Each example runs pi with the RLM extension and a task that"
   echo "requires the Python REPL — you'll see the iterations in real time."
+  echo ""
+  echo "Load mode: autoload (default). Override with PI_RLM_LOAD_MODE=explicit."
 }
 
 case "${1:-}" in

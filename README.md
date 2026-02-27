@@ -83,6 +83,9 @@ Run any example to see the RLM iterating in your terminal:
 
 Each example is designed so that **only code execution can produce the correct answer** — an LLM reasoning alone would fail.
 
+> By default scripts use project autoload (`.pi/extensions/rlm/index.ts`).
+> If you need explicit extension loading, use `PI_RLM_LOAD_MODE=explicit`.
+
 ## Usage
 
 The extension registers an `rlm` tool that the LLM can call:
