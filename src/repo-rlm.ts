@@ -1,7 +1,168 @@
-import { StringEnum } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { complete, StringEnum, type Message } from "@mariozechner/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 import { RepoRLMStore, type RepoRLMMode, type RepoRLMScheduler } from "./repo-rlm-core";
+
+async function resolveModel(ctx: ExtensionContext, modelId?: string): Promise<any> {
+  if (!modelId) return ctx.model;
+
+  const registryAny = ctx.modelRegistry as any;
+  let resolved =
+    registryAny?.getModelById?.(modelId) ??
+    registryAny?.getModel?.(modelId) ??
+    registryAny?.models?.find?.((m: any) => m?.id === modelId);
+
+  if (resolved && typeof resolved.then === "function") {
+    resolved = await resolved;
+  }
+
+  return resolved ?? ctx.model;
+}
+
+function extractText(response: { content: Array<{ type: string; text?: string }> }): string {
+  return response.content
+    .filter((c): c is { type: "text"; text: string } => c.type === "text" && typeof c.text === "string")
+    .map((c) => c.text)
+    .join("\n")
+    .trim();
+}
+
+function readIfExists(path: string): string {
+  if (!existsSync(path)) return "";
+  try {
+    return readFileSync(path, "utf-8");
+  } catch {
+    return "";
+  }
+}
+
+function truncate(value: string, maxChars: number): string {
+  if (value.length <= maxChars) return value;
+  return value.slice(0, maxChars) + "\n...[truncated]";
+}
+
+async function runSemanticSynthesis(
+  params: {
+    runId: string;
+    target: "auto" | "wiki" | "review" | "all";
+    semanticModel?: string;
+  },
+  ctx: ExtensionContext,
+  signal: AbortSignal | undefined,
+): Promise<Array<{ kind: string; path: string }>> {
+  const store = new RepoRLMStore(ctx.cwd);
+  const run = store.getRun(params.runId);
+  const runRoot = store.getRunRoot(params.runId);
+
+  const shouldWiki = params.target === "all" || params.target === "wiki" || (params.target === "auto" && run.mode === "wiki");
+  const shouldReview =
+    params.target === "all" || params.target === "review" || (params.target === "auto" && run.mode === "review");
+
+  const model = await resolveModel(ctx, params.semanticModel);
+  if (!model) throw new Error("No model configured for semantic synthesis");
+  const apiKey = await ctx.modelRegistry.getApiKey(model);
+  if (!apiKey) throw new Error(`No API key for semantic synthesis model: ${model.id}`);
+
+  const artifacts: Array<{ kind: string; path: string }> = [];
+
+  if (shouldReview) {
+    const reviewDir = join(runRoot, "artifacts", "review");
+    mkdirSync(reviewDir, { recursive: true });
+
+    const summaryJson = truncate(readIfExists(join(reviewDir, "summary.json")), 30_000);
+    const clustersJson = truncate(readIfExists(join(reviewDir, "findings-clusters.json")), 35_000);
+    const reportMd = truncate(readIfExists(join(reviewDir, "report.md")), 20_000);
+
+    const reviewPrompt = [
+      "You are a senior staff engineer creating an executive code review narrative.",
+      "Using the deterministic review artifacts below, produce:",
+      "1) an executive summary",
+      "2) top systemic risks",
+      "3) prioritized remediation plan (P0/P1/P2)",
+      "4) rollout and validation checklist",
+      "Keep claims grounded in provided artifacts. Do not fabricate file paths.",
+      "",
+      "<summary_json>",
+      summaryJson || "{}",
+      "</summary_json>",
+      "",
+      "<clusters_json>",
+      clustersJson || "{}",
+      "</clusters_json>",
+      "",
+      "<report_md>",
+      reportMd || "",
+      "</report_md>",
+    ].join("\n");
+
+    const reviewMessages: Message[] = [
+      {
+        role: "user",
+        content: [{ type: "text", text: reviewPrompt }],
+        timestamp: Date.now(),
+      },
+    ];
+
+    const reviewResp = await complete(model, { messages: reviewMessages }, { apiKey, signal });
+    const reviewText = extractText(reviewResp as any);
+    const reviewSemanticPath = join(reviewDir, "report.semantic.md");
+    writeFileSync(reviewSemanticPath, (reviewText || "(empty semantic review output)") + "\n", "utf-8");
+    artifacts.push({ kind: "review_report_semantic", path: join("artifacts", "review", "report.semantic.md") });
+  }
+
+  if (shouldWiki) {
+    const wikiDir = join(runRoot, "artifacts", "wiki");
+    mkdirSync(wikiDir, { recursive: true });
+
+    const architectureSummary = truncate(readIfExists(join(wikiDir, "architecture-summary.md")), 25_000);
+    const moduleIndex = truncate(readIfExists(join(wikiDir, "module-index.md")), 20_000);
+    const wikiIndex = truncate(readIfExists(join(wikiDir, "index.md")), 20_000);
+
+    const wikiPrompt = [
+      "You are a principal architect creating a semantic architecture briefing.",
+      "Generate a concise architecture narrative with:",
+      "- system boundaries",
+      "- module responsibilities",
+      "- key coupling risks",
+      "- modernization opportunities",
+      "Base only on provided artifact content.",
+      "",
+      "<architecture_summary>",
+      architectureSummary || "",
+      "</architecture_summary>",
+      "",
+      "<module_index>",
+      moduleIndex || "",
+      "</module_index>",
+      "",
+      "<wiki_index>",
+      wikiIndex || "",
+      "</wiki_index>",
+    ].join("\n");
+
+    const wikiMessages: Message[] = [
+      {
+        role: "user",
+        content: [{ type: "text", text: wikiPrompt }],
+        timestamp: Date.now(),
+      },
+    ];
+
+    const wikiResp = await complete(model, { messages: wikiMessages }, { apiKey, signal });
+    const wikiText = extractText(wikiResp as any);
+    const wikiSemanticPath = join(wikiDir, "architecture.semantic.md");
+    writeFileSync(wikiSemanticPath, (wikiText || "(empty semantic wiki output)") + "\n", "utf-8");
+    artifacts.push({ kind: "wiki_architecture_semantic", path: join("artifacts", "wiki", "architecture.semantic.md") });
+  }
+
+  if (artifacts.length > 0) {
+    store.registerArtifacts(params.runId, artifacts);
+  }
+
+  return artifacts;
+}
 
 export function registerRepoRLMTools(pi: ExtensionAPI): void {
   const ModeSchema = StringEnum(["generic", "wiki", "review"] as const, {
@@ -126,26 +287,53 @@ export function registerRepoRLMTools(pi: ExtensionAPI): void {
     name: "repo_rlm_synthesize",
     label: "Repo RLM Synthesize",
     description:
-      "Synthesize higher-level artifacts from recursive node results (wiki index, ranked review findings, codequality, SARIF).",
+      "Synthesize higher-level artifacts from recursive node results (wiki index, ranked review findings, codequality, SARIF). Optionally run semantic LLM-assisted synthesis.",
     parameters: Type.Object({
       run_id: Type.String({ description: "Run ID" }),
       target: Type.Optional(StringEnum(["auto", "wiki", "review", "all"] as const, { default: "auto" })),
+      semantic: Type.Optional(Type.Boolean({ description: "Run optional semantic (LLM-assisted) synthesis", default: false })),
+      semantic_model: Type.Optional(
+        Type.String({ description: "Optional model id for semantic synthesis (defaults to current model)" }),
+      ),
     }),
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const target = (params.target ?? "auto") as "auto" | "wiki" | "review" | "all";
       const store = new RepoRLMStore(ctx.cwd);
-      const out = store.synthesizeRun(params.run_id, (params.target ?? "auto") as "auto" | "wiki" | "review" | "all");
-      const artifactPreview = out.artifacts.slice(0, 12).map((a) => `${a.kind}:${a.path}`).join(" | ");
+      const out = store.synthesizeRun(params.run_id, target);
+
+      const semanticArtifacts =
+        params.semantic === true
+          ? await runSemanticSynthesis(
+              {
+                runId: params.run_id,
+                target,
+                semanticModel: params.semantic_model,
+              },
+              ctx,
+              signal,
+            )
+          : [];
+
+      const refreshed = store.getRun(params.run_id);
+      const allArtifacts = refreshed.output_index ?? out.artifacts;
+      const artifactPreview = allArtifacts.slice(0, 12).map((a) => `${a.kind}:${a.path}`).join(" | ");
+
       return {
         content: [
           {
             type: "text",
             text:
-              `Synthesized run ${out.run.run_id} (${params.target ?? "auto"})\n` +
-              `Artifacts: ${out.artifacts.length}\n` +
+              `Synthesized run ${refreshed.run_id} (${target})\n` +
+              `Artifacts: ${allArtifacts.length}\n` +
+              `Semantic artifacts: ${semanticArtifacts.length}\n` +
               `Preview: ${artifactPreview || "(none)"}`,
           },
         ],
-        details: out,
+        details: {
+          run: refreshed,
+          artifacts: allArtifacts,
+          semanticArtifacts,
+        },
       };
     },
   });

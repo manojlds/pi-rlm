@@ -1633,6 +1633,28 @@ export class RepoRLMStore {
     };
   }
 
+  getRunRoot(runId: string): string {
+    const run = this.getRun(runId);
+    return this.runDir(run.run_id);
+  }
+
+  registerArtifacts(runId: string, artifacts: Array<{ kind: string; path: string }>): RepoRLMRun {
+    const run = this.getRun(runId);
+    const artifactMap = new Map<string, { kind: string; path: string }>();
+
+    for (const existing of run.output_index ?? []) {
+      artifactMap.set(`${existing.kind}|${existing.path}`, existing);
+    }
+    for (const a of artifacts) {
+      artifactMap.set(`${a.kind}|${a.path}`, a);
+    }
+
+    run.output_index = Array.from(artifactMap.values()).sort((a, b) => a.path.localeCompare(b.path));
+    run.updated_at = nowIso();
+    this.setRun(run);
+    return run;
+  }
+
   exportRun(runId: string, format: "markdown" | "json"): { path: string } {
     const status = this.getStatus(runId);
     const artifactsDir = join(this.runDir(runId), "artifacts");

@@ -9,7 +9,7 @@ This phase focuses on objective-driven synthesis from recursive outputs.
 
 ## Completion Snapshot
 
-- ✅ P3-01 Synthesis API (`repo_rlm_synthesize`)
+- ✅ P3-01 Synthesis API (`repo_rlm_synthesize`, optional semantic mode)
 - ✅ P3-02 Wiki synthesis scaffold (`artifacts/wiki/index.md`)
 - ✅ P3-03 Review dedup + ranking scaffold (`findings-ranked.json`, `report.md`)
 - ✅ P3-04 Export scaffold for CI (`codequality.json`, `sarif.json`)
@@ -26,6 +26,7 @@ This phase focuses on objective-driven synthesis from recursive outputs.
 Implemented:
 - `RepoRLMStore.synthesizeRun(runId, target)` in `src/repo-rlm-core.ts`
 - `repo_rlm_synthesize` tool in `src/repo-rlm.ts`
+- optional semantic mode (`semantic: true`) with model override (`semantic_model`)
 
 Targets:
 - `auto`
@@ -95,6 +96,8 @@ Implemented now:
 - objective tag extraction from run objective text
 - objective tags propagated into review ranked/summary outputs
 - architecture summary scaffolding includes objective + focus tags
+- optional semantic review narrative (`artifacts/review/report.semantic.md`)
+- optional semantic architecture narrative (`artifacts/wiki/architecture.semantic.md`)
 
 Remaining:
 - objective-specific prompt/LLM synthesis passes for higher semantic quality
