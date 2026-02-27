@@ -38,6 +38,24 @@ pi -e /path/to/pi-rlm/src/index.ts
 
 > ⚠️ Don't combine `-e` with auto-discovered `.pi/extensions/rlm/` — the tool name will conflict.
 
+### Autoload during extension development
+
+pi auto-discovers extensions from:
+
+- `.pi/extensions/*.ts`
+- `.pi/extensions/*/index.ts`
+- `~/.pi/agent/extensions/...` (global)
+
+This repo now includes a local autoload shim at:
+
+- `.pi/extensions/rlm/index.ts` → re-exports `src/index.ts`
+
+So when you run pi in this folder, it can pick up the extension automatically. While iterating, use `/reload` in pi after edits.
+
+See also:
+- pi docs: `docs/extensions.md` (autoload + `/reload` behavior)
+- local notes: `docs/autoload-dev.md`
+
 ## Requirements
 
 - **Python 3** — for the isolated REPL environment (not a hardened security sandbox)
