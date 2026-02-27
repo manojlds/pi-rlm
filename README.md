@@ -61,6 +61,52 @@ See also:
 - **Python 3** — for the isolated REPL environment (not a hardened security sandbox)
 - **pi** coding agent
 
+## What You Can Do With This Extension
+
+### A) Analyze very large context with `rlm`
+
+Use `rlm` when direct prompting would fail due to context size/noise.
+
+- Investigate huge logs for hidden failure patterns
+- Compute exact answers over large CSV/text datasets
+- Decode/transform embedded payloads (regex + parsing + code execution)
+- Perform semantic chunk analysis with `llm_query()` / `llm_query_batched()`
+- Recursively decompose hard tasks with `rlm_query()`
+
+Example prompt:
+
+```text
+Use the rlm tool to inspect file:/var/log/app.log and identify the top 3 production risks with evidence lines.
+```
+
+### B) Run repo-scale recursive analysis with `repo_rlm_*`
+
+Use repo tools when you want persistent, resumable, tree-structured exploration.
+
+- Build architecture/wiki artifacts for large codebases
+- Run deep code review passes across subsystems
+- Synthesize ranked findings, clusters, and risk summaries
+- Export CI-friendly outputs (`codequality.json`, `sarif.json`)
+- Resume/cancel/export long-running recursive jobs
+
+Example flow:
+
+```text
+Use repo_rlm_start with objective "deep architecture and quality review" mode "review".
+Use repo_rlm_run for that run_id with max_nodes 800.
+Use repo_rlm_synthesize for that run_id with target "review" and semantic true.
+Use repo_rlm_export for that run_id with format "markdown".
+```
+
+### Main artifact outputs
+
+Under `.pi/rlm/runs/<run-id>/artifacts/`:
+
+- `wiki/index.md`, `wiki/module-index.md`, `wiki/architecture-summary.md`
+- `review/findings-ranked.json`, `review/findings-clusters.json`, `review/summary.json`
+- `review/report.md`, optional `review/report.semantic.md`
+- `review/codequality.json`, `review/sarif.json`
+
 ## Quick Start
 
 ```bash
