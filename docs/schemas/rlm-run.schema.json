@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pi-rlm.dev/schemas/rlm-run.schema.json",
+  "title": "RLM Run",
+  "type": "object",
+  "required": [
+    "run_id",
+    "objective",
+    "status",
+    "root_node_id",
+    "created_at",
+    "config"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 1 },
+    "objective": { "type": "string", "minLength": 1 },
+    "mode": {
+      "type": "string",
+      "enum": ["generic", "wiki", "review"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["running", "completed", "failed", "cancelled"]
+    },
+    "root_node_id": { "type": "string" },
+    "config": {
+      "type": "object",
+      "required": ["max_depth", "max_llm_calls"],
+      "properties": {
+        "max_depth": { "type": "integer", "minimum": 0 },
+        "max_llm_calls": { "type": "integer", "minimum": 1 },
+        "max_tokens": { "type": "integer", "minimum": 1 },
+        "max_wall_clock_ms": { "type": "integer", "minimum": 1 },
+        "scheduler": {
+          "type": "string",
+          "enum": ["bfs", "dfs", "hybrid"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "nodes_total": { "type": "integer", "minimum": 0 },
+        "nodes_completed": { "type": "integer", "minimum": 0 },
+        "nodes_failed": { "type": "integer", "minimum": 0 },
+        "active_nodes": { "type": "integer", "minimum": 0 },
+        "max_depth_seen": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "output_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string" },
+          "path": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "properties": {
+        "last_event_offset": { "type": "integer", "minimum": 0 },
+        "updated_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

@@ -2,8 +2,11 @@ import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-age
 import { Type } from "@sinclair/typebox";
 import { Text } from "@mariozechner/pi-tui";
 import { RLMEngine, type RLMConfig, type RLMTrajectoryStep, type RLMCallTree, type RLMSubCall, formatCallTreeVisualization, formatLiveStatus } from "./rlm-engine";
+import { registerRepoRLMTools } from "./repo-rlm";
 
 export default function (pi: ExtensionAPI) {
+  registerRepoRLMTools(pi);
+
   pi.registerTool({
     name: "rlm",
     label: "RLM",

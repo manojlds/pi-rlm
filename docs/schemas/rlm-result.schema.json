@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pi-rlm.dev/schemas/rlm-result.schema.json",
+  "title": "RLM Node Result",
+  "type": "object",
+  "required": ["run_id", "node_id", "summary", "status", "created_at"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "node_id": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "partial", "failed"]
+    },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "severity", "description", "evidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": {
+            "type": "string",
+            "enum": ["security", "quality", "performance", "docs", "architecture"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low", "info"]
+          },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "suggested_fix": { "type": "string" },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["path", "line_start", "line_end"],
+              "properties": {
+                "path": { "type": "string" },
+                "line_start": { "type": "integer", "minimum": 1 },
+                "line_end": { "type": "integer", "minimum": 1 },
+                "quote": { "type": "string" },
+                "snippet_hash": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "path"],
+        "properties": {
+          "kind": { "type": "string" },
+          "path": { "type": "string" },
+          "title": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "aggregation_notes": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

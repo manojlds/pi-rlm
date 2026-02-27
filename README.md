@@ -119,6 +119,16 @@ User: "Find the magic number in this 1M-line file"
 └─────────────────────────────────────┘
 ```
 
+## RLM-First Design Spec
+
+For the repo-scale recursive design (wiki generation, deep review, persistent recursion trees), see:
+
+- `docs/rlm-first-spec-v1.md`
+- `docs/phase-1-implementation-plan.md`
+- `docs/schemas/rlm-node.schema.json`
+- `docs/schemas/rlm-result.schema.json`
+- `docs/schemas/rlm-run.schema.json`
+
 ## License
 
 MIT

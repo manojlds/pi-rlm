@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pi-rlm.dev/schemas/rlm-node.schema.json",
+  "title": "RLM Node",
+  "type": "object",
+  "required": [
+    "run_id",
+    "node_id",
+    "depth",
+    "scope_type",
+    "scope_ref",
+    "objective",
+    "status",
+    "decision",
+    "created_at"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 1 },
+    "node_id": { "type": "string", "minLength": 1 },
+    "parent_id": { "type": ["string", "null"] },
+    "depth": { "type": "integer", "minimum": 0 },
+    "scope_type": {
+      "type": "string",
+      "enum": ["repo", "dir", "module", "file_group", "file_slice"]
+    },
+    "scope_ref": {
+      "type": "object",
+      "required": ["paths"],
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "line_ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "start", "end"],
+            "properties": {
+              "path": { "type": "string" },
+              "start": { "type": "integer", "minimum": 1 },
+              "end": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "objective": { "type": "string", "minLength": 1 },
+    "domain": {
+      "type": ["string", "null"],
+      "enum": ["security", "quality", "performance", "docs", "architecture", null]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "completed", "failed", "cancelled"]
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["undecided", "leaf", "split"]
+    },
+    "child_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "max_depth": { "type": "integer", "minimum": 0 },
+        "remaining_llm_calls": { "type": "integer", "minimum": 0 },
+        "remaining_tokens": { "type": "integer", "minimum": 0 },
+        "deadline_epoch_ms": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "llm_calls": { "type": "integer", "minimum": 0 },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}
