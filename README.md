@@ -149,6 +149,14 @@ For the repo-scale recursive design (wiki generation, deep review, persistent re
 - `docs/schemas/rlm-result.schema.json`
 - `docs/schemas/rlm-run.schema.json`
 
+## Extension Docs
+
+- `docs/tools.md` — all tool parameters/outputs
+- `docs/cookbook.md` — practical runbooks
+- `docs/ci-integration.md` — SARIF + codequality usage in CI
+- `docs/prompt-playbook.md` — objective prompt templates
+- `docs/autoload-dev.md` — local extension dev/autoload loop
+
 ## Repo-Scale RLM Workflow (Phase 3)
 
 The extension now includes repo-level recursive tools:
