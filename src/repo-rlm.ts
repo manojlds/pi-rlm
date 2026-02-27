@@ -123,6 +123,34 @@ export function registerRepoRLMTools(pi: ExtensionAPI): void {
   });
 
   pi.registerTool({
+    name: "repo_rlm_synthesize",
+    label: "Repo RLM Synthesize",
+    description:
+      "Synthesize higher-level artifacts from recursive node results (wiki index, ranked review findings, codequality, SARIF).",
+    parameters: Type.Object({
+      run_id: Type.String({ description: "Run ID" }),
+      target: Type.Optional(StringEnum(["auto", "wiki", "review", "all"] as const, { default: "auto" })),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const store = new RepoRLMStore(ctx.cwd);
+      const out = store.synthesizeRun(params.run_id, (params.target ?? "auto") as "auto" | "wiki" | "review" | "all");
+      const artifactPreview = out.artifacts.slice(0, 12).map((a) => `${a.kind}:${a.path}`).join(" | ");
+      return {
+        content: [
+          {
+            type: "text",
+            text:
+              `Synthesized run ${out.run.run_id} (${params.target ?? "auto"})\n` +
+              `Artifacts: ${out.artifacts.length}\n` +
+              `Preview: ${artifactPreview || "(none)"}`,
+          },
+        ],
+        details: out,
+      };
+    },
+  });
+
+  pi.registerTool({
     name: "repo_rlm_status",
     label: "Repo RLM Status",
     description: "Get current status/progress of an RLM run.",

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, extname, join, relative, resolve } from "node:path";
 
@@ -104,6 +105,26 @@ interface DecisionOutcome {
   metrics: ScopeMetrics;
 }
 
+type FindingSeverity = "critical" | "high" | "medium" | "low" | "info";
+
+interface FindingEvidence {
+  path: string;
+  line_start: number;
+  line_end: number;
+  quote?: string;
+}
+
+interface ReviewFinding {
+  id: string;
+  domain: string;
+  severity: FindingSeverity;
+  confidence: number;
+  title: string;
+  description: string;
+  suggested_fix?: string;
+  evidence: FindingEvidence[];
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
@@ -153,6 +174,43 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 function lineNumberAt(text: string, index: number): number {
   return text.slice(0, index).split("\n").length;
+}
+
+function severityRank(severity: FindingSeverity): number {
+  switch (severity) {
+    case "critical":
+      return 5;
+    case "high":
+      return 4;
+    case "medium":
+      return 3;
+    case "low":
+      return 2;
+    case "info":
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+function mapSeverityToCodeClimate(severity: FindingSeverity): "blocker" | "critical" | "major" | "minor" | "info" {
+  switch (severity) {
+    case "critical":
+      return "blocker";
+    case "high":
+      return "critical";
+    case "medium":
+      return "major";
+    case "low":
+      return "minor";
+    default:
+      return "info";
+  }
+}
+
+function safeRelPath(cwd: string, p: string): string {
+  const rel = relative(cwd, p);
+  return rel || p;
 }
 
 export class RepoRLMStore {
@@ -1124,6 +1182,255 @@ export class RepoRLMStore {
     return run;
   }
 
+  private getAllLatestResults(runId: string): RepoRLMResult[] {
+    return Array.from(this.getLatestResultMap(runId).values());
+  }
+
+  private extractReviewFindings(runId: string): ReviewFinding[] {
+    const results = this.getAllLatestResults(runId);
+    const out: ReviewFinding[] = [];
+
+    for (const r of results) {
+      const findings = Array.isArray(r.findings) ? r.findings : [];
+      for (const raw of findings) {
+        const f = raw as any;
+        const sev = ["critical", "high", "medium", "low", "info"].includes(String(f?.severity))
+          ? (f.severity as FindingSeverity)
+          : "info";
+        const evidenceRaw = Array.isArray(f?.evidence) ? f.evidence : [];
+        const evidence: FindingEvidence[] = evidenceRaw
+          .map((e: any) => ({
+            path: String(e?.path ?? ""),
+            line_start: Number(e?.line_start ?? 1),
+            line_end: Number(e?.line_end ?? Number(e?.line_start ?? 1)),
+            quote: typeof e?.quote === "string" ? e.quote : undefined,
+          }))
+          .filter((e) => e.path.length > 0);
+        if (evidence.length === 0) continue;
+
+        out.push({
+          id: String(f?.id ?? `${r.node_id}:${out.length + 1}`),
+          domain: String(f?.domain ?? "quality"),
+          severity: sev,
+          confidence: typeof f?.confidence === "number" ? f.confidence : 0.5,
+          title: String(f?.title ?? "Untitled finding"),
+          description: String(f?.description ?? ""),
+          suggested_fix: typeof f?.suggested_fix === "string" ? f.suggested_fix : undefined,
+          evidence,
+        });
+      }
+    }
+
+    return out;
+  }
+
+  private dedupeAndRankFindings(findings: ReviewFinding[]): ReviewFinding[] {
+    const byKey = new Map<string, ReviewFinding>();
+
+    for (const f of findings) {
+      const e = f.evidence[0]!;
+      const key = `${f.domain}|${f.title}|${e.path}|${e.line_start}|${e.line_end}`;
+      const existing = byKey.get(key);
+      if (!existing) {
+        byKey.set(key, f);
+        continue;
+      }
+
+      const betterSeverity = severityRank(f.severity) > severityRank(existing.severity);
+      const betterConfidence = f.confidence > existing.confidence;
+      if (betterSeverity || (!betterSeverity && betterConfidence)) {
+        byKey.set(key, f);
+      }
+    }
+
+    return Array.from(byKey.values()).sort((a, b) => {
+      const ds = severityRank(b.severity) - severityRank(a.severity);
+      if (ds !== 0) return ds;
+      return b.confidence - a.confidence;
+    });
+  }
+
+  private synthesizeWikiArtifacts(runId: string): Array<{ kind: string; path: string }> {
+    const runDir = this.runDir(runId);
+    const outDir = join(runDir, "artifacts", "wiki");
+    mkdirSync(outDir, { recursive: true });
+
+    const results = this.getAllLatestResults(runId);
+    const nodeDocs = results
+      .flatMap((r) => r.artifacts ?? [])
+      .filter((a) => a.kind === "wiki_node")
+      .map((a) => a.path);
+
+    const uniqueNodeDocs = Array.from(new Set(nodeDocs)).sort();
+
+    const indexPath = join(outDir, "index.md");
+    const lines = [
+      "# Repository Wiki",
+      "",
+      `Generated from run ${runId}.`,
+      "",
+      "## Node Documents",
+      "",
+      ...(uniqueNodeDocs.length > 0
+        ? uniqueNodeDocs.map((p) => {
+            const rel = safeRelPath(outDir, join(runDir, p));
+            return `- [${basename(p)}](${rel.replace(/\\/g, "/")})`;
+          })
+        : ["- (none)"]),
+    ];
+    writeFileSync(indexPath, lines.join("\n") + "\n", "utf-8");
+
+    return [
+      { kind: "wiki_index", path: join("artifacts", "wiki", "index.md") },
+      ...uniqueNodeDocs.map((p) => ({ kind: "wiki_node", path: p })),
+    ];
+  }
+
+  private synthesizeReviewArtifacts(runId: string): Array<{ kind: string; path: string }> {
+    const runDir = this.runDir(runId);
+    const outDir = join(runDir, "artifacts", "review");
+    mkdirSync(outDir, { recursive: true });
+
+    const rawFindings = this.extractReviewFindings(runId);
+    const ranked = this.dedupeAndRankFindings(rawFindings);
+
+    const rankedPath = join(outDir, "findings-ranked.json");
+    writeJson(rankedPath, {
+      run_id: runId,
+      raw_count: rawFindings.length,
+      deduped_count: ranked.length,
+      findings: ranked,
+    });
+
+    const reportPath = join(outDir, "report.md");
+    const reportLines = [
+      "# Review Report",
+      "",
+      `Run: ${runId}`,
+      `Raw findings: ${rawFindings.length}`,
+      `Deduped findings: ${ranked.length}`,
+      "",
+      "## Top Findings",
+      "",
+      ...(ranked.slice(0, 50).map((f, i) => {
+        const e = f.evidence[0];
+        return [
+          `${i + 1}. **[${f.severity.toUpperCase()}]** ${f.title}`,
+          `   - Domain: ${f.domain}`,
+          `   - Confidence: ${f.confidence.toFixed(2)}`,
+          `   - Location: ${e.path}:${e.line_start}-${e.line_end}`,
+          `   - Description: ${f.description}`,
+          f.suggested_fix ? `   - Suggested fix: ${f.suggested_fix}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n");
+      }) ?? ["(none)"]),
+    ];
+    writeFileSync(reportPath, reportLines.join("\n") + "\n", "utf-8");
+
+    const codeQualityPath = join(outDir, "codequality.json");
+    const codeQuality = ranked.map((f) => {
+      const e = f.evidence[0];
+      const fp = createHash("sha256").update(`${f.domain}|${f.title}|${e.path}|${e.line_start}|${e.line_end}`).digest("hex");
+      return {
+        description: f.description || f.title,
+        check_name: `pi-rlm-${f.domain}`,
+        fingerprint: fp,
+        severity: mapSeverityToCodeClimate(f.severity),
+        location: {
+          path: e.path,
+          lines: { begin: e.line_start },
+        },
+      };
+    });
+    writeJson(codeQualityPath, codeQuality);
+
+    const sarifPath = join(outDir, "sarif.json");
+    const rules = Array.from(
+      new Map(
+        ranked.map((f) => {
+          const id = `${f.domain}:${f.title}`;
+          return [id, { id, name: f.title, shortDescription: { text: f.title }, help: { text: f.description || f.title } }];
+        }),
+      ).values(),
+    );
+    const sarif = {
+      version: "2.1.0",
+      runs: [
+        {
+          tool: {
+            driver: {
+              name: "pi-rlm",
+              rules,
+            },
+          },
+          results: ranked.map((f) => {
+            const e = f.evidence[0];
+            const ruleId = `${f.domain}:${f.title}`;
+            const level = severityRank(f.severity) >= 4 ? "error" : severityRank(f.severity) >= 3 ? "warning" : "note";
+            return {
+              ruleId,
+              level,
+              message: { text: f.description || f.title },
+              locations: [
+                {
+                  physicalLocation: {
+                    artifactLocation: { uri: e.path },
+                    region: { startLine: e.line_start, endLine: e.line_end },
+                  },
+                },
+              ],
+            };
+          }),
+        },
+      ],
+    };
+    writeJson(sarifPath, sarif);
+
+    return [
+      { kind: "review_ranked_findings", path: join("artifacts", "review", "findings-ranked.json") },
+      { kind: "review_report", path: join("artifacts", "review", "report.md") },
+      { kind: "review_codequality", path: join("artifacts", "review", "codequality.json") },
+      { kind: "review_sarif", path: join("artifacts", "review", "sarif.json") },
+    ];
+  }
+
+  synthesizeRun(runId: string, target: "auto" | "wiki" | "review" | "all" = "auto"): {
+    run: RepoRLMRun;
+    artifacts: Array<{ kind: string; path: string }>;
+  } {
+    const run = this.getRun(runId);
+    const artifactMap = new Map<string, { kind: string; path: string }>();
+
+    const shouldWiki = target === "all" || target === "wiki" || (target === "auto" && run.mode === "wiki");
+    const shouldReview = target === "all" || target === "review" || (target === "auto" && run.mode === "review");
+
+    if (shouldWiki) {
+      for (const a of this.synthesizeWikiArtifacts(runId)) {
+        artifactMap.set(`${a.kind}|${a.path}`, a);
+      }
+    }
+
+    if (shouldReview) {
+      for (const a of this.synthesizeReviewArtifacts(runId)) {
+        artifactMap.set(`${a.kind}|${a.path}`, a);
+      }
+    }
+
+    for (const existing of run.output_index ?? []) {
+      artifactMap.set(`${existing.kind}|${existing.path}`, existing);
+    }
+
+    run.output_index = Array.from(artifactMap.values()).sort((a, b) => a.path.localeCompare(b.path));
+    run.updated_at = nowIso();
+    this.setRun(run);
+
+    return {
+      run,
+      artifacts: run.output_index,
+    };
+  }
+
   exportRun(runId: string, format: "markdown" | "json"): { path: string } {
     const status = this.getStatus(runId);
     const artifactsDir = join(this.runDir(runId), "artifacts");
@@ -1166,10 +1473,16 @@ export class RepoRLMStore {
         (n) => `- ${n.node_id} (depth=${n.depth}, status=${n.status}, decision=${n.decision})`,
       ),
       "",
+      "## Artifacts",
+      "",
+      ...(status.run.output_index.length > 0
+        ? status.run.output_index.map((a) => `- ${a.kind}: ${a.path}`)
+        : ["- (none)"]),
+      "",
       "## Notes",
       "",
-      "Phase-2 recursive scheduler scaffold active.",
-      "Run repo_rlm_step/repo_rlm_run to execute recursive decomposition.",
+      "Phase-3 scaffold adds synthesis outputs for wiki/review modes.",
+      "Use repo_rlm_synthesize after scheduler completion for best results.",
     ];
     writeFileSync(mdPath, lines.join("\n") + "\n", "utf-8");
     return { path: mdPath };

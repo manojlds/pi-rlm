@@ -210,6 +210,18 @@ function runReviewEvidence(base) {{
   assert(Array.isArray(finding.evidence) && finding.evidence.length > 0, 'finding evidence missing');
   assert(typeof finding.evidence[0].path === 'string', 'evidence path missing');
   assert(Number.isInteger(finding.evidence[0].line_start), 'evidence line_start missing');
+
+  const synth = store.synthesizeRun(run.run_id, 'review');
+  assert(synth.artifacts.some(a => a.kind === 'review_report'), 'review report artifact missing');
+
+  const rankedPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'findings-ranked.json');
+  const ranked = JSON.parse(fs.readFileSync(rankedPath, 'utf-8'));
+  assert(ranked.raw_count >= ranked.deduped_count, 'dedupe count invariant broken');
+
+  const codeQualityPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'codequality.json');
+  const sarifPath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'review', 'sarif.json');
+  assert(fs.existsSync(codeQualityPath), 'codequality export missing');
+  assert(fs.existsSync(sarifPath), 'sarif export missing');
 }}
 
 function runExportChecks(base) {{
@@ -224,6 +236,11 @@ function runExportChecks(base) {{
   }});
 
   store.runUntil(run.run_id, 100);
+  const synth = store.synthesizeRun(run.run_id, 'wiki');
+  assert(synth.artifacts.some(a => a.kind === 'wiki_index'), 'wiki index artifact missing');
+
+  const wikiIndex = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'wiki', 'index.md');
+  assert(fs.existsSync(wikiIndex), 'wiki index file missing');
 
   const jsonExport = store.exportRun(run.run_id, 'json');
   const mdExport = store.exportRun(run.run_id, 'markdown');
