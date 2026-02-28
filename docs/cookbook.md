@@ -37,7 +37,8 @@ Use repo_rlm_export for run_id "<id>" with format "markdown".
 
 1. Start
 ```text
-Use repo_rlm_start with objective "generate architecture wiki for this repository" and mode "wiki".
+Use repo_rlm_start with objective "generate a DeepWiki-style architecture wiki for this repository" and mode "wiki".
+# optional: exclude_paths ["vendor", "third_party", "generated/**"]
 ```
 
 2. Run

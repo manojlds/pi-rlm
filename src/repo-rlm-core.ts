@@ -15,6 +15,7 @@ interface RepoRLMRunConfig {
   max_tokens: number;
   max_wall_clock_ms: number;
   scheduler: RepoRLMScheduler;
+  exclude_paths?: string[];
 }
 
 interface RepoRLMRun {
@@ -249,6 +250,115 @@ function objectiveFocusTags(objective: string): string[] {
   return Array.from(new Set(tags));
 }
 
+const DEFAULT_EXCLUDED_SEGMENTS = new Set([
+  ".git",
+  "node_modules",
+  ".pi",
+  "dist",
+  "build",
+  "coverage",
+  ".next",
+  ".turbo",
+  ".cache",
+  ".idea",
+  ".vscode",
+]);
+
+function normalizeForPathMatching(value: string): string {
+  return value.replace(/\\/g, "/").replace(/^\.\//, "").replace(/^\/+/, "").trim();
+}
+
+function globToRegExp(glob: string): RegExp {
+  const escaped = glob
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*\*/g, "::DOUBLE_STAR::")
+    .replace(/\*/g, "[^/]*")
+    .replace(/::DOUBLE_STAR::/g, ".*");
+  return new RegExp(`^${escaped}$`);
+}
+
+function shouldExcludeAbsolutePath(cwd: string, absPath: string, customExcludes: string[]): boolean {
+  const relRaw = relative(cwd, absPath);
+  const rel = normalizeForPathMatching(relRaw);
+  const segments = rel.split("/").filter(Boolean);
+
+  if (segments.some((seg) => DEFAULT_EXCLUDED_SEGMENTS.has(seg))) {
+    return true;
+  }
+
+  for (const pattern of customExcludes) {
+    const normPattern = normalizeForPathMatching(pattern);
+    if (!normPattern) continue;
+
+    if (normPattern.includes("*")) {
+      if (globToRegExp(normPattern).test(rel)) return true;
+      continue;
+    }
+
+    if (rel === normPattern || rel.startsWith(`${normPattern}/`) || segments.includes(normPattern)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function parseSummaryField(summary: string, field: string): string | null {
+  const m = summary.match(new RegExp(`${field}=([^|]+)`));
+  return m ? m[1]!.trim() : null;
+}
+
+function parseSampleFilesFromSummary(summary: string): string[] {
+  const raw = parseSummaryField(summary, "sample_files");
+  if (!raw || raw === "(none)") return [];
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function inferFileRole(relPath: string): string {
+  const p = relPath.toLowerCase();
+  const name = basename(relPath).toLowerCase();
+
+  if (name === "readme.md") return "Project overview and onboarding documentation.";
+  if (name.startsWith("contributing")) return "Contribution workflow and development conventions.";
+  if (name.includes("changelog")) return "Release and change history.";
+  if (p.includes("/test") || p.endsWith(".test.ts") || p.endsWith(".spec.ts")) return "Automated tests for behavior and regression safety.";
+  if (p.includes("/cli/") || p.includes("bin/")) return "CLI command surface and argument handling.";
+  if (p.includes("/scripts/")) return "Operational or developer automation scripts.";
+  if (p.includes("/docs/")) return "Design, usage, or integration documentation.";
+  if (p.includes("/github/workflows/") || p.includes("/.gitlab-ci")) return "CI/CD pipeline definition.";
+  if (name === "package.json") return "Package metadata, scripts, and dependency constraints.";
+  if (name === "tsconfig.json") return "TypeScript compiler configuration.";
+  if (p.endsWith(".ts") || p.endsWith(".js")) return "Application/runtime logic implementation.";
+  if (p.endsWith(".md")) return "Narrative documentation for humans.";
+  if (p.endsWith(".json") || p.endsWith(".yaml") || p.endsWith(".yml")) return "Configuration and machine-readable project metadata.";
+  return "Project file contributing to repository behavior.";
+}
+
+function extractKeySymbols(content: string): string[] {
+  const out = new Set<string>();
+  const patterns = [
+    /export\s+(?:async\s+)?function\s+([A-Za-z0-9_]+)/g,
+    /export\s+class\s+([A-Za-z0-9_]+)/g,
+    /export\s+(?:const|let|var)\s+([A-Za-z0-9_]+)/g,
+    /export\s+interface\s+([A-Za-z0-9_]+)/g,
+    /export\s+type\s+([A-Za-z0-9_]+)/g,
+  ];
+
+  for (const pattern of patterns) {
+    let m: RegExpExecArray | null;
+    while ((m = pattern.exec(content)) !== null) {
+      out.add(m[1]!);
+      if (out.size >= 12) break;
+    }
+    if (out.size >= 12) break;
+  }
+
+  return Array.from(out);
+}
+
 export class RepoRLMStore {
   private baseDir: string;
   private cwd: string;
@@ -315,13 +425,20 @@ export class RepoRLMStore {
 
     this.ensureRunDirs(runId);
 
+    const effectiveConfig: RepoRLMRunConfig = {
+      ...input.config,
+      exclude_paths: Array.from(
+        new Set([...(input.config.exclude_paths ?? []), ...Array.from(DEFAULT_EXCLUDED_SEGMENTS)]),
+      ).sort(),
+    };
+
     const run: RepoRLMRun = {
       run_id: runId,
       objective: input.objective,
       mode: input.mode,
       status: "running",
       root_node_id: rootNodeId,
-      config: input.config,
+      config: effectiveConfig,
       progress: {
         nodes_total: 1,
         nodes_completed: 0,
@@ -354,10 +471,10 @@ export class RepoRLMStore {
       child_ids: [],
       confidence: null,
       budgets: {
-        max_depth: input.config.max_depth,
-        remaining_llm_calls: input.config.max_llm_calls,
-        remaining_tokens: input.config.max_tokens,
-        deadline_epoch_ms: Date.now() + input.config.max_wall_clock_ms,
+        max_depth: effectiveConfig.max_depth,
+        remaining_llm_calls: effectiveConfig.max_llm_calls,
+        remaining_tokens: effectiveConfig.max_tokens,
+        deadline_epoch_ms: Date.now() + effectiveConfig.max_wall_clock_ms,
       },
       created_at: createdAt,
       updated_at: createdAt,
@@ -426,16 +543,21 @@ export class RepoRLMStore {
     return next;
   }
 
-  private collectScopeFiles(paths: string[], maxFiles: number): ScopeMetrics {
+  private collectScopeFiles(run: RepoRLMRun, paths: string[], maxFiles: number): ScopeMetrics {
     const sampledFiles: string[] = [];
     let totalBytes = 0;
     const stack = paths.map((p) => this.toAbs(p));
     const visited = new Set<string>();
+    const customExcludes = run.config.exclude_paths ?? [];
 
     while (stack.length > 0 && sampledFiles.length < maxFiles) {
       const p = stack.pop()!;
       if (visited.has(p)) continue;
       visited.add(p);
+
+      if (shouldExcludeAbsolutePath(this.cwd, p, customExcludes)) {
+        continue;
+      }
 
       let st: ReturnType<typeof statSync>;
       try {
@@ -461,7 +583,9 @@ export class RepoRLMStore {
 
       for (const name of entries) {
         if (sampledFiles.length >= maxFiles) break;
-        stack.push(join(p, name));
+        const child = join(p, name);
+        if (shouldExcludeAbsolutePath(this.cwd, child, customExcludes)) continue;
+        stack.push(child);
       }
     }
 
@@ -473,7 +597,7 @@ export class RepoRLMStore {
   }
 
   private decideNode(run: RepoRLMRun, node: RepoRLMNode): DecisionOutcome {
-    const metrics = this.collectScopeFiles(node.scope_ref.paths, 400);
+    const metrics = this.collectScopeFiles(run, node.scope_ref.paths, 400);
 
     if (Date.now() > node.budgets.deadline_epoch_ms) {
       return { decision: "leaf", reason: "deadline_exceeded", metrics };
@@ -501,9 +625,12 @@ export class RepoRLMStore {
   private splitNode(run: RepoRLMRun, node: RepoRLMNode): RepoRLMNode[] {
     const dirs: string[] = [];
     const files: string[] = [];
+    const customExcludes = run.config.exclude_paths ?? [];
 
     for (const raw of node.scope_ref.paths) {
       const p = this.toAbs(raw);
+      if (shouldExcludeAbsolutePath(this.cwd, p, customExcludes)) continue;
+
       let st: ReturnType<typeof statSync>;
       try {
         st = statSync(p);
@@ -525,6 +652,7 @@ export class RepoRLMStore {
 
       for (const name of entries) {
         const child = join(p, name);
+        if (shouldExcludeAbsolutePath(this.cwd, child, customExcludes)) continue;
         try {
           const childSt = statSync(child);
           if (childSt.isDirectory()) dirs.push(child);
@@ -658,7 +786,7 @@ export class RepoRLMStore {
 
   private executeLeafNode(run: RepoRLMRun, node: RepoRLMNode): RepoRLMResult {
     const started = Date.now();
-    const metrics = this.collectScopeFiles(node.scope_ref.paths, 200);
+    const metrics = this.collectScopeFiles(run, node.scope_ref.paths, 200);
 
     const extCounts = new Map<string, number>();
     for (const f of metrics.sampledFiles) {
@@ -701,18 +829,81 @@ export class RepoRLMStore {
       const safe = node.node_id.replace(/[^a-zA-Z0-9_-]/g, "_");
       const relArtifactPath = join("artifacts", "wiki", "nodes", `${safe}.md`);
       const artifactPath = join(this.runDir(run.run_id), relArtifactPath);
+
+      const fileInsights = metrics.sampledFiles.slice(0, 18).map((absPath) => {
+        const relPath = relative(this.cwd, absPath) || absPath;
+        const role = inferFileRole(relPath);
+        const ext = extname(relPath).toLowerCase();
+
+        let heading: string | null = null;
+        let symbols: string[] = [];
+        try {
+          const st = statSync(absPath);
+          if (st.size <= 120_000 && [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".md"].includes(ext)) {
+            const content = readFileSync(absPath, "utf-8");
+            if (ext === ".md") {
+              const headingMatch = content.match(/^#\s+(.+)$/m);
+              heading = headingMatch ? headingMatch[1]!.trim() : null;
+            }
+            symbols = extractKeySymbols(content);
+          }
+        } catch {
+          // keep best-effort metadata only
+        }
+
+        return { relPath, role, heading, symbols };
+      });
+
+      const purposeSignals = new Set<string>();
+      const lowerPaths = fileInsights.map((f) => f.relPath.toLowerCase());
+      if (lowerPaths.some((p) => p.includes("/cli/") || p.includes("bin/"))) {
+        purposeSignals.add("Provides command-line entry points and user workflows.");
+      }
+      if (lowerPaths.some((p) => p.includes("/github/workflows/") || p.includes("/.gitlab-ci"))) {
+        purposeSignals.add("Defines CI/CD automation and repository quality gates.");
+      }
+      if (lowerPaths.some((p) => p.includes("/test") || p.endsWith(".test.ts") || p.endsWith(".spec.ts"))) {
+        purposeSignals.add("Contains automated tests that validate behavior and prevent regressions.");
+      }
+      if (lowerPaths.some((p) => p.includes("/docs/") || p.endsWith("readme.md"))) {
+        purposeSignals.add("Captures documentation and onboarding knowledge for maintainers.");
+      }
+      if (lowerPaths.some((p) => p.includes("src/") && (p.endsWith(".ts") || p.endsWith(".js")))) {
+        purposeSignals.add("Implements runtime and application logic in source modules.");
+      }
+
+      if (purposeSignals.size === 0) {
+        purposeSignals.add("Represents a scoped repository slice used to build the broader architecture map.");
+      }
+
+      const exportedSymbols = Array.from(new Set(fileInsights.flatMap((f) => f.symbols))).slice(0, 20);
+
       const body = [
         `# Node ${node.node_id}`,
         "",
-        `- Scope: ${node.scope_type}`,
-        `- Objective: ${node.objective}`,
-        `- File count: ${metrics.fileCount}`,
+        `This node summarizes a **${node.scope_type}** scope for objective: _${node.objective}_.`,
+        "",
+        "## Scope Metrics",
+        "",
+        `- File count (sampled): ${metrics.fileCount}`,
         `- Total bytes (sampled): ${metrics.totalBytes}`,
         topExt ? `- Top extensions: ${topExt}` : "- Top extensions: none",
+        `- Duration: ${Date.now() - started}ms`,
         "",
-        "## Sample files",
+        "## Inferred Responsibilities",
         "",
-        ...metrics.sampledFiles.slice(0, 25).map((p) => `- ${relative(this.cwd, p) || p}`),
+        ...Array.from(purposeSignals).map((s) => `- ${s}`),
+        "",
+        "## Key Files",
+        "",
+        ...fileInsights.map((f) => {
+          const suffix = f.heading ? ` _(heading: ${f.heading})_` : "";
+          return `- \`${f.relPath}\` — ${f.role}${suffix}`;
+        }),
+        "",
+        "## Exported/API Symbols (sample)",
+        "",
+        ...(exportedSymbols.length > 0 ? exportedSymbols.map((s) => `- ${s}`) : ["- (none detected)"]),
       ].join("\n");
       writeFileSync(artifactPath, body + "\n", "utf-8");
       artifacts.push({ kind: "wiki_node", path: relArtifactPath });
@@ -1341,75 +1532,222 @@ export class RepoRLMStore {
     const uniqueNodeDocs = Array.from(new Set(nodeDocs)).sort();
     const objectiveTags = objectiveFocusTags(run.objective);
 
-    const summarySnippets = results
-      .map((r) => `- ${r.node_id}: ${r.summary}`)
-      .slice(0, 30);
+    const sampledFiles = Array.from(new Set(results.flatMap((r) => parseSampleFilesFromSummary(r.summary)))).sort();
 
-    const moduleCounts = new Map<string, number>();
-    for (const p of uniqueNodeDocs) {
-      const seg = firstPathSegment(p);
-      moduleCounts.set(seg, (moduleCounts.get(seg) ?? 0) + 1);
+    const moduleMap = new Map<string, { count: number; files: Set<string> }>();
+    for (const file of sampledFiles) {
+      const mod = firstPathSegment(file);
+      const existing = moduleMap.get(mod) ?? { count: 0, files: new Set<string>() };
+      existing.count += 1;
+      existing.files.add(file);
+      moduleMap.set(mod, existing);
     }
 
-    const moduleIndexPath = join(outDir, "module-index.md");
-    const moduleLines = [
-      "# Module Index",
-      "",
-      ...(moduleCounts.size > 0
-        ? Array.from(moduleCounts.entries())
-            .sort((a, b) => b[1] - a[1])
-            .map(([name, count]) => `- ${name}: ${count} node documents`)
-        : ["- (none)"]),
-    ];
-    writeFileSync(moduleIndexPath, moduleLines.join("\n") + "\n", "utf-8");
+    const topModules = Array.from(moduleMap.entries())
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 40);
 
-    const architecturePath = join(outDir, "architecture-summary.md");
-    const architectureLines = [
+    const testFiles = sampledFiles.filter(
+      (p) => p.includes("/test") || p.endsWith(".test.ts") || p.endsWith(".spec.ts") || p.includes("tests/"),
+    );
+    const cliFiles = sampledFiles.filter((p) => p.includes("/cli/") || p.startsWith("scripts/") || p.includes("/bin/"));
+    const docFiles = sampledFiles.filter((p) => p.endsWith(".md") || p.startsWith("docs/") || p.toLowerCase().includes("readme"));
+
+    const packageJsonPath = join(this.cwd, "package.json");
+    const packageScripts: string[] = [];
+    if (existsSync(packageJsonPath)) {
+      try {
+        const pkg = readJson<any>(packageJsonPath);
+        const scripts = pkg?.scripts ?? {};
+        for (const [name, cmd] of Object.entries(scripts)) {
+          packageScripts.push(`- \`${name}\`: ${String(cmd)}`);
+          if (packageScripts.length >= 20) break;
+        }
+      } catch {
+        // best effort only
+      }
+    }
+
+    const summarySnippets = results
+      .map((r) => `- ${r.node_id}: ${r.summary}`)
+      .slice(0, 40);
+
+    const wikiArtifacts: Array<{ kind: string; path: string }> = [];
+    const writeWikiPage = (kind: string, fileName: string, lines: string[]) => {
+      const pagePath = join(outDir, fileName);
+      writeFileSync(pagePath, lines.join("\n") + "\n", "utf-8");
+      wikiArtifacts.push({ kind, path: join("artifacts", "wiki", fileName) });
+    };
+
+    writeWikiPage("wiki_home", "Home.md", [
+      "# Repository Wiki",
+      "",
+      `Run: ${runId}`,
+      `Objective: ${run.objective}`,
+      `Focus tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
+      "",
+      "## Navigation",
+      "",
+      "- [Architecture](Architecture.md)",
+      "- [Module Index](module-index.md)",
+      "- [CLI and Workflows](CLI-and-Workflows.md)",
+      "- [Setup and Development](Setup-and-Dev.md)",
+      "- [Testing](Testing.md)",
+      "- [Contributing](Contributing.md)",
+      "",
+      "## Repository Snapshot",
+      "",
+      `- Result nodes summarized: ${results.length}`,
+      `- Node documents generated: ${uniqueNodeDocs.length}`,
+      `- Sampled project files: ${sampledFiles.length}`,
+      `- Top modules analyzed: ${topModules.length}`,
+    ]);
+
+    writeWikiPage("wiki_architecture_summary", "architecture-summary.md", [
       "# Architecture Summary",
       "",
       `Run: ${runId}`,
       `Objective: ${run.objective}`,
       `Focus tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
       "",
-      "## Recursive Coverage",
+      "## High-Level Module Landscape",
       "",
-      `- Node documents: ${uniqueNodeDocs.length}`,
-      `- Result nodes summarized: ${results.length}`,
+      ...(topModules.length > 0
+        ? topModules.slice(0, 20).map(([name, info]) => {
+            const exemplars = Array.from(info.files).slice(0, 4).map((p) => `\`${p}\``).join(", ");
+            return `- **${name}** (${info.count} files): ${exemplars || "(no examples)"}`;
+          })
+        : ["- (none)"]),
       "",
-      "## Summary Snippets",
+      "## Recursive Evidence Snippets",
       "",
       ...(summarySnippets.length ? summarySnippets : ["- (none)"]),
-    ];
-    writeFileSync(architecturePath, architectureLines.join("\n") + "\n", "utf-8");
+    ]);
 
-    const indexPath = join(outDir, "index.md");
-    const lines = [
+    writeWikiPage("wiki_architecture", "Architecture.md", [
+      "# Architecture",
+      "",
+      "This page provides a DeepWiki-style architectural overview synthesized from recursive node analyses.",
+      "",
+      "## System Boundaries",
+      "",
+      `- Primary runtime modules appear under: ${topModules.slice(0, 8).map(([m]) => `\`${m}\``).join(", ") || "(none)"}`,
+      `- Objective framing: ${run.objective}`,
+      "",
+      "## Key Coupling Areas",
+      "",
+      ...(topModules.slice(0, 10).map(([m, info]) => `- ${m}: ${info.count} sampled files suggest high surface area.`) || ["- (none)"]),
+      "",
+      "## Recommended Reading Order",
+      "",
+      "1. [Home](Home.md)",
+      "2. [module-index](module-index.md)",
+      "3. [CLI-and-Workflows](CLI-and-Workflows.md)",
+      "4. [Testing](Testing.md)",
+      "",
+      "## Node Documentation",
+      "",
+      ...(uniqueNodeDocs.slice(0, 160).map((p) => {
+        const rel = safeRelPath(outDir, join(runDir, p)).replace(/\\/g, "/");
+        return `- [${basename(p)}](${rel})`;
+      }) || ["- (none)"]),
+      ...(uniqueNodeDocs.length > 160
+        ? ["", `> Showing first 160 node docs (of ${uniqueNodeDocs.length}). See run artifacts for the full list.`]
+        : []),
+    ]);
+
+    writeWikiPage("wiki_module_index", "module-index.md", [
+      "# Module Index",
+      "",
+      "Grouped by top-level path segment with representative files.",
+      "",
+      ...(topModules.length > 0
+        ? topModules.map(([name, info]) => {
+            const fileList = Array.from(info.files).slice(0, 8).map((p) => `  - \`${p}\``).join("\n");
+            return [`- **${name}** (${info.count} files)`, fileList || "  - (none)"].join("\n");
+          })
+        : ["- (none)"]),
+    ]);
+
+    writeWikiPage("wiki_cli_workflows", "CLI-and-Workflows.md", [
+      "# CLI and Workflows",
+      "",
+      "Files that appear to define user-facing commands, scripts, and automation.",
+      "",
+      ...(cliFiles.length > 0 ? cliFiles.slice(0, 120).map((p) => `- \`${p}\` — ${inferFileRole(p)}`) : ["- (none detected)"]),
+    ]);
+
+    writeWikiPage("wiki_setup_dev", "Setup-and-Dev.md", [
+      "# Setup and Development",
+      "",
+      "## Key documentation and config files",
+      "",
+      ...(docFiles.length > 0 ? docFiles.slice(0, 80).map((p) => `- \`${p}\` — ${inferFileRole(p)}`) : ["- (none detected)"]),
+      "",
+      "## package.json scripts (if present)",
+      "",
+      ...(packageScripts.length > 0 ? packageScripts : ["- (none)"]),
+    ]);
+
+    writeWikiPage("wiki_testing", "Testing.md", [
+      "# Testing",
+      "",
+      "Test-related files discovered during recursive sampling.",
+      "",
+      ...(testFiles.length > 0 ? testFiles.slice(0, 120).map((p) => `- \`${p}\``) : ["- (none detected)"]),
+    ]);
+
+    writeWikiPage("wiki_contributing", "Contributing.md", [
+      "# Contributing",
+      "",
+      "This page highlights contributor-relevant files discovered by the run.",
+      "",
+      ...(sampledFiles
+        .filter((p) => {
+          const n = p.toLowerCase();
+          return (
+            n.includes("contributing") ||
+            n.includes("code_of_conduct") ||
+            n.includes("pull_request_template") ||
+            n.endsWith("readme.md") ||
+            n.startsWith("docs/")
+          );
+        })
+        .slice(0, 100)
+        .map((p) => `- \`${p}\` — ${inferFileRole(p)}`) || ["- (none detected)"]),
+    ]);
+
+    const indexLines = [
       "# Repository Wiki",
       "",
       `Generated from run ${runId}.`,
       "",
-      "## Overview",
+      "## Entry Points",
       "",
-      `- Objective: ${run.objective}`,
-      `- Focus tags: ${objectiveTags.length ? objectiveTags.join(", ") : "(none)"}`,
-      `- Architecture summary: [architecture-summary.md](architecture-summary.md)`,
-      `- Module index: [module-index.md](module-index.md)`,
+      "- [Home](Home.md)",
+      "- [Architecture](Architecture.md)",
+      "- [module-index](module-index.md)",
+      "- [CLI-and-Workflows](CLI-and-Workflows.md)",
+      "- [Setup-and-Dev](Setup-and-Dev.md)",
+      "- [Testing](Testing.md)",
+      "- [Contributing](Contributing.md)",
       "",
       "## Node Documents",
       "",
       ...(uniqueNodeDocs.length > 0
-        ? uniqueNodeDocs.map((p) => {
+        ? uniqueNodeDocs.slice(0, 160).map((p) => {
             const rel = safeRelPath(outDir, join(runDir, p));
             return `- [${basename(p)}](${rel.replace(/\\/g, "/")})`;
           })
         : ["- (none)"]),
+      ...(uniqueNodeDocs.length > 160
+        ? ["", `> Showing first 160 node docs (of ${uniqueNodeDocs.length}) to keep this page readable.`]
+        : []),
     ];
-    writeFileSync(indexPath, lines.join("\n") + "\n", "utf-8");
+    writeWikiPage("wiki_index", "index.md", indexLines);
 
     return [
-      { kind: "wiki_index", path: join("artifacts", "wiki", "index.md") },
-      { kind: "wiki_module_index", path: join("artifacts", "wiki", "module-index.md") },
-      { kind: "wiki_architecture_summary", path: join("artifacts", "wiki", "architecture-summary.md") },
+      ...wikiArtifacts,
       ...uniqueNodeDocs.map((p) => ({ kind: "wiki_node", path: p })),
     ];
   }

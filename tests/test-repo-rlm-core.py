@@ -234,6 +234,9 @@ function runReviewEvidence(base) {{
 
 function runExportChecks(base) {{
   setupLeafRepo(base);
+  writeFile(path.join(base, '.git', 'objects', 'aa', 'deadbeef'), 'ignored\n');
+  writeFile(path.join(base, 'node_modules', 'leftpad', 'index.js'), 'module.exports = 1;\n');
+
   const store = new RepoRLMStore(base);
   const run = store.startRun({{
     objective: 'export-test',
@@ -246,9 +249,16 @@ function runExportChecks(base) {{
   store.runUntil(run.run_id, 100);
   const synth = store.synthesizeRun(run.run_id, 'wiki');
   assert(synth.artifacts.some(a => a.kind === 'wiki_index'), 'wiki index artifact missing');
+  assert(synth.artifacts.some(a => a.kind === 'wiki_home'), 'wiki home artifact missing');
+  assert(synth.artifacts.some(a => a.kind === 'wiki_architecture'), 'wiki architecture artifact missing');
 
   const wikiIndex = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'wiki', 'index.md');
   assert(fs.existsSync(wikiIndex), 'wiki index file missing');
+
+  const architecturePath = path.join(base, '.pi', 'rlm', 'runs', run.run_id, 'artifacts', 'wiki', 'architecture-summary.md');
+  const architecture = fs.readFileSync(architecturePath, 'utf-8');
+  assert(!architecture.includes('.git/'), 'architecture summary should exclude .git paths');
+  assert(!architecture.includes('node_modules/'), 'architecture summary should exclude node_modules paths');
 
   const jsonExport = store.exportRun(run.run_id, 'json');
   const mdExport = store.exportRun(run.run_id, 'markdown');

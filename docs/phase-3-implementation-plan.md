@@ -98,6 +98,8 @@ Implemented now:
 - architecture summary scaffolding includes objective + focus tags
 - optional semantic review narrative (`artifacts/review/report.semantic.md`)
 - optional semantic architecture narrative (`artifacts/wiki/architecture.semantic.md`)
+- DeepWiki-style deterministic wiki pages (`Home`, `Architecture`, `Setup-and-Dev`, `CLI-and-Workflows`, `Testing`, `Contributing`)
+- default exclusion of noisy directories (`.git`, `node_modules`, `.pi`, `dist`, etc.) with optional `exclude_paths`
 
 Remaining:
 - objective-specific prompt/LLM synthesis passes for higher semantic quality

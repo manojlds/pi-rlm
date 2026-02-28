@@ -108,7 +108,14 @@ async function runSemanticSynthesis(
     const reviewResp = await complete(model, { messages: reviewMessages }, { apiKey, signal });
     const reviewText = extractText(reviewResp as any);
     const reviewSemanticPath = join(reviewDir, "report.semantic.md");
-    writeFileSync(reviewSemanticPath, (reviewText || "(empty semantic review output)") + "\n", "utf-8");
+    const reviewFallback = [
+      "# Semantic Review (Fallback)",
+      "",
+      "Model response was empty; falling back to deterministic report.",
+      "",
+      truncate(readIfExists(join(reviewDir, "report.md")), 25_000) || "(no deterministic report found)",
+    ].join("\n");
+    writeFileSync(reviewSemanticPath, (reviewText || reviewFallback) + "\n", "utf-8");
     artifacts.push({ kind: "review_report_semantic", path: join("artifacts", "review", "report.semantic.md") });
   }
 
@@ -153,7 +160,14 @@ async function runSemanticSynthesis(
     const wikiResp = await complete(model, { messages: wikiMessages }, { apiKey, signal });
     const wikiText = extractText(wikiResp as any);
     const wikiSemanticPath = join(wikiDir, "architecture.semantic.md");
-    writeFileSync(wikiSemanticPath, (wikiText || "(empty semantic wiki output)") + "\n", "utf-8");
+    const wikiFallback = [
+      "# Semantic Architecture Briefing (Fallback)",
+      "",
+      "Model response was empty; falling back to deterministic architecture summary.",
+      "",
+      truncate(readIfExists(join(wikiDir, "architecture-summary.md")), 25_000) || "(no architecture summary found)",
+    ].join("\n");
+    writeFileSync(wikiSemanticPath, (wikiText || wikiFallback) + "\n", "utf-8");
     artifacts.push({ kind: "wiki_architecture_semantic", path: join("artifacts", "wiki", "architecture.semantic.md") });
   }
 
@@ -188,6 +202,11 @@ export function registerRepoRLMTools(pi: ExtensionAPI): void {
       max_tokens: Type.Optional(Type.Number({ minimum: 1024, maximum: 10_000_000 })),
       max_wall_clock_ms: Type.Optional(Type.Number({ minimum: 1_000, maximum: 86_400_000 })),
       scheduler: Type.Optional(SchedulerSchema),
+      exclude_paths: Type.Optional(
+        Type.Array(Type.String(), {
+          description: "Optional extra path globs/prefixes to exclude (default excludes include .git, node_modules, .pi, dist)",
+        }),
+      ),
     }),
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const mode = (params.mode ?? "generic") as RepoRLMMode;
@@ -197,6 +216,7 @@ export function registerRepoRLMTools(pi: ExtensionAPI): void {
         max_tokens: params.max_tokens ?? 500_000,
         max_wall_clock_ms: params.max_wall_clock_ms ?? 30 * 60 * 1000,
         scheduler: (params.scheduler ?? "bfs") as RepoRLMScheduler,
+        exclude_paths: params.exclude_paths ?? [],
       };
 
       const domain = mode === "review" ? "quality" : mode === "wiki" ? "architecture" : null;
@@ -218,6 +238,7 @@ export function registerRepoRLMTools(pi: ExtensionAPI): void {
               `Started run ${run.run_id} (${run.mode})\n` +
               `Objective: ${run.objective}\n` +
               `Root node: ${run.root_node_id}\n` +
+              `Exclude paths: ${(run.config.exclude_paths ?? []).join(", ") || "(none)"}\n` +
               `Persisted at: .pi/rlm/runs/${run.run_id}/\n` +
               "Use repo_rlm_step or repo_rlm_run to execute recursion.",
           },

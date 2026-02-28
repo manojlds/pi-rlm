@@ -118,10 +118,15 @@ Rule of thumb:
 
 Under `.pi/rlm/runs/<run-id>/artifacts/`:
 
-- `wiki/index.md`, `wiki/module-index.md`, `wiki/architecture-summary.md`
+- `wiki/index.md`, `wiki/Home.md`, `wiki/Architecture.md`
+- `wiki/module-index.md`, `wiki/CLI-and-Workflows.md`, `wiki/Setup-and-Dev.md`, `wiki/Testing.md`, `wiki/Contributing.md`
+- `wiki/architecture-summary.md`, optional `wiki/architecture.semantic.md`
 - `review/findings-ranked.json`, `review/findings-clusters.json`, `review/summary.json`
 - `review/report.md`, optional `review/report.semantic.md`
 - `review/codequality.json`, `review/sarif.json`
+
+By default repo runs exclude noisy paths (`.git`, `node_modules`, `.pi`, `dist`, etc.).
+You can add more excludes via `repo_rlm_start.exclude_paths`.
 
 ## Quick Start
 
@@ -238,6 +243,7 @@ A typical flow inside pi:
 1. Start a run
 ```text
 Use repo_rlm_start with objective "full review of this repository" and mode "review".
+# optional: exclude_paths ["vendor", "third_party", "generated/**"]
 ```
 
 2. Execute recursion

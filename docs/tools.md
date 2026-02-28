@@ -40,6 +40,9 @@ Start a persistent recursive repo run.
 - `max_tokens` (default `500000`)
 - `max_wall_clock_ms` (default `1800000`)
 - `scheduler` (`bfs | dfs | hybrid`, default `bfs`)
+- `exclude_paths` (string[], optional): extra path prefixes/globs to exclude
+
+Default excluded segments always include: `.git`, `node_modules`, `.pi`, `dist`, `build`, `coverage`, `.next`, `.turbo`, `.cache`.
 
 ### Returns
 
@@ -85,7 +88,13 @@ Build higher-level artifacts from node outputs.
 
 - Wiki:
   - `artifacts/wiki/index.md`
+  - `artifacts/wiki/Home.md`
+  - `artifacts/wiki/Architecture.md`
   - `artifacts/wiki/module-index.md`
+  - `artifacts/wiki/CLI-and-Workflows.md`
+  - `artifacts/wiki/Setup-and-Dev.md`
+  - `artifacts/wiki/Testing.md`
+  - `artifacts/wiki/Contributing.md`
   - `artifacts/wiki/architecture-summary.md`
 - Review:
   - `artifacts/review/findings-ranked.json`
