@@ -98,6 +98,22 @@ Use repo_rlm_synthesize for that run_id with target "review" and semantic true.
 Use repo_rlm_export for that run_id with format "markdown".
 ```
 
+### Which tool should I use?
+
+| Situation | Use | Why |
+|---|---|---|
+| One huge file/blob (logs, CSV, text dump) | `rlm` | Fast REPL-style code exploration over a single context |
+| Need exact computed answer from noisy data | `rlm` | Python execution + iterative inspection beats pure prompting |
+| Need semantic analysis over large chunks | `rlm` (+ `llm_query`) | Chunk + analyze + aggregate inside one run |
+| Full repository architecture mapping/wiki | `repo_rlm_*` (`mode: wiki`) | Persistent recursive tree + wiki synthesis artifacts |
+| Deep multi-module code quality review | `repo_rlm_*` (`mode: review`) | Recursive decomposition + ranked findings + CI exports |
+| Long job you may pause/resume later | `repo_rlm_*` | Run state persisted under `.pi/rlm/runs/<run-id>/` |
+| Need SARIF/CodeQuality outputs for CI | `repo_rlm_synthesize` (`target: review`) | Deterministic machine-readable outputs |
+
+Rule of thumb:
+- Use **`rlm`** for one-context computational/semantic investigations.
+- Use **`repo_rlm_*`** for persistent repo-scale exploration and artifact generation.
+
 ### Main artifact outputs
 
 Under `.pi/rlm/runs/<run-id>/artifacts/`:
