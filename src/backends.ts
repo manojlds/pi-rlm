@@ -186,7 +186,10 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
   try {
     if (request.runId && typeof request.depth === "number") {
       const paneId = await startStructuredTmuxCall(request, command);
-      await waitForTmuxPane(paneId, request.timeoutMs, request.signal);
+      const paneState = await waitForTmuxPane(paneId, request.timeoutMs, request.signal);
+      if (request.tmuxUseCurrentSession && paneState === "dead") {
+        await cleanupCurrentSessionPaneArtifacts(paneId);
+      }
     } else {
       await runEphemeralTmuxCall(request, command, stamp);
     }
@@ -479,11 +482,93 @@ async function getCurrentTmuxSessionName(): Promise<string | undefined> {
   return sessionName || undefined;
 }
 
+async function cleanupCurrentSessionPaneArtifacts(paneId: string): Promise<void> {
+  const paneMeta = await getTmuxPaneMetadata(paneId);
+  if (!paneMeta) return;
+
+  if (!paneMeta.windowName.startsWith("rlm-depth-")) {
+    return;
+  }
+
+  await killTmuxPane(paneId);
+
+  const windowPanes = await listTmuxWindowPanes(paneMeta.windowId);
+  if (windowPanes.length === 0) {
+    return;
+  }
+
+  const hasAlivePane = windowPanes.some((pane) => !pane.dead);
+  if (!hasAlivePane) {
+    await killTmuxWindow(paneMeta.windowId);
+  }
+}
+
+async function getTmuxPaneMetadata(
+  paneId: string
+): Promise<{ windowId: string; windowName: string; sessionName: string } | undefined> {
+  const result = await runProcess(
+    "tmux",
+    ["display-message", "-p", "-t", paneId, "#{window_id}\t#{window_name}\t#{session_name}"],
+    {
+      timeoutMs: 5000
+    }
+  );
+
+  if (result.code !== 0) {
+    return undefined;
+  }
+
+  const line = result.stdout.trim();
+  if (!line) {
+    return undefined;
+  }
+
+  const [windowId, windowName, sessionName] = line.split("\t");
+  if (!windowId || !windowName || !sessionName) {
+    return undefined;
+  }
+
+  return {
+    windowId: windowId.trim(),
+    windowName: windowName.trim(),
+    sessionName: sessionName.trim()
+  };
+}
+
+async function listTmuxWindowPanes(
+  windowTarget: string
+): Promise<Array<{ paneId: string; dead: boolean }>> {
+  const result = await runProcess("tmux", ["list-panes", "-t", windowTarget, "-F", "#{pane_id}\t#{pane_dead}"], {
+    timeoutMs: 5000
+  });
+
+  if (result.code !== 0) {
+    return [];
+  }
+
+  const panes: Array<{ paneId: string; dead: boolean }> = [];
+
+  for (const entry of result.stdout.split("\n")) {
+    const line = entry.trim();
+    if (!line) continue;
+
+    const [paneId, deadFlag] = line.split("\t");
+    if (!paneId) continue;
+
+    panes.push({
+      paneId: paneId.trim(),
+      dead: deadFlag?.trim() === "1"
+    });
+  }
+
+  return panes;
+}
+
 async function waitForTmuxPane(
   paneId: string,
   timeoutMs: number,
   signal?: AbortSignal
-): Promise<void> {
+): Promise<"missing" | "dead"> {
   const deadline = Date.now() + timeoutMs;
 
   while (Date.now() < deadline) {
@@ -494,7 +579,7 @@ async function waitForTmuxPane(
 
     const paneState = await getTmuxPaneState(paneId);
     if (paneState === "missing" || paneState === "dead") {
-      return;
+      return paneState;
     }
 
     await sleep(250);
@@ -589,6 +674,12 @@ async function setTmuxWindowTiled(windowTarget: string): Promise<void> {
 
 async function killTmuxPane(paneId: string): Promise<void> {
   await runProcess("tmux", ["kill-pane", "-t", paneId], {
+    timeoutMs: 5000
+  }).catch(() => undefined);
+}
+
+async function killTmuxWindow(windowTarget: string): Promise<void> {
+  await runProcess("tmux", ["kill-window", "-t", windowTarget], {
     timeoutMs: 5000
   }).catch(() => undefined);
 }
