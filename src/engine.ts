@@ -76,8 +76,8 @@ export async function runRlmEngine(
       finalChars: finalOutput.length
     });
 
-    if (root.status === "failed") {
-      throw new Error(root.error ?? "RLM root node failed");
+    if (root.status !== "completed") {
+      throw new Error(root.error ?? `RLM root node ${root.status}`);
     }
 
     progress?.(`RLM run ${input.runId} completed in ${durationMs}ms`);
@@ -262,6 +262,40 @@ export async function runRlmEngine(
           parentId: node.id
         });
       });
+
+      const completedCount = node.children.filter((c) => c.status === "completed").length;
+      const cancelledCount = node.children.filter((c) => c.status === "cancelled").length;
+
+      if (completedCount === 0) {
+        node.finishedAt = Date.now();
+
+        if (cancelledCount === node.children.length) {
+          node.status = "cancelled";
+          node.error = "All child nodes were cancelled";
+          node.result = "Node cancelled: all child nodes were cancelled";
+          log("node_cancelled", {
+            nodeId: node.id,
+            parentId: params.parentId ?? null,
+            error: node.error,
+            children: node.children.length,
+            durationMs: node.finishedAt - node.startedAt
+          });
+          return node;
+        }
+
+        const failedCount = node.children.length - cancelledCount;
+        node.status = "failed";
+        node.error = `No child completed successfully (${failedCount} failed, ${cancelledCount} cancelled)`;
+        node.result = `Node failed: ${node.error}`;
+        log("node_error", {
+          nodeId: node.id,
+          parentId: params.parentId ?? null,
+          error: node.error,
+          children: node.children.length,
+          durationMs: node.finishedAt - node.startedAt
+        });
+        return node;
+      }
 
       node.result = await synthesizeNode(node);
       node.status = "completed";

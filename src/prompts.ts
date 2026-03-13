@@ -70,6 +70,9 @@ export function synthesisPrompt(input: {
   return [
     "You are the synthesizer node in a recursive language model run.",
     "Combine child results into one final response to the parent task.",
+    "Use COMPLETED children as evidence.",
+    "FAILED or CANCELLED children indicate missing work; do not infer their answers.",
+    "If some children failed, produce a best-effort synthesis and explicitly note the gaps.",
     "Be explicit about uncertainties if child outputs conflict.",
     "",
     `Depth: ${input.depth}`,
