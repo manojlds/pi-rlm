@@ -38,7 +38,7 @@ export class RunStore {
       promise: Promise.resolve(null as unknown as RlmRunResult)
     };
 
-    record.promise = (async () => {
+    const runPromise = (async () => {
       try {
         const result = await executor(id, controller.signal);
         record.status = "completed";
@@ -59,6 +59,10 @@ export class RunStore {
         this.prune();
       }
     })();
+
+    // Prevent unhandled-rejection crashes when async callers start a run and don't await it.
+    void runPromise.catch(() => undefined);
+    record.promise = runPromise;
 
     this.records.set(id, record);
     this.prune();

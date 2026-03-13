@@ -91,6 +91,33 @@ export async function runRlmEngine(
     depth: number;
     lineage: string[];
   }): Promise<RlmNode> {
+    if (state.nodesVisited >= input.maxNodes) {
+      const startedAt = Date.now();
+      const skippedNode: RlmNode = {
+        id: `n${++state.nodeCounter}`,
+        depth: params.depth,
+        task: params.task,
+        status: "cancelled",
+        startedAt,
+        finishedAt: startedAt,
+        error: "maxNodes reached",
+        result: "Node skipped: maxNodes reached",
+        children: []
+      };
+
+      progress?.(
+        `[${skippedNode.id}] skipped (maxNodes reached) ${shortTask(params.task, 72)}`
+      );
+      log("node_skipped", {
+        nodeId: skippedNode.id,
+        depth: skippedNode.depth,
+        task: skippedNode.task,
+        reason: "maxNodes reached",
+        nodesVisited: state.nodesVisited
+      });
+      return skippedNode;
+    }
+
     const nodeId = `n${++state.nodeCounter}`;
     state.nodesVisited += 1;
     state.maxDepthSeen = Math.max(state.maxDepthSeen, params.depth);
@@ -127,7 +154,8 @@ export async function runRlmEngine(
       const forcedReason = getForcedSolveReason({
         depth: params.depth,
         normalizedTask: normalized,
-        lineage: params.lineage
+        lineage: params.lineage,
+        remainingNodeBudget
       });
 
       if (forcedReason || input.mode === "solve") {
@@ -173,15 +201,26 @@ export async function runRlmEngine(
         return node;
       }
 
-      const subtasks = sanitizeSubtasks(decision.subtasks ?? [], params.task).slice(
+      const requestedSubtasks = sanitizeSubtasks(decision.subtasks ?? [], params.task).slice(
         0,
         input.maxBranching
       );
+      const remainingChildBudget = Math.max(0, input.maxNodes - state.nodesVisited);
+      const subtasks = requestedSubtasks.slice(0, remainingChildBudget);
 
       if (subtasks.length < 2) {
+        const fallbackReason =
+          requestedSubtasks.length < 2
+            ? "planner returned insufficient valid subtasks"
+            : "insufficient remaining node budget for decomposition";
+
+        if (input.mode === "decompose") {
+          throw new Error(`mode=decompose requires valid decomposition: ${fallbackReason}`);
+        }
+
         node.decision = {
           action: "solve",
-          reason: "planner returned insufficient valid subtasks"
+          reason: fallbackReason
         };
         node.result = await solveNode(node, node.decision.reason);
         node.status = "completed";
@@ -263,11 +302,10 @@ export async function runRlmEngine(
       if (parsedForced.action === "decompose") {
         return parsedForced;
       }
-      return {
-        action: "decompose",
-        reason: "mode=decompose requested, but planner output was invalid",
-        subtasks: []
-      };
+
+      throw new Error(
+        `mode=decompose requires planner action=decompose; got ${parsedForced.action} (${parsedForced.reason})`
+      );
     }
 
     const raw = await callModel("planner", plannerPrompt(args));
@@ -332,6 +370,7 @@ export async function runRlmEngine(
     depth: number;
     normalizedTask: string;
     lineage: string[];
+    remainingNodeBudget: number;
   }): string | undefined {
     if (args.depth >= input.maxDepth) {
       return "maxDepth reached";
@@ -339,6 +378,10 @@ export async function runRlmEngine(
 
     if (state.nodesVisited >= input.maxNodes) {
       return "maxNodes reached";
+    }
+
+    if (args.remainingNodeBudget < 2) {
+      return "insufficient node budget for decomposition";
     }
 
     if (args.lineage.includes(args.normalizedTask)) {
