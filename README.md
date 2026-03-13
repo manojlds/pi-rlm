@@ -132,7 +132,7 @@ Default behavior:
 
 Optional behavior:
 - Set `tmuxUseCurrentSession: true` (or CLI flag `--tmux-current-session`) to place panes in the current tmux session
-- Uses windows named `rlm-depth-0`, `rlm-depth-1`, ... in that current session
+- Uses windows named `rlm-<runId>-d0`, `rlm-<runId>-d1`, ... in that current session
 
 General:
 - Uses fresh `pi` process per subcall
@@ -156,6 +156,12 @@ Each run writes artifacts to:
 - `maxBranching`: child count cap per decomposition
 - cycle detection by normalized task lineage
 - cancellable runs (`op=cancel`)
+
+## Examples
+
+See the [examples/](examples/) directory:
+
+- **[web-data-extraction](examples/web-data-extraction/)** — Extract structured data from websites using RLM + browser-tools skill. Demonstrates parallel multi-page scraping with decomposition and synthesis.
 
 ## Development
 
