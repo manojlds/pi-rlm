@@ -206,7 +206,8 @@ function resolveStartInput(params: RlmToolParams, cwd: string): StartRunInput {
     maxBranching: params.maxBranching ?? 3,
     concurrency: params.concurrency ?? 2,
     timeoutMs: params.timeoutMs ?? defaultNodeTimeoutMs,
-    tmuxUseCurrentSession: params.tmuxUseCurrentSession ?? false
+    tmuxUseCurrentSession: params.tmuxUseCurrentSession ?? false,
+    piBin: params.piBin ?? "pi"
   };
 }
 

@@ -28,6 +28,11 @@ export const rlmToolParamsSchema = Type.Object({
     Type.Boolean({
       description: "For backend=tmux, place depth windows/panes in the current tmux session"
     })
+  ),
+  piBin: Type.Optional(
+    Type.String({
+      description: "Override pi binary path (default: pi)"
+    })
   )
 });
 

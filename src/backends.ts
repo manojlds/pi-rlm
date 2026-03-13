@@ -26,6 +26,7 @@ export interface CompletionRequest {
   depth?: number;
   stage?: string;
   tmuxUseCurrentSession?: boolean;
+  piBin: string;
 }
 
 interface ProcessResult {
@@ -151,7 +152,7 @@ async function completeWithCli(request: CompletionRequest): Promise<string> {
 
   args.push(request.prompt);
 
-  const result = await runProcess("pi", args, {
+  const result = await runProcess(request.piBin, args, {
     cwd: request.cwd,
     timeoutMs: request.timeoutMs,
     signal: request.signal,
@@ -178,11 +179,12 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
   await fs.writeFile(promptPath, request.prompt, "utf8");
 
   const modelPart = request.model ? ` --model ${shellQuote(request.model)}` : "";
+  const envExports = buildEnvExports();
   const shellScript = [
-    `PROMPT_CONTENT=$(cat ${shellQuote(promptPath)})`,
+    envExports,
     "set -o pipefail",
-    `PI_OFFLINE=1 pi ${defaultCliFlags.join(" ")} --tools ${shellQuote(tools)}${modelPart} \"$PROMPT_CONTENT\" 2>&1 | tee ${shellQuote(outputPath)}`
-  ].join("; ");
+    `PI_OFFLINE=1 ${shellQuote(request.piBin)} ${defaultCliFlags.join(" ")} --tools ${shellQuote(tools)}${modelPart} < ${shellQuote(promptPath)} 2>&1 | tee ${shellQuote(outputPath)}`
+  ].filter(Boolean).join("; ");
   const command = `bash -lc ${shellQuote(shellScript)}`;
 
   try {
@@ -193,7 +195,7 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
       if (shouldCleanupCurrentSessionWindows(request)) {
         const currentSessionName = await getCurrentTmuxSessionName();
         if (currentSessionName) {
-          await cleanupCurrentSessionDepthWindows(currentSessionName);
+          await cleanupCurrentSessionDepthWindows(currentSessionName, request.runId!);
         }
       }
     } else {
@@ -218,7 +220,7 @@ async function startStructuredTmuxCall(
   const useCurrentSession = Boolean(currentSessionName);
 
   const sessionName = currentSessionName ?? toTmuxRunSessionName(request.runId!);
-  const windowName = toTmuxDepthWindowName(request.depth!, useCurrentSession);
+  const windowName = toTmuxDepthWindowName(request.depth!, useCurrentSession, request.runId);
 
   if (useCurrentSession) {
     const { paneId, windowTarget } = await startPaneInDepthWindow(
@@ -494,7 +496,10 @@ function shouldCleanupCurrentSessionWindows(request: CompletionRequest): boolean
   return request.stage === "solver" || request.stage === "synthesizer";
 }
 
-async function cleanupCurrentSessionDepthWindows(sessionName: string): Promise<void> {
+async function cleanupCurrentSessionDepthWindows(sessionName: string, runId: string): Promise<void> {
+  const shortId = runId.slice(0, 8);
+  const windowPrefix = `rlm-${shortId}-d`;
+
   const result = await runProcess(
     "tmux",
     ["list-windows", "-t", sessionName, "-F", "#{window_id}\t#{window_name}"],
@@ -517,7 +522,7 @@ async function cleanupCurrentSessionDepthWindows(sessionName: string): Promise<v
     if (!windowId) continue;
 
     const windowName = nameParts.join("\t").trim();
-    if (!windowName.startsWith("rlm-depth-")) continue;
+    if (!windowName.startsWith(windowPrefix)) continue;
 
     rlmDepthWindowIds.push(windowId.trim());
   }
@@ -652,8 +657,12 @@ function toTmuxRunSessionName(runId: string): string {
   return `pi-rlm-${sanitized}`.slice(0, 48);
 }
 
-function toTmuxDepthWindowName(depth: number, useCurrentSession: boolean): string {
-  return useCurrentSession ? `rlm-depth-${depth}` : `depth-${depth}`;
+function toTmuxDepthWindowName(depth: number, useCurrentSession: boolean, runId?: string): string {
+  if (useCurrentSession) {
+    const shortId = runId ? runId.slice(0, 8) : "x";
+    return `rlm-${shortId}-d${depth}`;
+  }
+  return `depth-${depth}`;
 }
 
 function toTmuxPaneTitle(request: CompletionRequest): string {
@@ -661,6 +670,20 @@ function toTmuxPaneTitle(request: CompletionRequest): string {
   const stage = request.stage ?? "call";
   const depth = typeof request.depth === "number" ? `d${request.depth}` : "dx";
   return `${depth}:${node}:${stage}`.slice(0, 64);
+}
+
+function buildEnvExports(): string {
+  const patterns = [/^PI_/, /_API_KEY$/, /_SECRET$/, /^ANTHROPIC_/, /^OPENAI_/, /^GOOGLE_/];
+  const exports: string[] = [];
+
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value === undefined) continue;
+    if (patterns.some((p) => p.test(key))) {
+      exports.push(`export ${key}=${shellQuote(value)}`);
+    }
+  }
+
+  return exports.join("; ");
 }
 
 function isTmuxDuplicateSessionError(output: string): boolean {

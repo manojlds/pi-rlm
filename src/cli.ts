@@ -47,6 +47,7 @@ interface ToolStartParams {
   timeoutMs: number;
   async: false;
   tmuxUseCurrentSession: boolean;
+  piBin: string;
   model?: string;
 }
 
@@ -177,6 +178,7 @@ async function main(): Promise<void> {
       timeoutMs: opts.timeoutMs,
       async: false,
       tmuxUseCurrentSession: opts.tmuxUseCurrentSession,
+      piBin: opts.piBin,
       ...(opts.model ? { model: opts.model } : {})
     };
 

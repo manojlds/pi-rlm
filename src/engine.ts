@@ -379,7 +379,8 @@ export async function runRlmEngine(
         nodeId,
         depth,
         stage,
-        tmuxUseCurrentSession: input.tmuxUseCurrentSession
+        tmuxUseCurrentSession: input.tmuxUseCurrentSession,
+        piBin: input.piBin
       },
       ctx
     );
@@ -481,13 +482,19 @@ async function mapConcurrent<T, R>(
   const limit = Math.max(1, concurrency);
   const results = new Array<R>(items.length);
   let nextIndex = 0;
+  let aborted = false;
 
   await Promise.all(
     Array.from({ length: Math.min(limit, items.length) }, async () => {
-      while (nextIndex < items.length) {
+      while (nextIndex < items.length && !aborted) {
         const current = nextIndex;
         nextIndex += 1;
-        results[current] = await worker(items[current], current);
+        try {
+          results[current] = await worker(items[current], current);
+        } catch (error) {
+          aborted = true;
+          throw error;
+        }
       }
     })
   );

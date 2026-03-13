@@ -20,6 +20,7 @@ export interface StartRunInput {
   concurrency: number;
   timeoutMs: number;
   tmuxUseCurrentSession: boolean;
+  piBin: string;
 }
 
 export interface RlmNode {
