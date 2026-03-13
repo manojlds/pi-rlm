@@ -21,6 +21,10 @@ export interface CompletionRequest {
   toolsProfile: RlmToolsProfile;
   timeoutMs: number;
   signal?: AbortSignal;
+  runId?: string;
+  nodeId?: string;
+  depth?: number;
+  stage?: string;
 }
 
 interface ProcessResult {
@@ -37,6 +41,8 @@ const defaultCliFlags = [
   "--no-prompt-templates",
   "--no-themes"
 ];
+
+const tmuxWindowLocks = new Map<string, Promise<void>>();
 
 export async function completeWithBackend(
   request: CompletionRequest,
@@ -166,7 +172,6 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
   const stamp = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
   const promptPath = join(tmpdir(), `pi-rlm-${stamp}.prompt.txt`);
   const outputPath = join(tmpdir(), `pi-rlm-${stamp}.output.log`);
-  const sessionName = `pi-rlm-${stamp}`;
   const tools = profileToTools(request.toolsProfile);
 
   await fs.writeFile(promptPath, request.prompt, "utf8");
@@ -176,6 +181,87 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
     `PROMPT_CONTENT=$(cat ${shellQuote(promptPath)})`,
     `PI_OFFLINE=1 pi ${defaultCliFlags.join(" ")} --tools ${shellQuote(tools)}${modelPart} \"$PROMPT_CONTENT\" > ${shellQuote(outputPath)} 2>&1`
   ].join("; ");
+
+  try {
+    if (request.runId && typeof request.depth === "number") {
+      const paneId = await startStructuredTmuxCall(request, command);
+      await waitForTmuxPane(paneId, request.timeoutMs, request.signal);
+    } else {
+      await runEphemeralTmuxCall(request, command, stamp);
+    }
+
+    const output = await fs.readFile(outputPath, "utf8").catch(() => "");
+    return output.trim() || "(no response)";
+  } finally {
+    await safeUnlink(promptPath);
+    await safeUnlink(outputPath);
+  }
+}
+
+async function startStructuredTmuxCall(
+  request: CompletionRequest,
+  command: string
+): Promise<string> {
+  const sessionName = toTmuxRunSessionName(request.runId!);
+  const windowName = toTmuxDepthWindowName(request.depth!);
+
+  const createResult = await runProcess(
+    "tmux",
+    [
+      "new-session",
+      "-d",
+      "-s",
+      sessionName,
+      "-n",
+      windowName,
+      "-c",
+      request.cwd,
+      "-P",
+      "-F",
+      "#{pane_id}",
+      command
+    ],
+    {
+      cwd: request.cwd,
+      timeoutMs: 10000,
+      signal: request.signal
+    }
+  );
+
+  if (createResult.code === 0) {
+    await configureStructuredTmuxSession(sessionName);
+    const paneId = createResult.stdout.trim();
+    const windowTarget = (await getTmuxWindowIdForPane(paneId)) ?? `${sessionName}:${windowName}`;
+    await setTmuxPaneTitle(paneId, toTmuxPaneTitle(request));
+    await setTmuxWindowTiled(windowTarget);
+    return paneId;
+  }
+
+  const createOutput = `${createResult.stderr}\n${createResult.stdout}`;
+  if (!isTmuxDuplicateSessionError(createOutput)) {
+    throw new Error(`tmux backend failed to start run session: ${createResult.stderr || createResult.stdout}`);
+  }
+
+  await configureStructuredTmuxSession(sessionName);
+  const { paneId, windowTarget } = await startPaneInDepthWindow(
+    sessionName,
+    windowName,
+    request.cwd,
+    command,
+    request.signal
+  );
+
+  await setTmuxPaneTitle(paneId, toTmuxPaneTitle(request));
+  await setTmuxWindowTiled(windowTarget);
+  return paneId;
+}
+
+async function runEphemeralTmuxCall(
+  request: CompletionRequest,
+  command: string,
+  stamp: string
+): Promise<void> {
+  const sessionName = `pi-rlm-${stamp}`;
 
   const startResult = await runProcess(
     "tmux",
@@ -188,35 +274,315 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
   );
 
   if (startResult.code !== 0) {
-    await safeUnlink(promptPath);
     throw new Error(`tmux backend failed to start: ${startResult.stderr || startResult.stdout}`);
   }
 
   const deadline = Date.now() + request.timeoutMs;
 
+  while (Date.now() < deadline) {
+    if (request.signal?.aborted) {
+      await killTmuxSession(sessionName);
+      throw new Error("RLM request aborted");
+    }
+
+    const alive = await hasTmuxSession(sessionName);
+    if (!alive) return;
+    await sleep(250);
+  }
+
+  if (await hasTmuxSession(sessionName)) {
+    await killTmuxSession(sessionName);
+    throw new Error(`tmux backend timed out after ${request.timeoutMs}ms`);
+  }
+}
+
+async function configureStructuredTmuxSession(sessionName: string): Promise<void> {
+  await runProcess(
+    "tmux",
+    ["set-window-option", "-g", "-t", sessionName, "remain-on-exit", "on"],
+    {
+      timeoutMs: 5000
+    }
+  ).catch(() => undefined);
+}
+
+async function withTmuxWindowLock<T>(
+  sessionName: string,
+  windowName: string,
+  worker: () => Promise<T>
+): Promise<T> {
+  const key = `${sessionName}:${windowName}`;
+  const previous = tmuxWindowLocks.get(key) ?? Promise.resolve();
+
+  let release: (() => void) | undefined;
+  const current = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  const queued = previous
+    .then(() => current)
+    .catch(() => current);
+  tmuxWindowLocks.set(key, queued);
+
+  await previous;
+
   try {
-    while (Date.now() < deadline) {
-      if (request.signal?.aborted) {
-        await killTmuxSession(sessionName);
-        throw new Error("RLM request aborted");
+    return await worker();
+  } finally {
+    release?.();
+    if (tmuxWindowLocks.get(key) === queued) {
+      tmuxWindowLocks.delete(key);
+    }
+  }
+}
+
+async function startPaneInDepthWindow(
+  sessionName: string,
+  windowName: string,
+  cwd: string,
+  command: string,
+  signal?: AbortSignal
+): Promise<{ paneId: string; windowTarget: string }> {
+  return withTmuxWindowLock(sessionName, windowName, async () => {
+    const existingWindowId = await getTmuxWindowIdByName(sessionName, windowName);
+
+    if (existingWindowId) {
+      const splitResult = await runProcess(
+        "tmux",
+        [
+          "split-window",
+          "-d",
+          "-t",
+          existingWindowId,
+          "-c",
+          cwd,
+          "-P",
+          "-F",
+          "#{pane_id}",
+          command
+        ],
+        {
+          cwd,
+          timeoutMs: 10000,
+          signal
+        }
+      );
+
+      if (splitResult.code !== 0) {
+        throw new Error(`tmux backend failed to create pane: ${splitResult.stderr || splitResult.stdout}`);
       }
 
-      const alive = await hasTmuxSession(sessionName);
-      if (!alive) break;
-      await sleep(250);
+      return {
+        paneId: splitResult.stdout.trim(),
+        windowTarget: existingWindowId
+      };
     }
 
-    if (await hasTmuxSession(sessionName)) {
-      await killTmuxSession(sessionName);
-      throw new Error(`tmux backend timed out after ${request.timeoutMs}ms`);
+    const createResult = await runProcess(
+      "tmux",
+      [
+        "new-window",
+        "-d",
+        "-t",
+        sessionName,
+        "-n",
+        windowName,
+        "-c",
+        cwd,
+        "-P",
+        "-F",
+        "#{pane_id}",
+        command
+      ],
+      {
+        cwd,
+        timeoutMs: 10000,
+        signal
+      }
+    );
+
+    if (createResult.code === 0) {
+      const paneId = createResult.stdout.trim();
+      const windowTarget = (await getTmuxWindowIdForPane(paneId)) ?? `${sessionName}:${windowName}`;
+      return { paneId, windowTarget };
     }
 
-    const output = await fs.readFile(outputPath, "utf8").catch(() => "");
-    return output.trim() || "(no response)";
-  } finally {
-    await safeUnlink(promptPath);
-    await safeUnlink(outputPath);
+    const createOutput = `${createResult.stderr}\n${createResult.stdout}`;
+    if (isTmuxDuplicateWindowError(createOutput)) {
+      const recoveredWindowId = await getTmuxWindowIdByName(sessionName, windowName);
+      if (recoveredWindowId) {
+        const recoveredSplit = await runProcess(
+          "tmux",
+          [
+            "split-window",
+            "-d",
+            "-t",
+            recoveredWindowId,
+            "-c",
+            cwd,
+            "-P",
+            "-F",
+            "#{pane_id}",
+            command
+          ],
+          {
+            cwd,
+            timeoutMs: 10000,
+            signal
+          }
+        );
+
+        if (recoveredSplit.code === 0) {
+          return {
+            paneId: recoveredSplit.stdout.trim(),
+            windowTarget: recoveredWindowId
+          };
+        }
+      }
+    }
+
+    throw new Error(`tmux backend failed to create depth window: ${createResult.stderr || createResult.stdout}`);
+  });
+}
+
+async function waitForTmuxPane(
+  paneId: string,
+  timeoutMs: number,
+  signal?: AbortSignal
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    if (signal?.aborted) {
+      await killTmuxPane(paneId);
+      throw new Error("RLM request aborted");
+    }
+
+    const paneState = await getTmuxPaneState(paneId);
+    if (paneState === "missing" || paneState === "dead") {
+      return;
+    }
+
+    await sleep(250);
   }
+
+  await killTmuxPane(paneId);
+  throw new Error(`tmux backend timed out after ${timeoutMs}ms`);
+}
+
+async function getTmuxPaneState(paneId: string): Promise<"alive" | "dead" | "missing"> {
+  const result = await runProcess("tmux", ["list-panes", "-a", "-F", "#{pane_id} #{pane_dead}"], {
+    timeoutMs: 5000
+  });
+
+  if (result.code !== 0) {
+    return "missing";
+  }
+
+  const line = result.stdout
+    .split("\n")
+    .map((entry) => entry.trim())
+    .find((entry) => entry.startsWith(`${paneId} `));
+
+  if (!line) {
+    return "missing";
+  }
+
+  const deadFlag = line.slice(paneId.length + 1).trim();
+  return deadFlag === "1" ? "dead" : "alive";
+}
+
+async function getTmuxWindowIdByName(
+  sessionName: string,
+  windowName: string
+): Promise<string | undefined> {
+  const result = await runProcess(
+    "tmux",
+    ["list-windows", "-t", sessionName, "-F", "#{window_id}\t#{window_name}"],
+    {
+      timeoutMs: 5000
+    }
+  );
+
+  if (result.code !== 0) {
+    return undefined;
+  }
+
+  for (const entry of result.stdout.split("\n")) {
+    const line = entry.trim();
+    if (!line) continue;
+
+    const [windowId, ...nameParts] = line.split("\t");
+    if (!windowId) continue;
+
+    const currentName = nameParts.join("\t").trim();
+    if (currentName === windowName) {
+      return windowId;
+    }
+  }
+
+  return undefined;
+}
+
+async function getTmuxWindowIdForPane(paneId: string): Promise<string | undefined> {
+  if (!paneId) return undefined;
+
+  const result = await runProcess("tmux", ["display-message", "-p", "-t", paneId, "#{window_id}"], {
+    timeoutMs: 5000
+  });
+
+  if (result.code !== 0) {
+    return undefined;
+  }
+
+  const windowId = result.stdout.trim();
+  return windowId || undefined;
+}
+
+async function setTmuxPaneTitle(paneId: string, paneTitle: string): Promise<void> {
+  if (!paneId) return;
+
+  await runProcess("tmux", ["select-pane", "-t", paneId, "-T", paneTitle], {
+    timeoutMs: 5000
+  }).catch(() => undefined);
+}
+
+async function setTmuxWindowTiled(windowTarget: string): Promise<void> {
+  await runProcess("tmux", ["select-layout", "-t", windowTarget, "tiled"], {
+    timeoutMs: 5000
+  }).catch(() => undefined);
+}
+
+async function killTmuxPane(paneId: string): Promise<void> {
+  await runProcess("tmux", ["kill-pane", "-t", paneId], {
+    timeoutMs: 5000
+  }).catch(() => undefined);
+}
+
+function toTmuxRunSessionName(runId: string): string {
+  const sanitized = runId.replace(/[^a-zA-Z0-9_-]/g, "-");
+  return `pi-rlm-${sanitized}`.slice(0, 48);
+}
+
+function toTmuxDepthWindowName(depth: number): string {
+  return `depth-${depth}`;
+}
+
+function toTmuxPaneTitle(request: CompletionRequest): string {
+  const node = request.nodeId ?? "root";
+  const stage = request.stage ?? "call";
+  const depth = typeof request.depth === "number" ? `d${request.depth}` : "dx";
+  return `${depth}:${node}:${stage}`.slice(0, 64);
+}
+
+function isTmuxDuplicateSessionError(output: string): boolean {
+  const normalized = output.toLowerCase();
+  return normalized.includes("duplicate session") || normalized.includes("session already exists");
+}
+
+function isTmuxDuplicateWindowError(output: string): boolean {
+  const normalized = output.toLowerCase();
+  return normalized.includes("duplicate window") || normalized.includes("window already exists");
 }
 
 function extractLastAssistantText(messages: unknown[]): string {

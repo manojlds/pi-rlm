@@ -184,6 +184,7 @@ export async function runRlmEngine(
 
       const decision = await planNode({
         task: params.task,
+        nodeId: node.id,
         depth: params.depth,
         maxDepth: input.maxDepth,
         maxBranching: input.maxBranching,
@@ -306,13 +307,14 @@ export async function runRlmEngine(
 
   async function planNode(args: {
     task: string;
+    nodeId: string;
     depth: number;
     maxDepth: number;
     maxBranching: number;
     remainingNodeBudget: number;
   }): Promise<PlannerDecision> {
     if (input.mode === "decompose") {
-      const forced = await callModel("planner", plannerPrompt(args));
+      const forced = await callModel("planner", plannerPrompt(args), args.nodeId, args.depth);
       const parsedForced = parsePlannerDecision(forced);
       if (parsedForced.action === "decompose") {
         return parsedForced;
@@ -323,7 +325,7 @@ export async function runRlmEngine(
       );
     }
 
-    const raw = await callModel("planner", plannerPrompt(args));
+    const raw = await callModel("planner", plannerPrompt(args), args.nodeId, args.depth);
     return parsePlannerDecision(raw);
   }
 
@@ -334,7 +336,7 @@ export async function runRlmEngine(
       maxDepth: input.maxDepth,
       forceReason
     });
-    return callModel("solver", prompt, node.id);
+    return callModel("solver", prompt, node.id, node.depth);
   }
 
   async function synthesizeNode(node: RlmNode): Promise<string> {
@@ -343,10 +345,15 @@ export async function runRlmEngine(
       depth: node.depth,
       children: node.children
     });
-    return callModel("synthesizer", prompt, node.id);
+    return callModel("synthesizer", prompt, node.id, node.depth);
   }
 
-  async function callModel(stage: string, promptText: string, nodeId?: string): Promise<string> {
+  async function callModel(
+    stage: string,
+    promptText: string,
+    nodeId?: string,
+    depth?: number
+  ): Promise<string> {
     if (activeSignal.aborted) {
       throw new Error("RLM run cancelled");
     }
@@ -367,7 +374,11 @@ export async function runRlmEngine(
         model: input.model,
         toolsProfile: input.toolsProfile,
         timeoutMs: input.timeoutMs,
-        signal: activeSignal
+        signal: activeSignal,
+        runId: input.runId,
+        nodeId,
+        depth,
+        stage
       },
       ctx
     );

@@ -118,7 +118,9 @@ rlm({ op: "cancel", id: "a1b2c3d4" })
 
 ### `backend: "tmux"`
 
-- Runs each subcall inside a detached tmux session
+- Creates one detached tmux session per RLM run (`pi-rlm-<runId>`)
+- Uses depth-oriented windows (`depth-0`, `depth-1`, ...)
+- Starts subcalls in panes within the matching depth window (tiled layout)
 - Uses fresh `pi` process per subcall
 - Useful when you specifically want tmux-level observability/control
 
