@@ -19,6 +19,7 @@ export interface StartRunInput {
   maxBranching: number;
   concurrency: number;
   timeoutMs: number;
+  tmuxUseCurrentSession: boolean;
 }
 
 export interface RlmNode {

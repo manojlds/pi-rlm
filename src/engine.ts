@@ -378,7 +378,8 @@ export async function runRlmEngine(
         runId: input.runId,
         nodeId,
         depth,
-        stage
+        stage,
+        tmuxUseCurrentSession: input.tmuxUseCurrentSession
       },
       ctx
     );

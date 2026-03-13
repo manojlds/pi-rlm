@@ -26,6 +26,7 @@ interface CliOptions {
   live: boolean;
   liveRefreshMs: number;
   piBin: string;
+  tmuxUseCurrentSession: boolean;
   task: string;
   help: boolean;
   version: boolean;
@@ -45,6 +46,7 @@ interface ToolStartParams {
   concurrency: number;
   timeoutMs: number;
   async: false;
+  tmuxUseCurrentSession: boolean;
   model?: string;
 }
 
@@ -124,7 +126,8 @@ const defaults: Omit<CliOptions, "task" | "help" | "version" | "model"> = {
   json: false,
   live: false,
   liveRefreshMs: 250,
-  piBin: "pi"
+  piBin: "pi",
+  tmuxUseCurrentSession: false
 };
 
 const allowedBackends = new Set<RlmBackend>(["sdk", "cli", "tmux"]);
@@ -173,6 +176,7 @@ async function main(): Promise<void> {
       concurrency: opts.concurrency,
       timeoutMs: opts.timeoutMs,
       async: false,
+      tmuxUseCurrentSession: opts.tmuxUseCurrentSession,
       ...(opts.model ? { model: opts.model } : {})
     };
 
@@ -278,6 +282,10 @@ function parseArgs(argv: string[]): CliOptions {
     }
     if (arg === "--live") {
       opts.live = true;
+      continue;
+    }
+    if (arg === "--tmux-current-session") {
+      opts.tmuxUseCurrentSession = true;
       continue;
     }
 
@@ -1000,6 +1008,7 @@ function printHelp(): void {
   process.stdout.write("  --timeout-ms <n>              Timeout per model call (default: 180000)\n");
   process.stdout.write("  --live                        Show live tree visualization (TTY only)\n");
   process.stdout.write("  --live-refresh-ms <n>         Live refresh interval in ms (default: 250)\n");
+  process.stdout.write("  --tmux-current-session        For backend=tmux, use current tmux session windows\n");
   process.stdout.write("  --json                        Print machine-readable JSON\n");
   process.stdout.write("  --pi-bin <path>               Override pi binary path (default: pi)\n");
   process.stdout.write("  -h, --help                    Show help\n");

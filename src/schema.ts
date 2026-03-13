@@ -23,7 +23,12 @@ export const rlmToolParamsSchema = Type.Object({
   maxBranching: Type.Optional(Type.Integer({ minimum: 1, maximum: 8 })),
   concurrency: Type.Optional(Type.Integer({ minimum: 1, maximum: 8 })),
   timeoutMs: Type.Optional(Type.Integer({ minimum: 1000, maximum: 3600000 })),
-  waitTimeoutMs: Type.Optional(Type.Integer({ minimum: 100, maximum: 3600000 }))
+  waitTimeoutMs: Type.Optional(Type.Integer({ minimum: 100, maximum: 3600000 })),
+  tmuxUseCurrentSession: Type.Optional(
+    Type.Boolean({
+      description: "For backend=tmux, place depth windows/panes in the current tmux session"
+    })
+  )
 });
 
 export type RlmToolParams = Static<typeof rlmToolParamsSchema>;

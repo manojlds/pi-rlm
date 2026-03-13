@@ -54,6 +54,12 @@ Live tree visualization (TTY):
 pi-rlm "Analyze architecture of this repo" --tools-profile read-only --live
 ```
 
+Use current tmux session windows instead of a separate `pi-rlm-<runId>` session:
+
+```bash
+pi-rlm "Analyze architecture of this repo" --backend tmux --tmux-current-session
+```
+
 Notes:
 - The wrapper runs a **single synchronous** `op=start` operation.
 - It shells out to the installed `pi` CLI and loads this extension automatically.
@@ -72,6 +78,7 @@ rlm({
   task: "Implement auth refactor and validate tests",
   backend: "sdk",         // sdk | cli | tmux
   mode: "auto",           // auto | solve | decompose
+  tmuxUseCurrentSession: false,
   maxDepth: 2,
   maxNodes: 24,
   maxBranching: 3,
@@ -118,9 +125,16 @@ rlm({ op: "cancel", id: "a1b2c3d4" })
 
 ### `backend: "tmux"`
 
+Default behavior:
 - Creates one detached tmux session per RLM run (`pi-rlm-<runId>`)
 - Uses depth-oriented windows (`depth-0`, `depth-1`, ...)
 - Starts subcalls in panes within the matching depth window (tiled layout)
+
+Optional behavior:
+- Set `tmuxUseCurrentSession: true` (or CLI flag `--tmux-current-session`) to place panes in the current tmux session
+- Uses windows named `rlm-depth-0`, `rlm-depth-1`, ... in that current session
+
+General:
 - Uses fresh `pi` process per subcall
 - Useful when you specifically want tmux-level observability/control
 

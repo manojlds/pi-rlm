@@ -25,6 +25,7 @@ export interface CompletionRequest {
   nodeId?: string;
   depth?: number;
   stage?: string;
+  tmuxUseCurrentSession?: boolean;
 }
 
 interface ProcessResult {
@@ -202,8 +203,27 @@ async function startStructuredTmuxCall(
   request: CompletionRequest,
   command: string
 ): Promise<string> {
-  const sessionName = toTmuxRunSessionName(request.runId!);
-  const windowName = toTmuxDepthWindowName(request.depth!);
+  const currentSessionName = request.tmuxUseCurrentSession
+    ? await getCurrentTmuxSessionName()
+    : undefined;
+  const useCurrentSession = Boolean(currentSessionName);
+
+  const sessionName = currentSessionName ?? toTmuxRunSessionName(request.runId!);
+  const windowName = toTmuxDepthWindowName(request.depth!, useCurrentSession);
+
+  if (useCurrentSession) {
+    const { paneId, windowTarget } = await startPaneInDepthWindow(
+      sessionName,
+      windowName,
+      request.cwd,
+      command,
+      request.signal
+    );
+
+    await setTmuxPaneTitle(paneId, toTmuxPaneTitle(request));
+    await setTmuxWindowTiled(windowTarget);
+    return paneId;
+  }
 
   const createResult = await runProcess(
     "tmux",
@@ -445,6 +465,20 @@ async function startPaneInDepthWindow(
   });
 }
 
+async function getCurrentTmuxSessionName(): Promise<string | undefined> {
+  const result = await runProcess("tmux", ["display-message", "-p", "#S"], {
+    timeoutMs: 5000,
+    env: process.env
+  }).catch(() => ({ code: null, stdout: "", stderr: "" }));
+
+  if (!result || result.code !== 0) {
+    return undefined;
+  }
+
+  const sessionName = result.stdout.trim();
+  return sessionName || undefined;
+}
+
 async function waitForTmuxPane(
   paneId: string,
   timeoutMs: number,
@@ -564,8 +598,8 @@ function toTmuxRunSessionName(runId: string): string {
   return `pi-rlm-${sanitized}`.slice(0, 48);
 }
 
-function toTmuxDepthWindowName(depth: number): string {
-  return `depth-${depth}`;
+function toTmuxDepthWindowName(depth: number, useCurrentSession: boolean): string {
+  return useCurrentSession ? `rlm-depth-${depth}` : `depth-${depth}`;
 }
 
 function toTmuxPaneTitle(request: CompletionRequest): string {
