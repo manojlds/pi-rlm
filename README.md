@@ -52,6 +52,7 @@ Notes:
 - The wrapper runs a **single synchronous** `op=start` operation.
 - It shells out to the installed `pi` CLI and loads this extension automatically.
 - `--live` renders a real-time tree by reading `events.jsonl` while the run executes.
+- CLI source is authored in TypeScript (`src/cli.ts`) and built with `npm run build:cli` (Node + `tsc`, no Bun runtime required).
 
 ## Tool API
 
