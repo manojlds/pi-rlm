@@ -1,0 +1,9 @@
+node_modules/
+*.log
+*.tgz
+
+# Local Pi working state
+.pi/npm/
+
+# Runtime artifacts
+dist/

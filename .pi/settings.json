@@ -1,0 +1,10 @@
+{
+  "packages": [
+    {
+      "source": "npm:@manojlds/pi-rlm",
+      "extensions": [],
+      "skills": []
+    },
+    ".."
+  ]
+}

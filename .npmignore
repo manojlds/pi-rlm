@@ -1,0 +1,8 @@
+# Dev & CI
+.github/
+.pi/
+tsconfig.json
+package-lock.json
+
+# Local-only files
+AGENTS.md

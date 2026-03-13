@@ -1,0 +1,53 @@
+{
+  "name": "@manojlds/pi-rlm",
+  "version": "0.1.0",
+  "description": "Recursive Language Model (RLM) extension for Pi coding agent",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.ts",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi-coding-agent",
+    "rlm",
+    "recursive-language-model",
+    "subagent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manojlds/pi-rlm.git"
+  },
+  "homepage": "https://github.com/manojlds/pi-rlm",
+  "bugs": "https://github.com/manojlds/pi-rlm/issues",
+  "files": [
+    "index.ts",
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "pack:check": "npm pack --dry-run",
+    "check": "npm run typecheck && npm run pack:check"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@sinclair/typebox": "*"
+  },
+  "devDependencies": {
+    "@mariozechner/pi-ai": "^0.57.1",
+    "@mariozechner/pi-coding-agent": "^0.57.1",
+    "@sinclair/typebox": "^0.34.41",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
