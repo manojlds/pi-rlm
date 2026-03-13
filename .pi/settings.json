@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "source": "npm:@manojlds/pi-rlm",
+      "source": "npm:pi-rlm",
       "extensions": [],
       "skills": []
     },

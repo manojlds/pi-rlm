@@ -19,7 +19,7 @@ pi install /path/to/pi-rlm
 Or as a package:
 
 ```bash
-pi install npm:@manojlds/pi-rlm
+pi install npm:pi-rlm
 ```
 
 ## Tool API

@@ -1,5 +1,5 @@
 {
-  "name": "@manojlds/pi-rlm",
+  "name": "pi-rlm",
   "version": "0.1.0",
   "description": "Recursive Language Model (RLM) extension for Pi coding agent",
   "license": "MIT",
