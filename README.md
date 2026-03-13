@@ -36,6 +36,12 @@ Or with a positional task:
 pi-rlm "Find top reliability risks in this codebase" --backend sdk --max-depth 3
 ```
 
+Local shortcut from this repo:
+
+```bash
+npm run cli -- "Find top reliability risks in this codebase" --backend sdk --max-depth 3
+```
+
 JSON output:
 
 ```bash
@@ -53,6 +59,7 @@ Notes:
 - It shells out to the installed `pi` CLI and loads this extension automatically.
 - `--live` renders a real-time tree by reading `events.jsonl` while the run executes.
 - CLI source is authored in TypeScript (`src/cli.ts`) and built with `npm run build:cli` (Node + `tsc`, no Bun runtime required).
+- `npm publish` runs `prepack`, so the built CLI (`bin/pi-rlm.mjs`) is included in the published package.
 
 ## Tool API
 

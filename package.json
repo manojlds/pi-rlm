@@ -35,8 +35,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build:cli": "tsc -p tsconfig.cli.json && node ./scripts/build-cli.mjs",
+    "prepack": "npm run build:cli",
+    "cli": "npm run build:cli --silent && node ./bin/pi-rlm.mjs",
     "pack:check": "npm pack --dry-run",
-    "check": "npm run typecheck && npm run build:cli && npm run pack:check"
+    "check": "npm run typecheck && npm run pack:check"
   },
   "peerDependencies": {
     "@mariozechner/pi-ai": "*",
