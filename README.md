@@ -42,9 +42,16 @@ JSON output:
 pi-rlm "Summarize repo" --mode solve --json
 ```
 
+Live tree visualization (TTY):
+
+```bash
+pi-rlm "Analyze architecture of this repo" --tools-profile read-only --live
+```
+
 Notes:
 - The wrapper runs a **single synchronous** `op=start` operation.
 - It shells out to the installed `pi` CLI and loads this extension automatically.
+- `--live` renders a real-time tree by reading `events.jsonl` while the run executes.
 
 ## Tool API
 

@@ -47,7 +47,7 @@ export async function runRlmEngine(
   });
 
   try {
-    const root = await runNode({ task: input.task, depth: 0, lineage: [] });
+    const root = await runNode({ task: input.task, depth: 0, lineage: [], parentId: undefined });
 
     const finalOutput = root.result ?? "(no final output)";
 
@@ -90,6 +90,7 @@ export async function runRlmEngine(
     task: string;
     depth: number;
     lineage: string[];
+    parentId: string | undefined;
   }): Promise<RlmNode> {
     if (state.nodesVisited >= input.maxNodes) {
       const startedAt = Date.now();
@@ -110,6 +111,7 @@ export async function runRlmEngine(
       );
       log("node_skipped", {
         nodeId: skippedNode.id,
+        parentId: params.parentId ?? null,
         depth: skippedNode.depth,
         task: skippedNode.task,
         reason: "maxNodes reached",
@@ -134,6 +136,7 @@ export async function runRlmEngine(
     progress?.(`[${node.id}] depth=${params.depth} ${shortTask(params.task, 72)}`);
     log("node_start", {
       nodeId: node.id,
+      parentId: params.parentId ?? null,
       depth: params.depth,
       task: params.task,
       nodesVisited: state.nodesVisited
@@ -143,7 +146,11 @@ export async function runRlmEngine(
       node.status = "cancelled";
       node.error = "Run cancelled";
       node.finishedAt = Date.now();
-      log("node_cancelled", { nodeId: node.id, depth: node.depth });
+      log("node_cancelled", {
+        nodeId: node.id,
+        parentId: params.parentId ?? null,
+        depth: node.depth
+      });
       throw new Error("RLM run cancelled");
     }
 
@@ -166,6 +173,7 @@ export async function runRlmEngine(
         node.finishedAt = Date.now();
         log("node_end", {
           nodeId: node.id,
+          parentId: params.parentId ?? null,
           action: "solve",
           reason,
           chars: node.result.length,
@@ -193,6 +201,7 @@ export async function runRlmEngine(
         node.finishedAt = Date.now();
         log("node_end", {
           nodeId: node.id,
+          parentId: params.parentId ?? null,
           action: "solve",
           reason: decision.reason,
           chars: node.result.length,
@@ -227,6 +236,7 @@ export async function runRlmEngine(
         node.finishedAt = Date.now();
         log("node_end", {
           nodeId: node.id,
+          parentId: params.parentId ?? null,
           action: "solve",
           reason: node.decision.reason,
           chars: node.result.length,
@@ -238,6 +248,7 @@ export async function runRlmEngine(
       progress?.(`[${node.id}] decomposing into ${subtasks.length} subtasks`);
       log("node_decompose", {
         nodeId: node.id,
+        parentId: params.parentId ?? null,
         subtasks,
         reason: decision.reason
       });
@@ -246,7 +257,8 @@ export async function runRlmEngine(
         return runNode({
           task: subtask,
           depth: params.depth + 1,
-          lineage: [...params.lineage, normalized]
+          lineage: [...params.lineage, normalized],
+          parentId: node.id
         });
       });
 
@@ -255,6 +267,7 @@ export async function runRlmEngine(
       node.finishedAt = Date.now();
       log("node_end", {
         nodeId: node.id,
+        parentId: params.parentId ?? null,
         action: "decompose",
         chars: node.result.length,
         children: node.children.length,
@@ -269,6 +282,7 @@ export async function runRlmEngine(
         node.finishedAt = Date.now();
         log("node_cancelled", {
           nodeId: node.id,
+          parentId: params.parentId ?? null,
           error: message,
           durationMs: node.finishedAt - node.startedAt
         });
@@ -280,6 +294,7 @@ export async function runRlmEngine(
       node.finishedAt = Date.now();
       log("node_error", {
         nodeId: node.id,
+        parentId: params.parentId ?? null,
         error: message,
         durationMs: node.finishedAt - node.startedAt
       });
