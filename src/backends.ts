@@ -178,17 +178,23 @@ async function completeWithTmux(request: CompletionRequest): Promise<string> {
   await fs.writeFile(promptPath, request.prompt, "utf8");
 
   const modelPart = request.model ? ` --model ${shellQuote(request.model)}` : "";
-  const command = [
+  const shellScript = [
     `PROMPT_CONTENT=$(cat ${shellQuote(promptPath)})`,
-    `PI_OFFLINE=1 pi ${defaultCliFlags.join(" ")} --tools ${shellQuote(tools)}${modelPart} \"$PROMPT_CONTENT\" > ${shellQuote(outputPath)} 2>&1`
+    "set -o pipefail",
+    `PI_OFFLINE=1 pi ${defaultCliFlags.join(" ")} --tools ${shellQuote(tools)}${modelPart} \"$PROMPT_CONTENT\" 2>&1 | tee ${shellQuote(outputPath)}`
   ].join("; ");
+  const command = `bash -lc ${shellQuote(shellScript)}`;
 
   try {
     if (request.runId && typeof request.depth === "number") {
       const paneId = await startStructuredTmuxCall(request, command);
-      const paneState = await waitForTmuxPane(paneId, request.timeoutMs, request.signal);
-      if (request.tmuxUseCurrentSession && paneState === "dead") {
-        await cleanupCurrentSessionPaneArtifacts(paneId);
+      await waitForTmuxPane(paneId, request.timeoutMs, request.signal);
+
+      if (shouldCleanupCurrentSessionWindows(request)) {
+        const currentSessionName = await getCurrentTmuxSessionName();
+        if (currentSessionName) {
+          await cleanupCurrentSessionDepthWindows(currentSessionName);
+        }
       }
     } else {
       await runEphemeralTmuxCall(request, command, stamp);
@@ -482,86 +488,43 @@ async function getCurrentTmuxSessionName(): Promise<string | undefined> {
   return sessionName || undefined;
 }
 
-async function cleanupCurrentSessionPaneArtifacts(paneId: string): Promise<void> {
-  const paneMeta = await getTmuxPaneMetadata(paneId);
-  if (!paneMeta) return;
-
-  if (!paneMeta.windowName.startsWith("rlm-depth-")) {
-    return;
-  }
-
-  await killTmuxPane(paneId);
-
-  const windowPanes = await listTmuxWindowPanes(paneMeta.windowId);
-  if (windowPanes.length === 0) {
-    return;
-  }
-
-  const hasAlivePane = windowPanes.some((pane) => !pane.dead);
-  if (!hasAlivePane) {
-    await killTmuxWindow(paneMeta.windowId);
-  }
+function shouldCleanupCurrentSessionWindows(request: CompletionRequest): boolean {
+  if (!request.tmuxUseCurrentSession) return false;
+  if (request.depth !== 0) return false;
+  return request.stage === "solver" || request.stage === "synthesizer";
 }
 
-async function getTmuxPaneMetadata(
-  paneId: string
-): Promise<{ windowId: string; windowName: string; sessionName: string } | undefined> {
+async function cleanupCurrentSessionDepthWindows(sessionName: string): Promise<void> {
   const result = await runProcess(
     "tmux",
-    ["display-message", "-p", "-t", paneId, "#{window_id}\t#{window_name}\t#{session_name}"],
+    ["list-windows", "-t", sessionName, "-F", "#{window_id}\t#{window_name}"],
     {
       timeoutMs: 5000
     }
   );
 
   if (result.code !== 0) {
-    return undefined;
+    return;
   }
 
-  const line = result.stdout.trim();
-  if (!line) {
-    return undefined;
-  }
-
-  const [windowId, windowName, sessionName] = line.split("\t");
-  if (!windowId || !windowName || !sessionName) {
-    return undefined;
-  }
-
-  return {
-    windowId: windowId.trim(),
-    windowName: windowName.trim(),
-    sessionName: sessionName.trim()
-  };
-}
-
-async function listTmuxWindowPanes(
-  windowTarget: string
-): Promise<Array<{ paneId: string; dead: boolean }>> {
-  const result = await runProcess("tmux", ["list-panes", "-t", windowTarget, "-F", "#{pane_id}\t#{pane_dead}"], {
-    timeoutMs: 5000
-  });
-
-  if (result.code !== 0) {
-    return [];
-  }
-
-  const panes: Array<{ paneId: string; dead: boolean }> = [];
+  const rlmDepthWindowIds: string[] = [];
 
   for (const entry of result.stdout.split("\n")) {
     const line = entry.trim();
     if (!line) continue;
 
-    const [paneId, deadFlag] = line.split("\t");
-    if (!paneId) continue;
+    const [windowId, ...nameParts] = line.split("\t");
+    if (!windowId) continue;
 
-    panes.push({
-      paneId: paneId.trim(),
-      dead: deadFlag?.trim() === "1"
-    });
+    const windowName = nameParts.join("\t").trim();
+    if (!windowName.startsWith("rlm-depth-")) continue;
+
+    rlmDepthWindowIds.push(windowId.trim());
   }
 
-  return panes;
+  for (const windowId of rlmDepthWindowIds) {
+    await killTmuxWindow(windowId);
+  }
 }
 
 async function waitForTmuxPane(
