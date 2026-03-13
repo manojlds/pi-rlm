@@ -22,6 +22,30 @@ Or as a package:
 pi install npm:pi-rlm
 ```
 
+## CLI Wrapper
+
+This package also ships a lightweight CLI wrapper:
+
+```bash
+pi-rlm --task "Analyze architecture of this repo" --mode auto --tools-profile read-only
+```
+
+Or with a positional task:
+
+```bash
+pi-rlm "Find top reliability risks in this codebase" --backend sdk --max-depth 3
+```
+
+JSON output:
+
+```bash
+pi-rlm "Summarize repo" --mode solve --json
+```
+
+Notes:
+- The wrapper runs a **single synchronous** `op=start` operation.
+- It shells out to the installed `pi` CLI and loads this extension automatically.
+
 ## Tool API
 
 The extension registers one tool: `rlm`.

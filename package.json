@@ -5,6 +5,9 @@
   "license": "MIT",
   "type": "module",
   "main": "index.ts",
+  "bin": {
+    "pi-rlm": "./bin/pi-rlm.mjs"
+  },
   "keywords": [
     "pi-package",
     "pi-extension",
@@ -22,6 +25,7 @@
   "files": [
     "index.ts",
     "src",
+    "bin",
     "README.md"
   ],
   "publishConfig": {
