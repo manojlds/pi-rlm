@@ -1,0 +1,10 @@
+{
+  "name": "web-data-extraction-example",
+  "private": true,
+  "type": "module",
+  "description": "Self-contained pi-rlm web data extraction example",
+  "scripts": {
+    "setup": "node ./scripts/setup.mjs",
+    "clean": "rm -rf .pi/git .pi/npm .pi/tmp .pi/skills/browser-tools"
+  }
+}

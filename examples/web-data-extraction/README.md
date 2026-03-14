@@ -1,90 +1,109 @@
-# Web Data Extraction Example
+# Web Data Extraction Example (Self-Contained)
 
-This example demonstrates using [pi-rlm](https://github.com/manojlds/pi-rlm) with the [browser-tools](https://github.com/badlogic/pi-skills) skill to extract structured data from websites.
+This example is an **isolated mini-project** with its own:
 
-RLM decomposes extraction tasks into parallel subtasks — each targeting a specific page or section — then synthesizes results into a unified output.
+- `.pi/settings.json` (project-local pi package config)
+- `package.json` and setup scripts
+- local browser-tools runtime inside this example's `.pi/` directory
+
+It is designed so you can run and experiment without changing the main repo's `.pi` setup.
+
+## Project Layout
+
+```text
+examples/web-data-extraction/
+  .pi/settings.json
+  SKILL.md
+  package.json
+  scripts/
+    setup.mjs
+    resolve-browser-tools.sh
+    browser-start.sh
+    browser-nav.sh
+    browser-content.sh
+    browser-eval.sh
+```
 
 ## Setup
 
-1. Install pi-rlm and browser-tools:
+From repo root:
 
 ```bash
-pi install npm:pi-rlm
-pi install-skill https://github.com/badlogic/pi-skills/tree/main/browser-tools
+cd examples/web-data-extraction
+npm run setup
 ```
 
-2. Install the example skill (from this repo):
+`npm run setup` will:
+
+1. Ensure project-local `npm:pi-rlm` is installed (inside this example's `.pi` scope)
+2. Download `browser-tools` into `.pi/skills/browser-tools`
+3. Install npm dependencies for that local browser-tools runtime
+
+### Start Chrome for browser-tools
 
 ```bash
-pi install-skill ./examples/web-data-extraction
+./scripts/browser-start.sh
+# or with your profile/cookies:
+./scripts/browser-start.sh --profile
 ```
 
-## Quick Start
+## Quick Start (Pi Agent)
 
-### Using the pi agent
+From `examples/web-data-extraction/`:
 
-Start a pi session and ask it to extract data:
-
-```
-Extract all book titles, prices, and ratings from https://books.toscrape.com/ using the web-data-extraction skill.
+```text
+Use the web-data-extraction skill to extract all book titles, prices, and ratings from https://books.toscrape.com/ and return JSON.
 ```
 
-Pi will load the skill, start the browser, and invoke the `rlm` tool to decompose and extract the data.
+## Why wrappers are used
 
-### Using the CLI
+RLM subtask nodes run with `--no-skills`, so they cannot rely on skill placeholders like `{baseDir}`.
 
-```bash
-# Single page extraction
-pi-rlm --task 'Extract all book data (title, price, rating, availability) from https://books.toscrape.com/ as JSON. Use browser-content.js to scrape the page. Start browser with browser-start.js first.' \
-  --backend sdk --mode auto --max-depth 2 --max-nodes 12
+This example uses local wrappers (`./scripts/browser-*.sh`) so solver nodes can run browser tools reliably from the same working directory.
 
-# Multi-page extraction with parallel decomposition
-pi-rlm --task 'Extract product data from these pages in parallel:
-- https://books.toscrape.com/catalogue/category/books/travel_2/index.html
-- https://books.toscrape.com/catalogue/category/books/mystery_3/index.html
-- https://books.toscrape.com/catalogue/category/books/fiction_10/index.html
-For each book: title, price, rating. Return unified JSON array.
-Use browser-content.js for page extraction.' \
-  --backend sdk --mode decompose --max-depth 1 --max-nodes 8 --concurrency 3
+## Example prompt templates
 
-# With live tree visualization
-pi-rlm --task 'Extract all book data from https://books.toscrape.com/ as JSON. Use browser-content.js for extraction.' \
-  --backend sdk --mode auto --max-depth 2 --max-nodes 12 --live
+### Single page extraction
+
+```text
+Use the rlm tool to extract all product information from https://books.toscrape.com/.
+For each book, extract: title, price, rating, and availability.
+Return the results as a JSON array.
+
+Use ./scripts/browser-content.sh for full page extraction and ./scripts/browser-eval.sh for targeted DOM queries.
+Start the browser first with ./scripts/browser-start.sh if not already running.
+
+RLM settings: backend=sdk, mode=auto, maxDepth=2, maxNodes=12, toolsProfile=coding
 ```
 
-## How It Works
+### Multi-page extraction (parallel)
 
-```
-User task: "Extract book data from 3 category pages"
-         │
-    ┌────┴────┐
-    │ Planner │  → decides to decompose (one subtask per URL)
-    └────┬────┘
-         │
-    ┌────┼────────────┐
-    │    │             │
-  ┌─┴─┐ ┌─┴─┐     ┌──┴──┐
-  │ S1│ │ S2│     │ S3  │   ← solver nodes run browser-content.js in parallel
-  └─┬─┘ └─┬─┘     └──┬──┘
-    │    │             │
-    └────┼────────────┘
-         │
-  ┌──────┴──────┐
-  │ Synthesizer │  → merges all book data into unified JSON
-  └─────────────┘
+```text
+Use the rlm tool to extract conference talk information from these pages:
+- https://example.com/talks/day1
+- https://example.com/talks/day2
+- https://example.com/talks/day3
+
+For each talk extract: title, speaker, time slot, room, and abstract.
+Decompose by page so each page is scraped in parallel.
+Return a unified JSON array sorted by time slot.
+
+Use ./scripts/browser-content.sh for full page extraction.
+Start the browser first with ./scripts/browser-start.sh if not already running.
+
+RLM settings: backend=sdk, mode=decompose, maxDepth=1, maxNodes=8, toolsProfile=coding
 ```
 
-## Key Concepts
+### Paginated extraction
 
-- **RLM subtask nodes run with `--no-skills`** — browser tool usage instructions must be embedded in the task description so solver nodes know how to invoke them.
-- **Start the browser before the RLM run** — the solver nodes expect Chrome to be running with remote debugging on port 9222.
-- **`browser-content.js`** handles JS-rendered pages and outputs clean markdown — best for full-page extraction.
-- **`browser-eval.js`** executes JavaScript in the active tab — best for targeted DOM queries and interactions.
+```text
+Use the rlm tool to extract all job listings from https://example.com/careers.
+The page is paginated — extract from the first 5 pages.
+For each listing extract: title, department, location, and posting date.
+Return as a JSON array.
 
-## Recommended Settings
+Use ./scripts/browser-nav.sh and ./scripts/browser-eval.sh to navigate pagination and extract listings.
+Start the browser first with ./scripts/browser-start.sh if not already running.
 
-| Scenario | `--mode` | `--max-depth` | `--max-nodes` |
-|---|---|---|---|
-| Single page | `auto` | `2` | `12` |
-| Multi-page (parallel) | `decompose` | `1` | `8` |
-| Paginated listing | `auto` | `2` | `16` |
+RLM settings: backend=sdk, mode=auto, maxDepth=2, maxNodes=16, toolsProfile=coding
+```

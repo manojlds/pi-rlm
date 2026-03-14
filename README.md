@@ -165,7 +165,7 @@ Each run writes artifacts to:
 
 See the [examples/](examples/) directory:
 
-- **[web-data-extraction](examples/web-data-extraction/)** — Extract structured data from websites using RLM + browser-tools skill. Demonstrates parallel multi-page scraping with decomposition and synthesis.
+- **[web-data-extraction](examples/web-data-extraction/)** — Self-contained example project for RLM + browser-tools web scraping, with its own `.pi/settings.json`, setup script, and local wrapper commands.
 
 ## Development
 
