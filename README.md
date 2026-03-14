@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="pi-rlm" width="100%">
+</p>
+
 # pi-rlm
 
 Recursive Language Model (RLM) extension for [Pi coding agent](https://github.com/badlogic/pi-mono).
