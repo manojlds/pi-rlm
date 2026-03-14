@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "npm:pi-rlm"
+  ],
+  "skills": [
+    "../"
+  ]
+}

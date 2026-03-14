@@ -1,0 +1,9 @@
+# Local pi state for this example project
+.pi/git/
+.pi/npm/
+.pi/tmp/
+.pi/skills/browser-tools/
+
+# Runtime outputs
+*.log
+out/
